@@ -1,0 +1,38 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.contenedor-flex {
+  display: flex;
+}
+
+.centrar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.columna-flex {
+  display: flex;
+  flex-direction: column;
+}
+
+.altura-completa {
+  height: 100%;
+}
+
+.fuente-grande-ajustable {
+  font-size: clamp(60px, 5vw, 5vw);
+}
+
+.fuente-ajustable {
+  font-size: clamp(8px, 10vw, 100px);
+}
+
+.fondo-cubrir-centro-arriba {
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+}

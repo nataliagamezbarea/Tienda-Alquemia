@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Alquemia{% endblock %}</title>
+
+    <!-- Iconos de Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+    
+    <!-- Favicon -->
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='img/logo/alquemia.png') }}"
+    />
+
+    <!-- Estilos globales -->
+    <link href="{{ url_for('static', filename='css/general.css') }}" rel="stylesheet" />
+
+    <!-- Estilos adicionales desde plantillas hijas -->
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+
+    {# Barra de navegación #}
+    {# {% include "components/navbar.html" %} #}
+
+    <!-- Contenido principal -->
+    {% block content %}
+    {% endblock %}
+
+    {# Footer #}
+    {# {% include "components/footer.html" %} #}
+
+    <!-- Scripts -->
+    {% block extra_js %}{% endblock %} 
+
+</body>
+</html>

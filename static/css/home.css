@@ -1,0 +1,76 @@
+
+  nav {
+    grid-area: nav;
+    background: linear-gradient(to right, #eaeae8 50%, #bde5e8 50%);
+  }
+  
+  body {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "nav"
+      "content"
+      "footer";
+    min-height: 100vh;
+    margin: 0;
+  }
+  
+  /* Content Section */
+  #mujer_hombre {
+    grid-area: content;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 100vh;
+  }
+  
+  /* Individual Panels */
+  #mujer,
+  #hombre {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    font-family: "Andada Pro", serif;
+    font-weight: 300;
+    font-size: clamp(60px, 5vw, 5vw);
+  }
+  
+  #mujer {
+    background-image: url(../img/mujer/mujer.png);
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: cover;
+  }
+  
+  #hombre {
+    background-image: url(../img/hombre/hombre.png);
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: cover;
+    background-color: rgba(128, 128, 128, 0.5);
+  }
+  
+  /* Links inside panels */
+  #mujer a,
+  #hombre a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: black;
+    font-family: "Andada Pro", serif;
+    font-weight: 300;
+    font-size: clamp(8px, 10vw, 100px);
+  }
+  
+  /* Responsive */
+  @media (max-width: 700px) {
+    #mujer_hombre {
+      grid-template-columns: 1fr;
+      height: auto;
+      background-color: #eaeae8;
+    }
+  }
