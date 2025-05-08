@@ -6,3 +6,5 @@ class Color(db.Model):
     id_color = db.Column(db.Integer, primary_key=True)
     color = db.Column(db.String(50), unique=True, nullable=False)
     img_color = db.Column(db.String(255))
+
+    imagenes = db.relationship('ProductoImagen', back_populates='color')

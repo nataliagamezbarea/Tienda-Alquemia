@@ -15,4 +15,4 @@ class Producto(db.Model):
 
     seccion = db.relationship('Seccion', back_populates='productos')
 
-    categorias = db.relationship('Categoria', secondary='producto_categoria', backref='productos')
+    categorias = db.relationship('Categoria', secondary='productos_categorias', backref='productos_relacionados')
