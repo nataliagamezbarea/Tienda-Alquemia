@@ -27,3 +27,7 @@ from .autentificacion.cerrar_sesion import cerrar_sesion
 
 
 from .user.update_contraseña import update_contraseña
+
+
+# NOSOTROS
+from .nosotros import nosotros
