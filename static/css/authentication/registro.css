@@ -45,3 +45,12 @@ button.button-green {
   font-size: 20px;
   color: #333;
 }
+
+
+label {
+  margin-bottom: 0 !important;
+}
+
+.flex {
+  margin-bottom: 10px;
+}
