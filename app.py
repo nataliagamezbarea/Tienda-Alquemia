@@ -70,6 +70,12 @@ app.add_url_rule('/cambiar_contraseña', 'cambiar_contraseña', update_contrase�
 app.add_url_rule('/nosotros', 'nosotros', nosotros, methods=["GET"])
 app.add_url_rule('/encuentranos', 'encuentranos', encuentranos, methods=["GET"])
 
+# CONTACTANOS
+
+app.add_url_rule('/contactanos', 'contactanos', contacto, methods=["GET"])
+app.add_url_rule('/contactanos/particular', 'contactanos_particular', contacto_particular, methods=["GET", "POST"])
+app.add_url_rule('/contactanos/empresa', 'contactanos_empresa', contacto_empresa, methods=["GET", "POST"])
+
 
 
 

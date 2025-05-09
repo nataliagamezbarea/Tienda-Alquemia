@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Contacto{% endblock %}
+
+{% block content %}
+<link href="{{ url_for('static', filename='css/form.css') }}" rel="stylesheet" />
+<link href="{{ url_for('static', filename='css/contacto.css') }}" rel="stylesheet" />
+
+
+<!-- Mostrar mensaje de éxito o error -->
+{% if mensaje %}
+  <div class="alert alert-{{ tipo_mensaje }}">
+    {{ mensaje }}
+  </div>
+{% endif %}
+
+<section id="seccion-contacto" class="seccion-contacto">
+  <div id="contacto-particulares" class="contenedor-contacto" role="region" aria-labelledby="contacto-particulares-titulo">
+    <div class="icono-circulo">
+      <i class="fas fa-user" aria-hidden="true"></i>
+    </div>
+    <h2 id="contacto-particulares-titulo">Particulares</h2>
+    <p>¿Tienes dudas sobre pedidos, venta online, tiendas o nuestro programa de fidelización?</p>
+
+    <!-- Botón para abrir el modal popover -->
+    <button class="button-green" popovertarget="modal-particulares">Contacto</button>
+
+    <div class="flex align-center">
+      <hr>
+      <p>O si lo prefieres</p>
+      <hr>
+    </div>
+    <b>Llámanos</b>
+    <p>Lunes a Viernes 8:00 am - 4:30 pm</p>
+    <b>844 674 2174</b>
+  </div>
+
+  <div id="contacto-profesionales" class="contenedor-contacto" role="region" aria-labelledby="contacto-profesionales-titulo">
+    <div class="icono-circulo">
+      <i class="fas fa-briefcase" aria-hidden="true"></i>
+    </div>
+    <h2 id="contacto-profesionales-titulo">Profesionales y empresas</h2>
+    <p>¿Eres un profesional o empresa y quieres vender Mayoral o colaborar con nosotros?</p>
+
+    <button class="button-green" popovertarget="modal-empresas">Contacto</button>
+
+    <div class="flex align-center">
+      <hr>
+      <p>O si lo prefieres</p>
+      <hr>
+    </div>
+    <b>Llámanos</b>
+    <p>Lunes a Viernes 8:00 am - 4:30 pm</p>
+    <b>1 305 779 4305</b>
+  </div>
+</section>
+
+
+
+
+{% include "user/contacto/modal-particulares.html" %}
+{% include "user/contacto/modal-empresas.html" %}
+
+
+{% endblock %}
