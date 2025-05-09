@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Catálogo de Productos{% endblock %}
+
+{% block content %}
+<link href="{{ url_for('static', filename='css/catalogo.css') }}" rel="stylesheet" />
+<link href="{{ url_for('static', filename='css/search.css') }}" rel="stylesheet" />
+
+<!-- Formulario de Búsqueda -->
+<section class="busqueda">
+    <form aria-colspan="center" action="{{ url_for('busqueda') }}" method="get" class="formulario_busqueda align-center space_between">
+    <i class="fas fa-search"></i>
+      <input type="text" name="busqueda" placeholder="Busca productos..." value="{{ busqueda }}" />
+    </form>
+  </section>
+  
+
+<section class="catalogo">
+  {% if productos %}
+    <div class="productos-lista">
+      {# {% include 'user/productos.html' %} #}
+    </div>
+
+    <!-- Paginación -->
+    <div class="paginacion">
+      {% if pagina_actual > 1 %}
+        <a href="{{ url_for('busqueda', pagina=pagina_actual-1, busqueda=busqueda) }}" class="paginacion-btn">Anterior</a>
+      {% endif %}
+      <span>Página {{ pagina_actual }} de {{ total_paginas }}</span>
+      {% if pagina_actual < total_paginas %}
+        <a href="{{ url_for('busqueda', pagina=pagina_actual+1, busqueda=busqueda) }}" class="paginacion-btn">Siguiente</a>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="mensaje-vacio">
+      No se encontraron productos que coincidan con "{{ busqueda }}". 
+    </div>
+  {% endif %}
+</section>
+
+
+<script src="{{ url_for('static', filename='js/cambiar_imagen_color.js') }}"></script>
+{% endblock %}

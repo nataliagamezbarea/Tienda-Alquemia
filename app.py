@@ -1,13 +1,10 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask
-from flask_caching import Cache
 from backend.Modelos.database import init_db
+from flask_caching import Cache
 
-from routes.home import home
-
-
-
+from routes import *
 
 
 # Cargar las variables de entorno desde el archivo .env
@@ -34,6 +31,43 @@ cache = Cache(app)
 init_db(app)
 
 app.add_url_rule('/', 'home', home)
+app.add_url_rule('/busqueda','busqueda', busqueda, methods=["GET" , "POST"])
+
+app.add_url_rule('/login', 'login', login, methods=["GET", "POST"])
+
+
+
+@app.context_processor
+def inyectar_menu():
+    menu_data = obtener_menu(cache)
+    print(menu_data)  # Verifica los datos que se están obteniendo
+    return dict(menu=obtener_menu(cache))
+
+
+
+@app.context_processor
+def inyectar_cesta():
+    return dict(cesta=obtener_cesta())
+
+# HOME
+app.add_url_rule('/', 'home', home)
+
+# AUTENTIFICACIÓN
+app.add_url_rule('/login', 'login', login, methods=["GET", "POST"])
+app.add_url_rule('/registro', 'registro', registro, methods=["GET", "POST"])
+app.add_url_rule('/olvidado_contraseña', 'olvidado_contraseña', olvidado_contraseña, methods=["GET", "POST"])
+app.add_url_rule('/restablecer_contraseña/<token>', 'restablecer_contraseña', restablecer_contraseña, methods=["GET", "POST"])
+
+# USER
+app.add_url_rule('/informacion_personal', 'informacion_personal', informacion_personal)
+app.add_url_rule('/update_usuario', 'update_usuario', update_usuario, methods=['POST']) 
+app.add_url_rule('/compras', 'compras', compras, methods=["GET", "POST"])
+app.add_url_rule('/cerrar_sesion', 'cerrar_sesion', cerrar_sesion, methods=["GET", "POST"])
+app.add_url_rule('/cambiar_contraseña', 'cambiar_contraseña', update_contraseña, methods=["GET", "POST"])
+
+
+
+
 
 if __name__ == '__main__':
-    app.run(host='localhost', port=5000, debug=True)
+    app.run(host='127.0.0.1', port=5000, debug=True)
