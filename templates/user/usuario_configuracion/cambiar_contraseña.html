@@ -1,0 +1,49 @@
+
+
+{% extends "user/usuario_configuracion/base.html" %}
+{% block title %}User{% endblock %}
+{% block content %}
+
+<link href="{{ url_for('static', filename='css/form.css') }}" rel="stylesheet" />
+<link href="{{ url_for('static', filename='css/user/informacion_personal.css') }}" rel="stylesheet" />
+<script src="{{ url_for('static', filename='js/ver_contraseña.js') }}"></script>
+
+<div class="flex justify-center align-start contenedor flex-wrap form-contenedor">
+  <form method="POST" action="/cambiar_contraseña">
+            <!-- Mostrar mensaje de error o éxito -->
+            {% if tipo_mensaje == 'exito' %}
+            <div class="alerta exito">
+              {{ mensaje }}
+            </div>
+          {% endif %}
+        
+          <!-- Mensaje de error -->
+          {% if tipo_mensaje == 'error' %}
+            <div class="alerta error">
+              {{ mensaje }}
+            </div>
+          {% endif %}
+        
+   <h1> Actualizar Contraseña</h1>
+    <div >
+        <label for="actual">Contraseña Actual <span>*</span></label>
+        <input type="password" id="actual" name="actual"  required>
+    </div>
+
+    <div>
+        <label for="nueva">Nueva Contraseña <span>*</span></label>
+        <input type="password" id="nueva" name="nueva"  required>
+    </div>
+
+    <div>
+        <label for="confirmar">Confirmar Nueva Contraseña <span>*</span></label>
+        <input type="password" id="confirmar" name="confirmar"  required>
+    </div>
+
+    <button type="submit">Actualizar Contraseña</button>
+</form>
+</div>
+
+
+   
+{% endblock %}

@@ -1,0 +1,47 @@
+#grid-4 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1vw;
+  padding: 1vw;
+  max-width: 50%;
+}
+
+#grid-4 img {
+  border-radius: 10px;
+  width: 100%;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  padding: 1em;
+  width: 30vw;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+button.button-green {
+  background-color: #28a745;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 30px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.contraseña_contenedor {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.icono-ojo {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 20px;
+  color: #333;
+}

@@ -1,0 +1,48 @@
+<link href="{{ url_for('static', filename='css/nav.css') }}" rel="stylesheet"/>
+<link href="{{ url_for('static', filename='css/menu.css') }}" rel="stylesheet"/>
+
+<link href="{{ url_for('static', filename='css/cesta.css') }}" rel="stylesheet"/>
+
+
+<nav class="space_between">
+  <div>
+    <button popovertarget="menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    {% include "components/menu.html" %} 
+
+  </div>
+
+  <div class="center">
+    <a class="align-center" href="{{ url_for('home') }}">
+      <img src="{{ url_for('static', filename='img/logo/alquemia.png') }}" alt="Logo" />
+    </a>
+  </div>
+
+  <div id="iconos-navbar" class="center">
+    <a href="{{ url_for('busqueda') }}">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </a>
+
+    <button popovertarget="cesta">
+      {% if session.get("user") %}
+      <span>{{ cesta.numero_de_productos if cesta.numero_de_productos > 0 else 0 }}</span>
+      {% endif %}
+  
+      <i class="fa-solid fa-bag-shopping"></i>
+  
+    </button>
+    
+    {% include "components/cesta.html" %}
+
+    
+    <a href="{{ url_for('login') }}">
+      <i class="fa-regular fa-user"></i>
+    </a>
+  </div>
+</nav>
+
+
+
+{% block content %}{% endblock %}

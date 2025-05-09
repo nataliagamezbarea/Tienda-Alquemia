@@ -1,0 +1,71 @@
+{% extends "user/usuario_configuracion/base.html" %}
+
+{% block title %}Mis Compras{% endblock %}
+
+{% block content %}
+
+<link href="{{ url_for('static', filename='css/user/compras.css') }}" rel="stylesheet" />
+
+<section title="compras" class="flex column w-25">
+  <h1>Mis Compras</h1>
+
+  {% if pedidos %}
+    {% for pedido in pedidos %}
+        {% set total_pedido = namespace(valor=0) %}
+        <div class="encabezado-pedido tarjeta-pedido">
+          <div>Pedido realizado el {{ pedido.fecha }}</div>
+          <div>Estado: {{ pedido.estado }} | Tipo: {{ pedido.tipo_pedido }}</div>
+
+          <div class="entrega-pedido">
+            <i class="fas fa-clock reloj-icono"></i>
+            Tu pedido llegará entre el <strong>{{ pedido.fecha_entrega_min.strftime("%d/%m/%Y") }}</strong> y el <strong>{{ pedido.fecha_entrega_max.strftime("%d/%m/%Y") }}</strong>.
+            {% if pedido.dias_restantes > 0 %}
+              <br>Faltan <strong>{{ pedido.dias_restantes }}</strong> día{{ 's' if pedido.dias_restantes > 1 }} para recibirlo.
+            {% else %}
+              <br><strong>¡Tu pedido debería estar llegando!</strong>
+            {% endif %}
+          </div>
+
+          <ul class="lista-productos">
+            {% for pp in pedido.pedido_productos %}
+              {% set precio_unitario = pp.producto_variante.producto.precio %}
+              {% set total_producto = precio_unitario * pp.cantidad %}
+              {% set total_pedido.valor = total_pedido.valor + total_producto %}
+
+              <li class="item-acordeon">
+                <input type="checkbox" id="producto-{{ loop.index }}" class="interruptor-acordeon">
+                <label for="producto-{{ loop.index }}" class="etiqueta-acordeon">
+                  {{ pp.producto_variante.producto.nombre }}
+                  <span class="flecha">⌄</span>
+                </label>
+
+                <div class="contenido-acordeon flex column align-center justify-center">
+                  {% set imagenes = pp.producto_variante.producto.imagenes %}
+                  {% if imagenes and imagenes|length > 0 %}
+                    <img src="{{ imagenes[0].imagen_url }}" alt="Imagen del producto" />
+                  {% else %}
+                    <p><em>Sin imagen disponible</em></p>
+                  {% endif %}
+
+                  <p><strong>Talla:</strong> {{ pp.producto_variante.talla.talla }}</p>
+                  <p><strong>Color:</strong> {{ pp.producto_variante.color.color }}</p>
+                  <p><strong>Precio unitario:</strong> {{ "%.2f"|format(precio_unitario) }}€</p>
+                  <p><strong>Cantidad:</strong> {{ pp.cantidad }}</p>
+                  <p><strong>Total:</strong> {{ "%.2f"|format(total_producto) }}€</p>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+
+          <div class="total"><strong>Precio total del pedido:</strong> {{ "%.2f"|format(total_pedido.valor) }}€</div>
+        </div>
+    {% endfor %}
+  {% else %}
+    <div class="mensaje-vacio">
+      ¡Aún no has realizado ninguna compra!<br>
+      Explora nuestros productos y encuentra algo que te encante. 🛍️
+    </div>
+  {% endif %}
+</section>
+
+{% endblock %}

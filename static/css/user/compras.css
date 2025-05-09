@@ -1,0 +1,93 @@
+section[title="compras"] h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+section[title="compras"] .tarjeta-pedido {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  background-color: #f9f9f9;
+}
+
+section[title="compras"] .encabezado-pedido {
+  margin-bottom: 0.5rem;
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+section[title="compras"] .encabezado-pedido div:first-child {
+  font-weight: bold;
+}
+
+section[title="compras"] .encabezado-pedido div:nth-child(2) {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+section[title="compras"] .entrega-pedido {
+  background-color: #acf6c072;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid green;
+  font-size: 0.95rem;
+  border-radius: 6px;
+}
+
+section[title="compras"] .lista-productos {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+section[title="compras"] .item-acordeon {
+  border-top: 1px solid #ddd;
+  padding: 1rem 0;
+}
+
+section[title="compras"] .interruptor-acordeon {
+  display: none;
+}
+
+section[title="compras"] .etiqueta-acordeon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+section[title="compras"] .flecha {
+  transition: transform 0.3s ease;
+}
+
+section[title="compras"] .interruptor-acordeon:checked + .etiqueta-acordeon .flecha {
+  transform: rotate(180deg);
+}
+
+section[title="compras"] .contenido-acordeon {
+  display: none;
+  margin-top: 1rem;
+  padding-left: 1.2rem;
+  text-align: center;
+}
+
+section[title="compras"] .interruptor-acordeon:checked + .etiqueta-acordeon + .contenido-acordeon {
+  display: block;
+}
+
+section[title="compras"] .contenido-acordeon img {
+  width: 200px;
+  height: auto;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+section[title="compras"] .contenido-acordeon p {
+  margin: 0.3rem 0;
+  font-size: 0.9rem;
+}

@@ -1,0 +1,41 @@
+{% extends "base.html" %} 
+{% block title %}Login{% endblock %} {% block
+content %}
+
+<link href="{{ url_for('static', filename='css/form.css') }}" rel="stylesheet" />
+<link href="{{ url_for('static', filename='css/authentication/login.css') }}"rel="stylesheet"/>
+
+<section title="login" class="flex justify-center align-start contenedor flex-wrap form-contenedor">
+  <form method="POST" action="/login">
+    <h2>Ya tengo una cuenta</h2>
+    <p>Inicia sesión con tu email</p>
+
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <input type="email" name="email" placeholder="Email" required />
+    <input
+      type="password"
+      name="contrasena"
+      placeholder="Contraseña"
+      required
+    />
+    <a id="olvidado" href="{{ url_for('olvidado_contraseña') }}">¿Has olvidado tu contraseña?</a>
+   <div class="flex center">
+    <button class="button-green" type="submit">Iniciar sesión</button>
+   </div>
+  </form>
+
+  <div id="registro">
+    <h2>Soy cliente nuevo</h2>
+    <p>Regístrate y disfruta de servicios personalizados.</p>
+    <div class="flex center">
+      <a class="button-green" href="{{ url_for('registro') }}">
+        Registrarte
+      </a>
+    </div>
+    
+  </div>
+</section>
+{% endblock %}

@@ -1,38 +1,141 @@
-html,
-body {
-  margin: 0;
-  padding: 0;
+.left , .right
+.center{
+  display: flex;
+  align-items: center;
+  flex: 1; /* de manera proporcional para cuando se haga el grow que permite crecer el contenedor */
 }
 
-.contenedor-flex {
-  display: flex;
+.left {
+  justify-content: flex-start;
 }
 
-.centrar {
-  display: flex;
+
+.center {
   justify-content: center;
   align-items: center;
 }
 
-.columna-flex {
+.right {
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.flex {
+  display: flex;
+}
+
+.space_between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.menu {
+  display: none;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3vw;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.align-start {
+  align-items: flex-start;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.mensaje-vacio {
+  text-align: center;
+  font-size: 1.1rem;
+  margin-top: 2rem;
+  background-color: #fffbe6;
+  padding: 1.5rem;
+  border: 1px dashed #f0c36d;
+  border-radius: 10px;
+}
+
+button {
+  all: unset;
+  font-size: 1em;
+  cursor: pointer;
+  position: relative;
+}
+
+/* numero de producto */
+button span {
+  position: absolute;
+  top: -6px;
+  right: 0;
+  left: 15px;
+  font-size: 10px;
+}
+
+.hidden {
+  display: none;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.underline {
+  text-decoration: underline;
+}
+
+
+.column {
   display: flex;
   flex-direction: column;
 }
 
-.altura-completa {
-  height: 100%;
+.wrap {
+  flex-wrap: wrap;
+  
 }
 
-.fuente-grande-ajustable {
-  font-size: clamp(60px, 5vw, 5vw);
+.align-start {
+  align-items: flex-start;
 }
 
-.fuente-ajustable {
-  font-size: clamp(8px, 10vw, 100px);
+.text-center {
+  text-align: center;
 }
 
-.fondo-cubrir-centro-arriba {
-  background-repeat: no-repeat;
-  background-position: center top;
-  background-size: cover;
+.text-left {
+  text-align: left;
+}
+
+.w-25 {
+  width: 25vw;
 }

@@ -1,0 +1,37 @@
+{% extends "base.html" %} 
+{% block title %}Login{% endblock %} {% block
+content %}
+
+<link href="{{ url_for('static', filename='css/form.css') }}" rel="stylesheet" />
+<link href="{{ url_for('static', filename='css/authentication/login.css') }}"rel="stylesheet"/>
+
+<section title="login" class="flex justify-center align-start contenedor flex-wrap form-contenedor">
+  <form method="POST">
+    {% if tipo_mensaje in ['exito', 'error'] %}
+    <div class="{{ 'exito' if tipo_mensaje == 'exito' else 'error' }}">
+      {{ mensaje }}
+    </div>
+  {% endif %}
+  
+    <h2>Olvidado contraseña</h2>
+    <p>Introduce tu email para recuperar la cuenta</p>
+
+    {% if error %}
+    <div class="error">{{ error }}</div>
+    {% endif %}
+
+    <input type="email" name="email" placeholder="Email" required />
+
+    <a id="login" class="underline" href="{{ url_for('login') }}">¿Te has acordado de la contraseña?</a>
+
+   <div class="flex center">
+    <button class="button-green" type="submit">Recuperar contraseña</button>
+   </div>
+
+  </form>
+
+
+
+  
+</section>
+{% endblock %}

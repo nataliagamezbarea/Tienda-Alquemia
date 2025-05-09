@@ -1,0 +1,147 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap");
+
+body {
+  font-family: "Roboto", Courier, monospace;
+  font-weight: 200;
+}
+
+.form-contenedor {
+  font-family: "Roboto", Courier, monospace;
+
+}
+.form-contenedor input  {
+  padding: 1vw;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+  font-size: 17px;
+  width: 100%;
+  font-family: "Roboto", Courier, monospace;
+  font-weight: 200;
+}
+
+input[type="checkbox"] {
+  cursor: pointer;
+}
+
+input[type="checkbox"]:checked,
+input[type="radio"]:checked {
+  accent-color: #0bab32;
+}
+
+form {
+  max-width: 100%;
+  gap: 10px;
+}
+
+.form-contenedor {
+  padding: 2vw;
+  gap: 2vw;
+  display: flex;
+  font-family: "Roboto", Courier, monospace;
+  font-weight: 200;
+}
+
+.form-contenedor form,
+.form-contenedor #registro {
+  border: 1px solid #c4c4c4;
+  border-radius: 25px;
+  padding: 3vw;
+  max-width: 700px;
+  min-width: 280px;
+  flex: 1 1 300px;
+  gap: 1.2vw;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.form-contenedor a#olvidado {
+  font-size: 0.9rem;
+  text-decoration: underline;
+  color: #333;
+  margin-bottom: 1em;
+}
+
+.form-contenedor h2 {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-family: "Roboto", Courier, monospace;
+  font-weight: 200;
+}
+
+.form-contenedor p {
+  font-size: 20px;
+  color: black;
+}
+
+.alerta {
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.error {
+  background-color: #ffe0e0;
+  color: #a10000;
+  border: 1px solid #ff5c5c;
+  border-left: 5px solid #d00000;
+  padding: 1em;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 1em;
+  gap: 0.5em;
+  margin: 20px;
+
+}
+
+.exito {
+  background-color: #e0ffe0;
+  color: #006400;
+  border: 1px solid #5cff5c;
+  border-left: 5px solid #00d000;
+  padding: 1em;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 1em;
+  gap: 0.5em;
+  width: 100%;
+  margin: 10px;
+
+}
+
+button[type="submit"],
+.button-green {
+  background-color: #0bab32;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 40px;
+  padding: 1vw;
+  cursor: pointer;
+  text-align: center;
+  width: 90%;
+}
+
+
+
+label {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5vw; 
+  color: #333;
+}
+
+.form-contenedor input {
+  padding: 1vw;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+  font-size: 17px;
+  width: 100%;
+  font-family: "Roboto", Courier, monospace;
+  font-weight: 200;
+  margin-top: 0.5vw;
+}

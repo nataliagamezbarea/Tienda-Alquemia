@@ -1,0 +1,64 @@
+<link href="{{ url_for('static', filename='css/form.css') }}" rel="stylesheet" />
+
+<div id="cesta" class="carrito {% if session.get('user') and cesta['numero_de_productos'] > 0 %}cesta-no-vacia{% endif %}" popover>
+  <header class="flex space_between align-center">
+    <h1>
+      {% if session.get("user") %}
+        Bolsa ({{ cesta['numero_de_productos'] if cesta['numero_de_productos'] > 0 else 0 }})
+      {% else %}
+        Bolsa
+      {% endif %}
+    </h1>
+    <button id="cerrar-cesta" aria-label="Cerrar cesta" popovertarget="cesta" popovertargetaction="hide">
+      <i class="fas fa-times"></i>
+    </button>
+  </header>
+
+  <section class="column space_between">
+    {% if not session.get("user") %}
+      <div class="mensaje-vacio">
+        Debes iniciar sesión para ver y gestionar tu cesta.
+      </div>
+    {% else %}
+      {% if cesta['numero_de_productos'] == 0 %}
+        <div class="mensaje-vacio" style="color: gray;">
+          Tu cesta está vacía.
+        </div>
+      {% else %}
+        {% for producto in cesta.get('productos_cesta', []) %}
+          <article class="flex space_between align-center">
+            <div class="left flex align-center">
+              <img src="{{ producto.imagen_url }}" alt="Imagen del producto">
+              <div class="column">
+                <h3>{{ producto.nombre }}</h3>
+                <div class="flex">
+                  <button><i class="fas fa-trash-alt"></i></button>
+              <input class="text-center" type="number" name="cantidad" min="1" value="{{ producto.cantidad }}">
+                </div>
+              <p class="precio-total">{{ producto.subtotal }} €</p>
+
+              </div>
+            </div>
+            <div class="right">
+             
+            </div>
+          </article>
+        {% endfor %}
+
+        <div id="envio-gratis" {% if cesta['total'] > 70 %} style="display: block;" {% else %} style="display: none;" {% endif %}>
+          <i class="fa-solid fa-truck"></i>
+          <p>Tu pedido tiene <span>envío gratis</span>.</p>
+        </div>
+
+        <div id="contenedor-inferior" class="column right">
+          <div class="flex space_between">
+            <span>Total</span>
+            <span>{{ cesta['total'] if cesta['total'] else '0,00 €' }} €</span>
+          </div>
+          <button class="button-green">Realizar pedido</button>
+          
+        </div>
+      {% endif %}
+    {% endif %}
+  </section>
+</div>
