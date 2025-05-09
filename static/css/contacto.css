@@ -1,0 +1,232 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;700&display=swap");
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+h2 {
+  text-align: center;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 400;
+  color: #333;
+}
+
+p {
+  text-align: center;
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  color: #666;
+}
+
+.icono-circulo {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background-color: #D2F9DC;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: white;
+}
+
+.contenedor-contacto {
+  border: 1px solid #c4c4c4;
+  border-radius: 25px;
+  padding: 3vw;
+  width: 100%;
+  max-width: 700px;
+  min-width: 280px;
+  flex: 1 1 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: white;
+  align-items: center;
+  margin: 1vw;
+}
+
+.contenedor-contacto i {
+  font-size: 30px;
+  color: green;
+}
+
+section.seccion-contacto {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  text-align: center;
+  gap: 1vw;
+}
+
+section.seccion-contacto button,
+section.seccion-contacto a.button-green {
+  width: 100%;
+}
+
+hr {
+  width: 150px;
+  border: 0;
+  height: 0.2px;
+  margin: 10px;
+  background-color: #CBCDD1;
+}
+
+.popover-container {
+  position: relative;
+  display: inline-block;
+}
+
+.popover-content {
+  display: none;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  max-width: 200px;
+  font-size: 14px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.popover-container:hover .popover-content {
+  display: block;
+  opacity: 1;
+}
+
+/* Formulario */
+.formulario-popup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+}
+
+.formulario-popup input:not([type="checkbox"]),
+.formulario-popup select,
+.formulario-popup textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-family: 'Roboto', sans-serif;
+}
+
+.formulario-popup textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.formulario-popup button {
+  width: 100%;
+  padding: 12px;
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.formulario-popup button:hover {
+  background-color: #218838;
+}
+
+.checkbox-privacidad {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.checkbox-privacidad a {
+  text-decoration: underline;
+  color: #007bff;
+}
+
+.checkbox-privacidad a:hover {
+  text-decoration: underline;
+}
+
+/* Modales */
+dialog,
+#modal-particulares,
+#modal-empresas {
+  width: 80%;
+  max-width: 600px;
+  padding: 3rem;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+  position: relative;
+}
+
+button[popovertargetaction="hide"],
+#modal-particulares button[popovertargetaction="hide"],
+#modal-empresas button[popovertargetaction="hide"] {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+  background: transparent;
+  border: 1px solid #ccc;
+  color: #333;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button[popovertargetaction="hide"]:hover {
+  color: #007bff;
+}
+
+/* Corrección de inputs/selects anchura */
+select {
+  max-width: 420px;
+}
+
+input:not([type="checkbox"]),
+textarea {
+  max-width: 400px;
+}
+
+.alert {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 5px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  z-index: 9999;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

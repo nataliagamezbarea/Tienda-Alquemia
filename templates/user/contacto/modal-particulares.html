@@ -1,0 +1,34 @@
+<dialog id="modal-particulares" popover>
+    <h2>Particulares</h2>
+    <p>¿Tienes dudas sobre pedidos, venta online, tiendas o nuestro programa de fidelización?</p>
+  
+    <form class="formulario-popup" method="POST" action="{{ url_for('contactanos_particular') }}">
+      <select name="opcion" required>
+        <option value="" disabled selected>Selecciona una opción</option>
+        <option value="pedidos">Pedidos</option>
+        <option value="venta_online">Venta online</option>
+        <option value="tiendas">Tiendas</option>
+        <option value="fidelizacion">Programa de fidelización</option>
+      </select>
+  
+      <input type="text" name="nombre" placeholder="Nombre *" required>
+      <input type="text" name="apellido1" placeholder="Apellido 1 *" required>
+      <input type="text" name="apellido2" placeholder="Apellido 2 *" required>
+  
+      <input type="email" name="email" placeholder="Email">
+      <input type="tel" name="telefono" placeholder="Teléfono">
+      <input type="text" name="tiquet" placeholder="Nº tiquet/Pedido">
+      <textarea name="comentario" placeholder="Comentario"></textarea>
+  
+      <label class="checkbox-privacidad">
+        <input type="checkbox" required>
+        He leído y aceptado las <a href="#" target="_blank">Política Privacidad</a>
+      </label>
+  
+      <button type="submit" class="button-green">Enviar</button>
+    </form>
+  
+    <button popovertarget="modal-particulares" popovertargetaction="hide">X</button>
+  </dialog>
+  
+  

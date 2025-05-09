@@ -35,3 +35,10 @@ from .nosotros import nosotros
 # ENCUENTRANOS
 
 from .encuentranos import encuentranos
+
+# CONTACTO
+
+from .contacto.contacto import contacto
+from .contacto.contacto_empresa import contacto_empresa
+
+from .contacto.contacto_particular import contacto_particular
