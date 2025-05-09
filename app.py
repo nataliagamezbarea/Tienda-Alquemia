@@ -68,6 +68,8 @@ app.add_url_rule('/cambiar_contraseña', 'cambiar_contraseña', update_contrase�
 
 # TIENDA 
 app.add_url_rule('/nosotros', 'nosotros', nosotros, methods=["GET"])
+app.add_url_rule('/encuentranos', 'encuentranos', encuentranos, methods=["GET"])
+
 
 
 

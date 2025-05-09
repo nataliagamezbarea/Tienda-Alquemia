@@ -1,6 +1,6 @@
 <link href="{{ url_for('static', filename='css/footer.css') }}" rel="stylesheet" />
 
-<footer class="flex justify-center align-start text-center">
+<footer class="flex justify-center align-start text-center flex-wrap">
   <div class="footer-seccion">
     <h4>Suscríbete a la newsletter</h4>
     <p>Descuentos, tendencias y más.</p>
@@ -34,7 +34,7 @@
     <h4>Empresa</h4>
     <ul>
       <li><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
-      {#<li><a href="{{ url_for('encuentranos') }}">Encuentranos</a></li>#}
+      <li><a href="{{ url_for('encuentranos') }}">Encuentranos</a></li>
       {#<li><a href="{{ url_for('contactanos') }}">Contacto</a></li>#}
     </ul>
   </div>
