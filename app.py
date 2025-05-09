@@ -66,6 +66,11 @@ app.add_url_rule('/cerrar_sesion', 'cerrar_sesion', cerrar_sesion, methods=["GET
 app.add_url_rule('/cambiar_contraseña', 'cambiar_contraseña', update_contraseña, methods=["GET", "POST"])
 
 
+# TIENDA 
+app.add_url_rule('/nosotros', 'nosotros', nosotros, methods=["GET"])
+
+
+
 
 
 

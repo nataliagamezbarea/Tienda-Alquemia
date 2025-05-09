@@ -1,0 +1,57 @@
+<link href="{{ url_for('static', filename='css/footer.css') }}" rel="stylesheet" />
+
+<footer class="flex justify-center align-start text-center">
+  <div class="footer-seccion">
+    <h4>Suscríbete a la newsletter</h4>
+    <p>Descuentos, tendencias y más.</p>
+    <form action="">
+      <div class="flex space_between" id="newsletter">
+        <div class="left">
+          <input type="email" placeholder="Escribe tu email" required />
+        </div>
+        <div class="right">
+          <button><i class="fas fa-arrow-right"></i></button>
+        </div>
+      </div>
+      <div class="flex align-center">
+        <input type="checkbox" required />
+        <p>
+          Acepto el tratamiento datos.
+        </p>
+      </div>
+    </form>
+  </div>
+
+  <div class="footer-seccion">
+    <h4>Colecciones</h4>
+    <ul>
+      <li><a href="#">Ropa de mujer</a></li>
+      <li><a href="#">Ropa de hombre</a></li>
+    </ul>
+  </div>
+
+  <div class="footer-seccion">
+    <h4>Empresa</h4>
+    <ul>
+      <li><a href="{{ url_for('nosotros') }}">Nosotros</a></li>
+      {#<li><a href="{{ url_for('encuentranos') }}">Encuentranos</a></li>#}
+      {#<li><a href="{{ url_for('contactanos') }}">Contacto</a></li>#}
+    </ul>
+  </div>
+
+  <div class="footer-seccion" id="redes_sociales" >
+    <a href="#" id="instagram" target="_blank">
+      <i class="fab fa-instagram"></i>
+    </a>
+    <a href="#" id="facebook" target="_blank">
+      <i class="fab fa-facebook-f"></i>
+    </a>
+    <a href="#" id="twitter" target="_blank">
+      <i class="fab fa-twitter"></i>
+    </a>
+    <a href="mailto:correo@correo.com" id="email" target="_blank">
+      <i class="fas fa-envelope"></i>
+    </a>
+  </div>
+
+</footer>

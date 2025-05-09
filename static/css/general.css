@@ -139,3 +139,7 @@ button span {
 .w-25 {
   width: 25vw;
 }
+
+.flex-wrap {
+  flex: wrap;
+}
