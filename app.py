@@ -5,8 +5,8 @@ from backend.Modelos.database import init_db
 from flask_caching import Cache
 
 from routes import *
-from routes.administrador.tallas import crear_talla, editar_talla, eliminar_talla, listar_tallas
-
+from routes.administrador.eliminar_producto import  crear_producto, eliminar_producto, obtener_productos_html
+from routes.administrador.actualizar_producto import actualizar_producto
 
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()
@@ -93,13 +93,26 @@ app.add_url_rule('/cesta/actualizar/<int:id_variante>', 'actualizar_cantidad_pro
 app.add_url_rule('/cesta/eliminar/<int:id_variante>', 'eliminar_producto_cesta', eliminar_producto_cesta, methods=["POST"])
 
 
-# Tallas
 
-app.add_url_rule('/tallas', 'listar_tallas', listar_tallas, methods=['GET'])
-app.add_url_rule('/crear_talla', 'crear_talla', crear_talla, methods=['GET', 'POST'])
-app.add_url_rule('/editar_talla/<int:id>', 'editar_talla', editar_talla, methods=['GET', 'POST'])
-app.add_url_rule('/eliminar_talla/<int:id>', 'eliminar_talla', eliminar_talla, methods=['POST'])
+# Productos
+app.add_url_rule('/productos', 'productos', obtener_productos_html, methods=['GET'])
+
+# Ruta para mostrar el formulario de creación de un producto (GET) y procesar el formulario (POST)
+app.add_url_rule('/producto/nuevo', 'crear_producto', crear_producto, methods=['GET', 'POST'])
+
+# Ruta para mostrar el formulario de actualización de un producto (GET) y procesar la actualización (POST)
+app.add_url_rule('/producto/editar/<int:producto_id>', 'actualizar_producto', actualizar_producto, methods=['GET', 'POST'])
+
+# Ruta para eliminar un producto (solo POST)
+app.add_url_rule('/producto/eliminar/<int:id_producto>', 'eliminar_producto', eliminar_producto, methods=['POST'])
 
 
+# Categorias
+
+
+# Devoluciones
+
+
+# Pedido
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True)

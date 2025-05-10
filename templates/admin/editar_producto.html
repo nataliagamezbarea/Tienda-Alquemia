@@ -1,0 +1,349 @@
+{% extends "admin/admin.html" %}
+{% block contenido %}
+
+<style>
+    /* Estilo general para el formulario */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+
+    form {
+        max-width: 900px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+
+    label {
+        font-weight: bold;
+        margin-top: 10px;
+        display: block;
+        color: #333;
+    }
+
+    input, select, textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+        color: #333;
+    }
+
+    input[type="file"] {
+        padding: 5px;
+    }
+
+    button {
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        padding: 12px 20px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #218838;
+    }
+
+    .variante {
+        border: 1px solid #ddd;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+    }
+
+    .variante select, .variante input {
+        width: 48%;
+        margin-right: 2%;
+        display: inline-block;
+    }
+
+    .variante input[type="file"] {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .imagen-previa {
+        margin-top: 10px;
+    }
+
+    .imagen-container {
+        display: inline-block;
+        margin-right: 10px;
+        position: relative;
+    }
+
+    .imagen-container img {
+        width: 100px;
+        height: 100px;
+        border-radius: 5px;
+    }
+
+    .imagen-container button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .imagen-container button:hover {
+        background-color: darkred;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+</style>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar Producto</title>
+</head>
+<body>
+
+<form method="POST" enctype="multipart/form-data">
+    <h2>Actualizar Producto</h2>
+    
+    <!-- Campos del Producto -->
+    <div class="form-group">
+        <label for="nombre">Nombre del Producto</label>
+        <input type="text" name="nombre" id="nombre" required value="{{ producto.nombre }}">
+    </div>
+
+    <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea name="descripcion" id="descripcion">{{ producto.descripcion }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="precio">Precio</label>
+        <input type="number" name="precio" id="precio" required value="{{ producto.precio }}">
+    </div>
+
+    <div class="form-group">
+        <label for="id_seccion">Sección</label>
+        <select name="id_seccion" id="id_seccion" required>
+            {% for seccion in secciones %}
+            <option value="{{ seccion.id_seccion }}" {% if producto.id_seccion == seccion.id_seccion %}selected{% endif %}>
+                {{ seccion.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="id_categoria">Categoría</label>
+        <select name="id_categoria" id="id_categoria" required multiple>
+            {% for categoria in categorias %}
+            <option value="{{ categoria.id_categoria }}" {% if categoria.id_categoria in categorias_producto %}selected{% endif %}>
+                {{ categoria.nombre }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Variantes (Color, Talla, Stock, y Imágenes) -->
+    <div id="variantes-container">
+        {% set i = 0 %}
+        {% for variante in variantes %}
+        <div class="variante" data-variante="{{ i }}">
+            <div class="form-group">
+                <a href="javascript:void(0);" onclick="eliminarVariante({{ i }})">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </a>
+                <label for="id_color">Color</label>
+                <select name="variantes[{{ i }}][id_color]" required>
+                    {% for color in colores %}
+                    <option value="{{ color.id_color }}" {% if color.id_color == variante.id_color %}selected{% endif %}>
+                        {{ color.color }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="id_talla">Talla</label>
+                <select name="variantes[{{ i }}][id_talla]" required>
+                    {% for talla in tallas %}
+                    <option value="{{ talla.id_talla }}" {% if talla.id_talla == variante.id_talla %}selected{% endif %}>
+                        {{ talla.talla }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="stock">Stock</label>
+                <input type="number" name="variantes[{{ i }}][stock]" required value="{{ variante.stock }}">
+            </div>
+
+            <div class="form-group">
+                <label for="imagenes">Imágenes para esta variante:</label>
+                <div class="imagen-previa">
+                    {% if variante.imagenes %}
+                        {% set imagen_urls = variante.imagenes | map(attribute='imagen_url') | list %}
+                        <input  name="variantes[{{ i }}][imagenes_existentes]" value="{% for url in imagen_urls %}{% if url.startswith('s') %}/{{ url }}{% else %}{{ url }}{% endif %}{% if not loop.last %},{% endif %}{% endfor %}">
+                        <div>
+                            {% for imagen in variante.imagenes %}
+                            <div class="imagen-container">
+                                <img src="{% if imagen.imagen_url.startswith('s') %}/{{ imagen.imagen_url }}{% else %}{{ imagen.imagen_url }}{% endif %}" alt="Imagen Variante" width="100" height="100">
+                                <button type="button" onclick="eliminarImagen({{ i }}, '{{ imagen.imagen_url }}')">Eliminar</button>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div>No hay imágenes predeterminadas para esta variante.</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="imagenes_nuevas">Agregar nuevas imágenes:</label>
+                <input type="file" name="variantes[{{ i }}][imagenes_nuevas]" accept="image/*" multiple>
+            </div>
+        </div>
+        {% set i = i + 1 %}
+        {% endfor %}
+    </div>
+
+    <button type="button" onclick="agregarVariante()">Agregar Variante</button><br><br>
+
+    <button type="submit">Actualizar Producto</button>
+</form>
+
+<script>
+    // Función para agregar una variante base (vacía) si no existe ninguna
+    function crearVarianteBase() {
+        const container = document.getElementById('variantes-container');
+        const varianteBase = document.createElement('div');
+        varianteBase.classList.add('variante');
+        varianteBase.innerHTML = `
+            <div class="form-group">
+                <a href="javascript:void(0);" onclick="eliminarVariante(0)">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </a>
+                <label for="id_color">Color</label>
+                <select name="variantes[0][id_color]" required>
+                    {% for color in colores %}
+                    <option value="{{ color.id_color }}">{{ color.color }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="id_talla">Talla</label>
+                <select name="variantes[0][id_talla]" required>
+                    {% for talla in tallas %}
+                    <option value="{{ talla.id_talla }}">{{ talla.talla }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="stock">Stock</label>
+                <input type="number" name="variantes[0][stock]" required>
+            </div>
+            <div class="form-group">
+                <label for="imagenes">Imágenes para esta variante:</label>
+                <div class="imagen-previa">
+                    <div>No hay imágenes predeterminadas para esta variante.</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="imagenes_nuevas">Agregar nuevas imágenes:</label>
+                <input type="file" name="variantes[0][imagenes_nuevas]" accept="image/*" multiple>
+            </div>
+        `;
+        container.appendChild(varianteBase);
+    }
+
+    // Función para agregar variantes dinámicamente
+    function agregarVariante() {
+        const container = document.getElementById('variantes-container');
+        
+        // Si no existe variante base (template), la creamos
+        const varianteBase = document.querySelector('.variante');
+        if (!varianteBase) {
+            crearVarianteBase();
+            return;
+        }
+
+        // Clonamos la variante base
+        const nuevaVariante = varianteBase.cloneNode(true);
+        
+        // Actualizamos el índice de la nueva variante
+        const nuevaVarianteIndex = container.children.length;
+        nuevaVariante.setAttribute('data-variante', nuevaVarianteIndex);
+
+        // Reseteamos los campos de la nueva variante
+        nuevaVariante.querySelectorAll('select, input').forEach(field => field.value = "");
+
+        // Añadimos la nueva variante al contenedor
+        container.appendChild(nuevaVariante);
+    }
+
+    // Función para eliminar una variante
+    function eliminarVariante(varianteIndex) {
+        const variante = document.querySelector(`[data-variante="${varianteIndex}"]`);
+        if (variante) {
+            variante.remove();
+        }
+    }
+
+
+
+    // Función para eliminar imagen y actualizar el campo input
+function eliminarImagen(varianteIndex, imagenUrl) {
+    // Eliminar visualmente la imagen del contenedor
+    const variante = document.querySelector(`[data-variante="${varianteIndex}"]`);
+    if (variante) {
+        const imagenContainers = variante.querySelectorAll('.imagen-container');
+        imagenContainers.forEach((container) => {
+            if (container.querySelector('img').src.includes(imagenUrl)) {
+                // Eliminar la imagen visualmente
+                container.remove();
+            }
+        });
+
+        // Actualizar el valor del input con las URLs restantes
+        const inputImagenes = variante.querySelector('input[name^="variantes"][name$="][imagenes_existentes]"]');
+        if (inputImagenes) {
+            let imagenesExistentes = inputImagenes.value.split(',');
+
+            // Filtramos la URL eliminada
+            imagenesExistentes = imagenesExistentes.filter(url => !url.includes(imagenUrl));
+
+            // Actualizamos el valor del input con las imágenes restantes
+            inputImagenes.value = imagenesExistentes.join(',');
+        }
+    }
+}
+
+
+</script>
+
+{% endblock %}
+

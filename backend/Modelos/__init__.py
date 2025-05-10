@@ -14,3 +14,7 @@ from .ProductoVariante import ProductoVariante
 from .Tienda import Tienda
 from .Usuario import Usuario
 from .ProductoColor import ProductoColor
+from backend.Modelos.Seccion import Seccion
+from backend.Modelos.Color import Color
+from backend.Modelos.Talla import  Talla
+from backend.Modelos.ProductoImagen import ProductoImagen
