@@ -71,7 +71,7 @@ def producto_detalle(id_producto):
             first()
 
         if id_variante:
-            id_variante = id_variante.id_variantes
+            id_variante = id_variante.id_variante
 
     return render_template(
         'productos/producto_detalle.html',
