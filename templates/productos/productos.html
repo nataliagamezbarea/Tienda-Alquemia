@@ -12,8 +12,10 @@
 
           {% if imagenes and imagenes[0].imagen_url %}
             <div class="imagen-producto-contenedor" id="producto-{{ producto_index }}">
+              <!-- Imagen por defecto -->
               <div class="imagen-producto default" style="background-image: url('{{ imagenes[0].imagen_url }}');"></div>
 
+              <!-- Imagen de hover si hay más de una imagen -->
               {% if imagenes|length > 1 and imagenes[1].imagen_url %}
                 <div class="imagen-producto hover" style="background-image: url('{{ imagenes[1].imagen_url }}');"></div>
               {% endif %}
