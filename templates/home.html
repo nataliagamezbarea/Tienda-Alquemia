@@ -9,10 +9,10 @@
 {% block content %}
 <div id="mujer_hombre">
   <div id="mujer" class="centrer altura-completa">
-    <a href="#" class="center ">MUJER</a>
+    <a href="{{ url_for('catalogo', seccion='mujer') }}" class="center">MUJER</a>
   </div>
   <div id="hombre" class="center altura-completa">
-    <a href="#" class="center">HOMBRE</a>
+    <a href="{{ url_for('catalogo', seccion='hombre') }}" class="center">HOMBRE</a>
   </div>
 </div>
 {% endblock %}
