@@ -42,3 +42,8 @@ from .contacto.contacto import contacto
 from .contacto.contacto_empresa import contacto_empresa
 
 from .contacto.contacto_particular import contacto_particular
+
+# PRODUCTOS
+
+from .productos.catalogo import catalogo
+from .productos.producto_detalle import producto_detalle

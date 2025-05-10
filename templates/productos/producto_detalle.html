@@ -1,0 +1,292 @@
+{% extends "base.html" %}
+
+{% block head_extra %}
+  <link href="{{ url_for('static', filename='css/productos/producto_detalle.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+{% endblock %}
+
+{% block content %}
+<style>
+/* Estilos básicos */
+.color-options {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  align-items: center;
+}
+.color-label {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+}
+.color-radio:checked + .color-label {
+  border: 2px solid #2d9cdb;
+  box-shadow: 0 0 0 3px rgba(45, 156, 219, 0.3);
+}
+.flash-message {
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 5px;
+  color: white;
+}
+.flash-message.success {
+  background-color: #28a745;
+}
+.flash-message.error {
+  background-color: #dc3545;
+}
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* Estilo para el contenedor del color */
+.color-option {
+  display: flex;
+  flex-direction: column; /* Esto hace que el texto esté encima */
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.color-name {
+  margin-bottom: 5px; /* Espacio entre el texto y el círculo */
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Opciones de color y su estilo */
+.color-radio {
+  display: none; /* Oculta el input del radio, ya que solo nos interesa el label */
+}
+
+.color-label {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  background-size: cover;
+  background-position: center;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.color-radio:checked + .color-label {
+  border-color: #2d9cdb;
+  box-shadow: 0 0 0 3px rgba(45, 156, 219, 0.3);
+}
+
+.flex {
+  display: flex;
+}
+
+.column {
+  flex-direction: column;
+}
+
+</style>
+
+<section id="producto">
+  <div id="contenedor-producto">
+
+    <!-- Columna izquierda: imágenes -->
+    <div class="columna-imagenes">
+      <div class="flex">
+        <div id="miniaturas" class="flex column">
+          {% for imagen in producto.imagenes[:4] %}
+            <img src="{{ imagen.imagen_url }}" alt="{{ producto.nombre }}" class="miniatura">
+          {% endfor %}
+        </div>
+
+        <div id="imagen-grande">
+          <img id="imagen-principal" src="{{ producto.imagenes[0].imagen_url }}" alt="Imagen principal de {{ producto.nombre }}">
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna derecha: información -->
+    <div class="columna-detalles">
+      <div id="informacion-producto">
+        <h1>{{ producto.nombre }}</h1>
+        <h2>{{ producto.precio }} €</h2>
+
+        <!-- Mensajes flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash-message {{ category }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+      
+        <!-- Formulario -->
+       {# <form id="form-añadir-cesta" method="POST" action="{{ url_for('añadir_producto_cesta') }}">#}
+
+          <!-- Opciones de color -->
+          <div class="color-options">
+            {% set colores_vistos = [] %}
+            {% for variante in producto.variantes %}
+              {% if variante.color and variante.color.id_color not in colores_vistos %}
+                <!-- Color label encima del input -->
+                <div class="flex column">
+                  <p>{{ variante.color.color }}</p>
+                  
+                  <input 
+                    type="radio" 
+                    class="color-radio" 
+                    id="color-{{ variante.color.id_color }}" 
+                    name="id_color_radio" 
+                    value="{{ variante.color.id_color }}"
+                    data-color-nombre="{{ variante.color.color }}"
+                    {% if loop.first %}checked{% endif %}
+                  >
+
+                  <label 
+                  for="color-{{ variante.color.id_color }}" 
+                  class="color-label" 
+                  style="background-image: url('{{ variante.color.img_color }}');" 
+                  title="{{ variante.color.color }}">
+                </label>
+                </div>
+                {% set _ = colores_vistos.append(variante.color.id_color) %}
+              {% endif %}
+            {% endfor %}
+          </div>
+
+          <!-- Selector de talla -->
+          <div id="selector-talla" style="margin-top: 15px;">
+            <label for="talla">Talla:</label>
+            <select id="talla" name="id_talla" required>
+              <option value="">Selecciona una talla</option>
+              {% set tallas_vistas = [] %}
+              {% for variante in producto.variantes %}
+                {% if variante.talla and variante.talla.id_talla not in tallas_vistas %}
+                  <option value="{{ variante.talla.id_talla }}">{{ variante.talla.talla }}</option>
+                  {% set _ = tallas_vistas.append(variante.talla.id_talla) %}
+                {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Campos ocultos -->
+          <input type="hidden" name="id_producto" value="{{ producto.id_producto }}">
+
+          <!-- Botón añadir -->
+          <div id="añadir-cesta" style="margin-top: 20px;">
+            <button type="submit">Añadir a mi cesta</button>
+          </div>
+
+        </form>
+
+        <!-- Info extra -->
+        <details style="margin-top: 20px;">
+          <summary>Referencia de producto</summary>
+          <div class="contenido-centro">
+            <p>La referencia del producto es: {{ producto.id_producto }}</p>
+            <button class="boton-icono" type="button" onclick="copiarReferencia('{{ producto.id_producto }}')">
+              <i class="fa-regular fa-clipboard"></i>
+            </button>
+          </div>
+        </details>
+
+        <details style="margin-top: 20px;">
+          <summary>Descripción</summary>
+          <div class="contenido-centro">
+            <p>{{ producto.descripcion }}</p>
+          </div>
+        </details>
+
+        <details style="margin-top: 10px;">
+          <summary>Envíos y devoluciones</summary>
+          <div>
+            <p>Recibe tu pedido en 24-48 horas laborables. Devoluciones gratuitas en 30 días para artículos de ropa en perfecto estado. ¡Compra con confianza!</p>
+          </div>
+        </details>
+
+        <details class="acordeon" style="margin-top: 10px;">
+          <summary>Categorías</summary>
+          <div>
+            <ul>
+              {% for categoria in producto.categorias %}
+                <li>{{ categoria.nombre }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </details>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Recomendados -->
+<h2 style="margin-top: 40px;">Recomendado para ti:</h2>
+{% include 'productos/productos.html' %}
+
+<!-- PASAMOS imagenesPorColor a JS -->
+<script>
+  window.imagenesPorColor = JSON.parse('{{ imagenes_por_color | tojson | safe }}');
+</script>
+
+<script>
+// Código JS para cambiar la imagen principal por el color seleccionado
+
+// Escuchar el cambio en el radio button para los colores
+document.querySelectorAll('.color-radio').forEach(function(radio) {
+  radio.addEventListener('change', function() {
+    // Obtener el id del color seleccionado
+    const colorId = this.value;
+    const colorNombre = this.getAttribute('data-color-nombre');
+
+    // Actualizar la imagen principal
+    updateMainImage(colorId);
+  });
+});
+
+// Función que actualiza la imagen principal con el color seleccionado
+function updateMainImage(colorId) {
+  // Verificar si tenemos las imágenes asociadas a ese color
+  const images = window.imagenesPorColor[colorId];
+  
+  if (images && images.length > 0) {
+    // Actualizar la imagen principal
+    const mainImage = document.getElementById('imagen-principal');
+    mainImage.src = images[0];  // Cambiar la imagen principal a la primera imagen del color seleccionado
+
+    // También cambiar las miniaturas
+    const miniaturas = document.querySelectorAll('.miniatura');
+    miniaturas.forEach((miniatura, index) => {
+      if (images[index]) {
+        miniatura.src = images[index];  // Actualizar las miniaturas con las imágenes del color
+      }
+    });
+  }
+}
+
+// Código JS para cambiar la imagen principal al hacer clic en una miniatura
+document.querySelectorAll('.miniatura').forEach(function(miniatura, index) {
+  miniatura.addEventListener('click', function() {
+    // Cambiar la imagen principal al hacer clic en una miniatura
+    const mainImage = document.getElementById('imagen-principal');
+    mainImage.src = miniatura.src;
+  });
+});
+</script>
+
+
+
+{% endblock %}
