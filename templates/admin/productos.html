@@ -1,0 +1,154 @@
+{% extends "admin/admin.html" %}
+
+{% block contenido %}
+
+<style>
+
+    h1 {
+        text-align: center;
+        color: #2c6b2f;
+        font-size: 32px;
+        margin-bottom: 30px;
+    }
+
+    .add-update-button {
+        background-color: #28a745;
+        color: white;
+        padding: 12px 20px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 16px;
+        display: block;
+        text-align: center;
+        margin-bottom: 20px;
+        transition: background-color 0.3s ease;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .table th, .table td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .table th {
+        background-color: #dff0d8;
+        color: #4cae4c;
+    }
+
+    .delete-button {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-size: 14px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .delete-button:hover {
+        background-color: #c0392b;
+    }
+
+    .image-column img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        margin-right: 5px;
+        border-radius: 5px;
+        border: 2px solid #ecf0f1;
+    }
+
+    .image-column img:hover {
+        transform: scale(1.1);
+        transition: transform 0.3s ease;
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .actions form {
+        margin: 0;
+    }
+
+    .actions a {
+        background-color: #27ae60;
+        color: white;
+        padding: 8px 15px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 14px;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+
+    .actions button {
+        padding: 8px 12px;
+        font-size: 14px;
+    }
+</style>
+
+<div class="container">
+    <h1>Lista de Productos</h1>
+
+    <a href="/producto/nuevo" class="add-update-button">Añadir Nuevo Producto</a>
+
+    {% if productos %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Categorías</th>
+                    <th>Secciones</th>
+                    <th>Tallas</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                    <th>Stock Total</th>
+                    <th>Imágenes</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                    <tr>
+                        <td>{{ producto.id_producto }}</td>
+                        <td>{{ producto.nombre }}</td>
+                        <td>{{ producto.categorias }}</td>
+                        <td>{{ producto.secciones }}</td>
+                        <td>{{ producto.tallas }}</td>
+                        <td>{{ producto.descripcion }}</td>
+                        <td>{{ producto.precio }}</td>
+                        <td>{{ producto.stock_total }}</td>
+                        <td class="image-column">
+                            {% for imagen in producto.imagenes %}
+                                <img src="{{ imagen.imagen_url }}" alt="Imagen del producto">
+                            {% endfor %}
+                        </td>
+                        <td class="actions">
+                            <form action="/producto/eliminar/{{ producto.id_producto }}" method="POST" style="display:inline;">
+                                <button type="submit" class="delete-button" onclick="return confirm('¿Seguro que deseas eliminar este producto?');">
+                                    Eliminar
+                                </button>
+                            </form>
+                            <a href="/producto/editar/{{ producto.id_producto }}" class="add-update-button">Editar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay productos disponibles.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

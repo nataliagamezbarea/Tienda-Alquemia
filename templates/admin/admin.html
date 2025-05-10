@@ -1,0 +1,36 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Alquemia</title>
+	
+	<!-- Enlaces a iconos y hojas de estilo -->
+	<link href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/admin.css') }}">
+</head>
+<body>
+
+	<aside id="barra-lateral">
+		<a href="#" class="marca">Alquemia</a>
+		<nav>
+			<ul class="menu-lateral">
+				<li><a href=""><i class='bx bx-package icono'></i>Productos</a></li>
+				<li><a href=""><i class='bx bx-category icono'></i>Categorías</a></li>
+				<li><a href=""><i class='bx bx-undo icono'></i>Devoluciones</a></li>
+				<li><a href=""><i class='bx bx-cart icono'></i>Pedidos</a></li>
+			</ul>
+		</nav>
+	</aside>
+
+	<main id="contenido">
+		<section class="panel-principal">
+			{% block contenido %}
+			{% endblock %}
+		</section>
+	</main>
+
+</body>
+</html>
