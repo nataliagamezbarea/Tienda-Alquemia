@@ -7,7 +7,6 @@ from .DetallesPedido import DetallesPedido
 from .Devoluciones import Devoluciones
 from .Pedido import Pedido
 from .PedidoProducto import PedidoProducto
-from .PedidoTienda import PedidoTienda
 from .Producto import Producto
 from .ProductoCategoria import ProductoCategoria
 from .ProductoVariante import ProductoVariante

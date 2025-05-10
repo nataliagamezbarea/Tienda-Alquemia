@@ -14,3 +14,4 @@ class Pedido(db.Model):
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id_usuario'), nullable=False)
 
     pedido_productos = relationship('PedidoProducto', backref='pedidos_productos', lazy=True)
+    
