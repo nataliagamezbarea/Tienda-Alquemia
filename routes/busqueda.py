@@ -1,36 +1,50 @@
-from flask import redirect, render_template, request, url_for
+from flask import render_template, request
 from math import ceil
 from backend.Modelos.database import db
-from backend.Vistas.VistaProductoCompleto import VistaProductoCompleto  # Importamos la vista de los productos completos
+from backend.Modelos import Producto  # Asegúrate de importar tu modelo Producto
 
 def busqueda():
     # Se obtiene el parámetro 'busqueda' de la URL, que es el término que el usuario busca
     busqueda = request.args.get('busqueda', '')  # Obtiene el parámetro 'busqueda'
-    
+    print(f"Busqueda realizada: {busqueda}")  # Verificación de la búsqueda
+
     # Si no se proporciona un término de búsqueda, se renderiza la página de búsqueda vacía
     if not busqueda:
-        return render_template('components/busqueda.html', busqueda=busqueda)  # Pasa la busqueda a la plantilla
-    
-    # Se obtiene el número de la página actual, por defecto es la página 1
+        return render_template('components/busqueda.html', busqueda=busqueda)
+
+    # Se obtiene el número de la página actual
     pagina_actual = request.args.get('pagina', 1, type=int)
-    
-    # Definimos cuántos productos queremos mostrar por página
     productos_por_pagina = 42
 
-    # Construimos la consulta base para obtener los productos desde la vista
-    query = db.session.query(VistaProductoCompleto).filter(VistaProductoCompleto.nombre_producto.ilike(f"%{busqueda}%"))
+    # Construimos la consulta base con filtro por nombre de producto
+    query = db.session.query(Producto).filter(Producto.nombre.ilike(f"%{busqueda}%"))
+    
+    # Verifica que la consulta se esté construyendo correctamente
+    print(f"Consulta de productos: {query}")
 
-    # Ejecutamos la consulta y paginamos los resultados según la página actual y el número de productos por página
-    productos_paginados = query.order_by(VistaProductoCompleto.id_producto).paginate(page=pagina_actual, per_page=productos_por_pagina)
+    # Realiza la paginación de la consulta
+    productos_paginados = query.order_by(Producto.id_producto).paginate(page=pagina_actual, per_page=productos_por_pagina)
 
-    # Calculamos el total de páginas a partir del número total de productos y productos por página
+    # Verificar los resultados de la consulta paginada
+    print(f"Productos encontrados: {productos_paginados.items}")
+
+    # Calcular el total de páginas
     total_paginas = ceil(query.count() / productos_por_pagina)
 
-    # Finalmente, renderizamos la plantilla de búsqueda con los resultados y la información de la paginación
+    # Si no se encuentran productos, renderiza un mensaje adecuado
+    if not productos_paginados.items:
+        print(f"No se encontraron productos que coincidan con: {busqueda}")
+        return render_template(
+            'components/busqueda.html',
+            busqueda=busqueda,
+            mensaje="No se encontraron productos que coincidan con tu búsqueda."
+        )
+
+    # Si se encontraron productos, renderiza la vista de resultados de búsqueda
     return render_template(
-        'components/busqueda.html',  
-        productos=productos_paginados.items,  # Pasamos los productos de la página actual
-        pagina_actual=pagina_actual,  # Pasamos la página actual
-        total_paginas=total_paginas,  # Pasamos el total de páginas
-        busqueda=busqueda  # Pasamos el término de búsqueda para mostrarlo en la plantilla
+        'components/busqueda.html',
+        productos=productos_paginados.items,
+        pagina_actual=pagina_actual,
+        total_paginas=total_paginas,
+        busqueda=busqueda
     )
