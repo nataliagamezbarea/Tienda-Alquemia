@@ -85,6 +85,12 @@ app.add_url_rule('/producto/<int:id_producto>', 'producto_detalle', producto_det
 app.add_url_rule('/producto/<int:id_producto>', 'producto_detalle', producto_detalle, methods=["GET"])
 
 
+#  Cesta
+
+app.add_url_rule('/cesta/añadir', 'añadir_producto_cesta', añadir_producto_cesta, methods=["POST"])
+app.add_url_rule('/cesta/actualizar/<int:id_variante>', 'actualizar_cantidad_producto', actualizar_cantidad_producto, methods=["POST"])
+app.add_url_rule('/cesta/eliminar/<int:id_variante>', 'eliminar_producto_cesta', eliminar_producto_cesta, methods=["POST"])
+
 
 
 

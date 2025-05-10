@@ -32,15 +32,24 @@
               <div class="column">
                 <h3>{{ producto.nombre }}</h3>
                 <div class="flex">
-                  <button><i class="fas fa-trash-alt"></i></button>
-              <input class="text-center" type="number" name="cantidad" min="1" value="{{ producto.cantidad }}">
-                </div>
-              <p class="precio-total">{{ producto.subtotal }} €</p>
+                  <!-- Corregido el nombre de la variable para usar "producto" en lugar de "producto_cesta" -->
+                  <form method="post" action="{{ url_for('eliminar_producto_cesta', id_variante=producto.variante.id_variante) }}">
+                    <button><i class="fas fa-trash-alt"></i></button>
+                  </form>
 
+                  <form method="post" action="{{ url_for('actualizar_cantidad_producto', id_variante=producto.variante.id_variante) }}">
+                    <div class="cantidad">
+                      <input type="number" name="cantidad" min="1" class="text-center" value="{{ producto.cantidad }}" aria-label="Cantidad de producto" onchange="this.form.submit()">
+
+                    </div>
+
+                    
+                  </form>
+                </div>
+                <p class="precio-total">{{ producto.subtotal }} €</p>
               </div>
             </div>
             <div class="right">
-             
             </div>
           </article>
         {% endfor %}
@@ -56,7 +65,6 @@
             <span>{{ cesta['total'] if cesta['total'] else '0,00 €' }} €</span>
           </div>
           <button class="button-green">Realizar pedido</button>
-          
         </div>
       {% endif %}
     {% endif %}

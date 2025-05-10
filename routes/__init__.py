@@ -47,3 +47,9 @@ from .contacto.contacto_particular import contacto_particular
 
 from .productos.catalogo import catalogo
 from .productos.producto_detalle import producto_detalle
+
+# Cesta
+
+from .cesta.añadir_producto_cesta import añadir_producto_cesta
+from .cesta.actualizar_cantidad_producto import actualizar_cantidad_producto
+from .cesta.eliminar_producto_cesta import eliminar_producto_cesta
