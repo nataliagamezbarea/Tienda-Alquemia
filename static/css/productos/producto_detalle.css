@@ -1,0 +1,209 @@
+
+#producto {
+	width: 90%;
+	max-width: 1200px;
+	margin: auto;
+	padding: 20px;
+  }
+  
+  #contenedor-producto {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	background: white;
+	padding: 20px;
+	border-radius: 10px;
+	justify-content: center;
+  }
+  
+  .columna-imagenes {
+	flex: 1 1 300px;
+	min-width: 280px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+  }
+  
+  #miniaturas {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	justify-content: center;
+	padding: 2vw;
+  }
+  #miniaturas img {
+	width: 60px;
+	cursor: pointer;
+	border-radius: 5px;
+	transition: transform 0.3s;
+  }
+  #miniaturas img:hover {
+	transform: scale(1.1);
+  }
+  
+  #imagen-grande {
+	width: 100%;
+  }
+  #imagen-principal {
+	width: 100%;
+	border-radius: 10px;
+  }
+  
+  .columna-detalles {
+	flex: 1 1 400px;
+	min-width: 300px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+  }
+  
+  #informacion-producto {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+  }
+  
+  #informacion-producto h1 {
+	font-size: 2rem;
+	color: #333;
+  }
+  #informacion-producto h2 {
+	font-size: 1.5rem;
+	color: #666;
+  }
+  
+  #selector-modelo {
+	display: flex;
+	gap: 15px;
+	justify-content: center;
+  }
+  #selector-modelo img {
+	width: 60px;
+	cursor: pointer;
+	border-radius: 8px;
+  }
+  
+  #medidas-nuevo {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+  }
+  #medidas-nuevo p:first-child {
+	text-decoration: underline;
+	cursor: pointer;
+	color: #555;
+  }
+  #medidas-nuevo p:last-child {
+	background-color: #ff9500;
+	color: white;
+	font-size: 12px;
+	padding: 5px 10px;
+	border-radius: 20px;
+  }
+  
+  #selector-talla {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border: 1px solid #ccc;
+	padding: 10px;
+	border-radius: 5px;
+	cursor: pointer;
+  }
+  #selector-talla select {
+	flex: 1;
+	border: none;
+	background: transparent;
+	font-size: 14px;
+  }
+  #selector-talla select:focus {
+	outline: none;
+  }
+  
+  #añadir-cesta {
+	display: flex;
+	gap: 20px;
+	align-items: center;
+  }
+  #añadir-cesta button {
+	flex: 1;
+	padding: 15px;
+	background-color: #5cc777;
+	color: white;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	font-size: 14px;
+  }
+  #añadir-cesta div {
+	width: 50px;
+	height: 50px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+  }
+  #añadir-cesta img {
+	width: 20px;
+	filter: opacity(0.5);
+  }
+  
+  .acordeon {
+	border-bottom: 1px solid #d1d1d1;
+	cursor: pointer;
+  }
+  .acordeon h3 {
+	font-size: 16px;
+	padding: 15px 10px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+  }
+  .acordeon p {
+	height: 0;
+	overflow: hidden;
+	color: #535353;
+	font-size: 14px;
+	padding: 0 10px;
+	transition: height 0.3s ease;
+  }
+  
+  .oculto {
+	display: none;
+  }
+
+  .flex {
+	display: flex;
+  }
+  .column {
+	flex-direction: column;
+  }
+  
+
+  .contenido-centro {
+    display: flex;
+    align-items: center;     /* Centrado vertical */
+    gap: 2vw;
+  }
+  
+
+  .boton-icono {
+    background-color: #22C55E; /* Verde bonito (Tailwind verde-500) */
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .boton-icono:hover {
+    background-color: #16A34A; /* Verde más oscuro al pasar el mouse */
+  }
+  
+
+  li {
+    text-transform: capitalize;
+  }
