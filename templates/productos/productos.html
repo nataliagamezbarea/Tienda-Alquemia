@@ -1,0 +1,52 @@
+<link href="{{ url_for('static', filename='css/catalogo.css') }}" rel="stylesheet" />
+
+<section class="catalogo">
+  <div class="lista-productos">
+    {% for producto in productos %}
+      {% set producto_index = loop.index %}
+      {% set variantes = producto.variantes %}
+      {% set imagenes = producto.imagenes %}
+
+      <a href="{{ url_for('producto_detalle', id_producto=producto.id_producto) }}" class="enlace-producto">
+        <div class="producto">
+
+          {% if imagenes and imagenes[0].imagen_url %}
+            <div class="imagen-producto-contenedor" id="producto-{{ producto_index }}">
+              <div class="imagen-producto default" style="background-image: url('{{ imagenes[0].imagen_url }}');"></div>
+
+              {% if imagenes|length > 1 and imagenes[1].imagen_url %}
+                <div class="imagen-producto hover" style="background-image: url('{{ imagenes[1].imagen_url }}');"></div>
+              {% endif %}
+            </div>
+          {% else %}
+            <p class="error">Error: No se encontró la imagen para {{ producto.nombre }}</p>
+          {% endif %}
+
+          <div class="detalles-producto">
+            <p class="nombre-producto"><strong>{{ producto.nombre }}</strong></p>
+            <p class="precio-producto"><strong>Precio:</strong> {{ producto.precio }} €</p>
+
+            {% if variantes %}
+              <div class="opciones-color">
+                {% set colores_vistos = [] %}
+                {% for variante in variantes %}
+                  {% if variante.color.id_color not in colores_vistos %}
+                    <span class="color"
+                          data-img="{{ imagenes[loop.index0].imagen_url if imagenes and loop.index0 < imagenes|length else imagenes[0].imagen_url }}"
+                          data-target="producto-{{ producto_index }}"
+                          style="background-image: url('{{ variante.color.img_color }}'); background-size: cover;"
+                          title="Color"></span>
+                    {% set _ = colores_vistos.append(variante.color.id_color) %}
+                  {% endif %}
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<script src="{{ url_for('static', filename='js/cambiar_imagen_color.js') }}"></script>

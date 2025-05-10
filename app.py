@@ -76,6 +76,13 @@ app.add_url_rule('/contactanos', 'contactanos', contacto, methods=["GET"])
 app.add_url_rule('/contactanos/particular', 'contactanos_particular', contacto_particular, methods=["GET", "POST"])
 app.add_url_rule('/contactanos/empresa', 'contactanos_empresa', contacto_empresa, methods=["GET", "POST"])
 
+# Productos
+
+app.add_url_rule('/catalogo', 'catalogo', catalogo, methods=["GET"])
+app.add_url_rule('/producto/<int:id_producto>', 'producto_detalle', producto_detalle, methods=["GET"])
+
+
+app.add_url_rule('/producto/<int:id_producto>', 'producto_detalle', producto_detalle, methods=["GET"])
 
 
 
