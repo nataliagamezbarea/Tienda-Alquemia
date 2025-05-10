@@ -5,6 +5,7 @@ from backend.Modelos.database import init_db
 from flask_caching import Cache
 
 from routes import *
+from routes.administrador.tallas import crear_talla, editar_talla, eliminar_talla, listar_tallas
 
 
 # Cargar las variables de entorno desde el archivo .env
@@ -92,7 +93,12 @@ app.add_url_rule('/cesta/actualizar/<int:id_variante>', 'actualizar_cantidad_pro
 app.add_url_rule('/cesta/eliminar/<int:id_variante>', 'eliminar_producto_cesta', eliminar_producto_cesta, methods=["POST"])
 
 
+# Tallas
 
+app.add_url_rule('/tallas', 'listar_tallas', listar_tallas, methods=['GET'])
+app.add_url_rule('/crear_talla', 'crear_talla', crear_talla, methods=['GET', 'POST'])
+app.add_url_rule('/editar_talla/<int:id>', 'editar_talla', editar_talla, methods=['GET', 'POST'])
+app.add_url_rule('/eliminar_talla/<int:id>', 'eliminar_talla', eliminar_talla, methods=['POST'])
 
 
 if __name__ == '__main__':
