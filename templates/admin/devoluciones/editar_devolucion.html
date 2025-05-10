@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Editar Devolución</h2>
+<form method="POST">
+    <label for="descripcion">Descripción:</label><br>
+    <textarea name="descripcion" id="descripcion" required>{{ devolucion.descripcion }}</textarea><br><br>
+
+    <label>
+        <input type="checkbox" name="hecha" {% if devolucion.hecha %}checked{% endif %}>
+        Marcada como hecha
+    </label><br><br>
+
+    <button type="submit">Guardar Cambios</button>
+    <a href="{{ url_for('lista_devoluciones') }}">Cancelar</a>
+</form>
+{% endblock %}

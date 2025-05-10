@@ -1,0 +1,28 @@
+<tbody>
+    {% for pedido in pedidos %}
+        <tr>
+            <form method="POST" action="{{ url_for('pedido') }}">
+                <td>{{ pedido.id_pedido }}</td>
+                <td>{{ pedido.nombre_envio }} {{ pedido.apellido1_envio }} {{ pedido.apellido2_envio }}</td>
+                <td>
+                    {% if pedido.tienda %}
+                        {{ pedido.tienda.ciudad }} ({{ pedido.tienda.pais }})
+                    {% else %}
+                        <em>Sin tienda</em>
+                    {% endif %}
+                </td>
+                <td>
+                    <select name="estado">
+                        {% for opcion in ['Pendiente', 'Enviado', 'Cancelado', 'Entregado', 'Procesando'] %}
+                            <option value="{{ opcion }}" {% if pedido.estado|lower == opcion|lower %}selected{% endif %}>{{ opcion }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <td>
+                    <input type="hidden" name="pedido_id" value="{{ pedido.id_pedido }}">
+                    <button type="submit">Guardar</button>
+                </td>
+            </form>
+        </tr>
+    {% endfor %}
+</tbody>

@@ -53,3 +53,15 @@ from .productos.producto_detalle import producto_detalle
 from .cesta.añadir_producto_cesta import añadir_producto_cesta
 from .cesta.actualizar_cantidad_producto import actualizar_cantidad_producto
 from .cesta.eliminar_producto_cesta import eliminar_producto_cesta
+
+# Productos
+
+from .administrador.producto.añadir_producto import crear_producto
+from .administrador.producto.actualizar_producto import actualizar_producto
+from .administrador.producto.eliminar_producto import eliminar_producto
+from .administrador.producto.leer_producto import obtener_productos_html
+
+# Categorias
+
+
+from .administrador.categoria.categorias import listar_categorias

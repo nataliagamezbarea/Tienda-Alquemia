@@ -5,8 +5,11 @@ from backend.Modelos.database import init_db
 from flask_caching import Cache
 
 from routes import *
-from routes.administrador.eliminar_producto import  crear_producto, eliminar_producto, obtener_productos_html
-from routes.administrador.actualizar_producto import actualizar_producto
+from routes.administrador.categoria.crear_categoria import crear_categoria
+from routes.administrador.categoria.categorias_editar import editar_categoria
+from routes.administrador.categoria.categorias_eliminar import eliminar_categoria
+from routes.administrador.devoluciones.devoluciones import crear_devolucion_view, editar_devolucion_view, eliminar_devolucion_view, lista_devoluciones_view, obtener_devolucion_view
+from routes.administrador.pedido import pedido
 
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()
@@ -109,10 +112,24 @@ app.add_url_rule('/producto/eliminar/<int:id_producto>', 'eliminar_producto', el
 
 # Categorias
 
+app.add_url_rule('/categorias', 'listar_categorias', listar_categorias, methods=['GET'])
+app.add_url_rule('/categorias/crear', 'crear_categoria', crear_categoria, methods=['GET', 'POST'])
+
+app.add_url_rule('/categorias/editar/<int:categoria_id>', 'editar_categoria', editar_categoria, methods=['GET', 'POST'])
+app.add_url_rule('/categorias/eliminar/<int:categoria_id>', 'eliminar_categoria', eliminar_categoria, methods=['POST'])
 
 # Devoluciones
 
+app.add_url_rule('/devoluciones', 'lista_devoluciones', lista_devoluciones_view, methods=['GET'])
+app.add_url_rule('/devoluciones/nueva', 'nueva_devolucion', crear_devolucion_view, methods=['GET', 'POST'])
+app.add_url_rule('/devoluciones/<int:id_devolucion>', 'obtener_devolucion', obtener_devolucion_view, methods=['GET'])
+app.add_url_rule('/devoluciones/editar/<int:id_devolucion>', 'editar_devolucion', editar_devolucion_view, methods=['GET', 'POST'])
+app.add_url_rule('/devoluciones/eliminar/<int:id_devolucion>', 'eliminar_devolucion', eliminar_devolucion_view, methods=['POST'])
+
 
 # Pedido
+
+app.add_url_rule('/pedido', 'pedido',pedido, methods=['GET' , 'POST'])
+
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True)

@@ -1,4 +1,5 @@
 from backend.Modelos.database import db 
+from sqlalchemy.orm import relationship
 
 class Tienda(db.Model):
     __tablename__ = 'tiendas'
@@ -8,4 +9,4 @@ class Tienda(db.Model):
     provincia = db.Column(db.String(100))
     ciudad = db.Column(db.String(100))
     codigo_postal = db.Column(db.String(10))
-    maps_url = db.Column(db.String(500))   
+    maps_url = db.Column(db.String(500))       
