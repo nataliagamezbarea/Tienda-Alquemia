@@ -13,6 +13,6 @@ class Producto(db.Model):
     variantes = db.relationship('ProductoVariante', back_populates='producto')
     imagenes = db.relationship('ProductoImagen', back_populates='producto')
 
-    seccion = db.relationship('Seccion', back_populates='productos')
+    seccion = db.relationship('Seccion', back_populates='productos' ,)
 
     categorias = db.relationship('Categoria', secondary='productos_categorias', backref='productos_relacionados')
