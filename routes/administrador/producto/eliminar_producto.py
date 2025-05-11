@@ -1,6 +1,5 @@
 from flask import redirect, url_for, flash
 from sqlalchemy.exc import SQLAlchemyError
-
 from backend.Modelos import (
     Producto, ProductoVariante, ProductoCategoria, ProductoImagen
 )
@@ -11,11 +10,21 @@ def eliminar_producto(id_producto):
     try:
         producto = Producto.query.get(id_producto)
         if not producto:
-            return f"Error: Producto con id {id_producto} no encontrado."
+            flash(f"Error: Producto con id {id_producto} no encontrado.", "error")
+            return redirect(url_for('productos'))
 
-        ProductoCategoria.query.filter_by(id_producto=id_producto).delete()
-        ProductoVariante.query.filter_by(id_producto=id_producto).delete()
-        ProductoImagen.query.filter_by(id_producto=id_producto).delete()
+        # Eliminar las relaciones manualmente
+        for variante in producto.variantes:
+            db.session.delete(variante)
+        
+        for imagen in producto.imagenes:
+            db.session.delete(imagen)
+        
+        for categoria in producto.categorias:
+            # Aquí no eliminamos las categorías, solo la relación
+            producto.categorias.remove(categoria)
+
+        # Eliminar el producto
         db.session.delete(producto)
         db.session.commit()
 
