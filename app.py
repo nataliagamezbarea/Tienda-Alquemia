@@ -37,7 +37,6 @@ app.add_url_rule('/busqueda','busqueda', busqueda, methods=["GET" , "POST"])
 
 @app.context_processor
 def inyectar_menu():
-    menu_data = obtener_menu(cache)
     return dict(menu=obtener_menu(cache))
 
 

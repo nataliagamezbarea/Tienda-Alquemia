@@ -78,3 +78,9 @@ from .administrador.devoluciones.eliminar_devolucion import eliminar_devolucion
 from .administrador.devoluciones.editar_devolucion import editar_devolucion
 from .administrador.devoluciones.obtener_devolucion import obtener_devolucion
 from .administrador.devoluciones.lista_devoluciones import lista_devoluciones
+
+
+
+# PAGAR
+
+from routes.pedido.pagar import pagar

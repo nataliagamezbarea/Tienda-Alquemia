@@ -1,127 +1,19 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagar</title>
-    <script src="https://www.paypal.com/sdk/js?client-id=ASox0EHAlSHDHdV4ThhxqVZee0iCK7vf-3kcuNhmQuS8lDrsrb7AbsIfrJAWhR6MdGlUVaWtPefJYaja&currency=USD&components=buttons,funding-eligibility"></script>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f7fa;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+{% extends "base.html" %}
 
-        .container {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 800px;
-            padding: 25px;
-            text-align: center;
-        }
+{% block head_extra %}
+  <link href="{{ url_for('static', filename='css/nosotros.css') }}" rel="stylesheet" />
+  <script src="https://www.paypal.com/sdk/js?client-id=ASox0EHAlSHDHdV4ThhxqVZee0iCK7vf-3kcuNhmQuS8lDrsrb7AbsIfrJAWhR6MdGlUVaWtPefJYaja&currency=USD&components=buttons,funding-eligibility"></script>
+  {% endblock %}
 
-        h1 {
-            font-size: 2.5rem;
-            color: #333;
-            margin-bottom: 30px;
-        }
+{% block title %}Pagar{% endblock %}
 
-        #resumen-pedido {
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-            color: #333;
-            padding: 20px;
-            background-color: #f9f9f9;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-
-        h2 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-        }
-
-        #productos-resumen {
-            list-style-type: none;
-            padding: 0;
-            margin-bottom: 15px;
-        }
-
-        #productos-resumen li {
-            font-size: 1.2rem;
-            color: #555;
-            border-bottom: 1px solid #f1f1f1;
-            padding: 10px 0;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #total-pedido {
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-align: right;
-            margin-top: 20px;
-            color: #333;
-        }
-
-        .paypal-button-container {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .button-container {
-            margin-top: 30px;
-        }
-
-        .button-green {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 1.1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            margin: 20px 0;
-            transition: background-color 0.3s ease;
-        }
-
-        .button-green:hover {
-            background-color: #218838;
-        }
-
-        .paypal-button-container button {
-            background-color: #0070ba;
-            color: white;
-            border-radius: 5px;
-            padding: 15px;
-            width: 100%;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .paypal-button-container button:hover {
-            background-color: #005fa3;
-        }
-    </style>
-</head>
-<body>
-
-<div class="container">
+{% block content %}
+<div class="center column">
     <h1>Realiza tu pago</h1>
 
     <div id="resumen-pedido">
         <h2>Resumen de tu pedido</h2>
         <ul id="productos-resumen">
-            <!-- Aquí se agregarán los productos dinámicamente -->
             {% for producto in cesta.get('productos_cesta', []) %}
                 <li>
                     <span>{{ producto.nombre }}</span> - {{ producto.subtotal }} €
@@ -140,75 +32,65 @@
     <!-- Botón para pagar con tarjeta -->
     <div class="paypal-button-container" id="paypal-card-button-container"></div>
 
-    <!-- Botón adicional (si deseas hacer algo más después del pago) -->
-    <div class="button-container">
-        <button class="button-green">Realizar pedido</button>
-    </div>
 </div>
+{% endblock %}
 
+{% block extra_js %}
 <script>
-    var totalCesta = {{ cesta['total'] | round(2) }}; // Total del carrito
+    document.addEventListener("DOMContentLoaded", function () {
+        var totalCesta = {{ cesta['total'] | round(2) }};
 
-    // Mostrar el resumen del pedido en el HTML
-    var productosResumen = '';
-    {% for producto in cesta.get('productos_cesta', []) %}
-        productosResumen += '<li>' + '{{ producto.nombre }}' + ' - ' + '{{ producto.subtotal }}' + ' €</li>';
-    {% endfor %}
-    document.getElementById('productos-resumen').innerHTML = productosResumen;
+        // Botón PayPal
+        paypal.Buttons({
+            fundingSource: paypal.FUNDING.PAYPAL,
+            style: {
+                layout: 'vertical',
+                color: 'white',
+                shape: 'rect',
+                label: 'pay'
+            },
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: totalCesta.toFixed(2),
+                            currency_code: 'USD'
+                        }
+                    }]
+                });
+            },
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    alert('Pago realizado por ' + details.payer.name.given_name);
+                });
+            }
+        }).render('#paypal-button-container');
 
-    // Botón de pago con PayPal
-    paypal.Buttons({
-        style: {
-            layout: 'vertical',
-            color: 'white',
-            shape: 'rect',
-            label: 'pay'
-        },
-        fundingSource: paypal.FUNDING.PAYPAL,
-        createOrder: function(data, actions) {
-            return actions.order.create({
-                purchase_units: [{
-                    amount: {
-                        value: totalCesta.toFixed(2),
-                        currency_code: 'USD'
-                    }
-                }]
-            });
-        },
-        onApprove: function(data, actions) {
-            return actions.order.capture().then(function(details) {
-                alert('Pago realizado por ' + details.payer.name.given_name);
-            });
-        }
-    }).render('#paypal-button-container');
-
-    // Botón de pago con tarjeta
-    paypal.Buttons({
-        style: {
-            layout: 'vertical',
-            color: 'white',
-            shape: 'rect',
-            label: 'pay'
-        },
-        fundingSource: paypal.FUNDING.CARD,
-        createOrder: function(data, actions) {
-            return actions.order.create({
-                purchase_units: [{
-                    amount: {
-                        value: totalCesta.toFixed(2),
-                        currency_code: 'USD'
-                    }
-                }]
-            });
-        },
-        onApprove: function(data, actions) {
-            return actions.order.capture().then(function(details) {
-                alert('Pago realizado por ' + details.payer.name.given_name);
-            });
-        }
-    }).render('#paypal-card-button-container');
+        // Botón Tarjeta
+        paypal.Buttons({
+            fundingSource: paypal.FUNDING.CARD,
+            style: {
+                layout: 'vertical',
+                color: 'white',
+                shape: 'rect',
+                label: 'pay'
+            },
+            createOrder: function (data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: totalCesta.toFixed(2),
+                            currency_code: 'USD'
+                        }
+                    }]
+                });
+            },
+            onApprove: function (data, actions) {
+                return actions.order.capture().then(function (details) {
+                    alert('Pago realizado por ' + details.payer.name.given_name);
+                });
+            }
+        }).render('#paypal-card-button-container');
+    });
 </script>
-
-
-</body>
-</html>
+{% endblock %}
