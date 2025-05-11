@@ -1,4 +1,4 @@
-# 🛍️ Tienda de Ropa - FashionStore
+# 🛍️ Tienda de Ropa - Alquemia
 
 Bienvenido al repositorio de **Alquemia**, una aplicación web para la gestión de una tienda de ropa. Aquí puedes ver productos, gestionarlos, y realizar compras desde una interfaz amigable y moderna.
 
