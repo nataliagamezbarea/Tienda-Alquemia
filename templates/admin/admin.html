@@ -13,14 +13,33 @@
 </head>
 <body>
 
+	<style>
+		.active {
+			background-color: #2f5d4b;
+		}
+	</style>
+
 	<aside id="barra-lateral">
 		<a href="#" class="marca">Alquemia</a>
 		<nav>
 			<ul class="menu-lateral">
-				<li><a href=""><i class='bx bx-package icono'></i>Productos</a></li>
-				<li><a href=""><i class='bx bx-category icono'></i>Categorías</a></li>
-				<li><a href=""><i class='bx bx-undo icono'></i>Devoluciones</a></li>
-				<li><a href=""><i class='bx bx-cart icono'></i>Pedidos</a></li>
+				<li>
+					<a href="{{ url_for('productos') }}" class="{% if request.path.startswith(url_for('productos')) %}active{% endif %}">
+						<i class='bx bx-package icono'></i>Productos
+					</a>
+				</li>
+				<li>
+						<i class='bx bx-category icono'></i>Categorías
+					</a>
+				</li>
+				<li>
+						<i class='bx bx-undo icono'></i>Devoluciones
+					</a>
+				</li>
+				<li>
+						<i class='bx bx-cart icono'></i>Pedidos
+					</a>
+				</li>
 			</ul>
 		</nav>
 	</aside>

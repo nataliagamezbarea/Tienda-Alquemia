@@ -3,7 +3,6 @@
 {% block contenido %}
 
 <style>
-
     h1 {
         text-align: center;
         color: #2c6b2f;
@@ -28,12 +27,15 @@
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
+        overflow-x: auto;
+        display: block;
     }
 
     .table th, .table td {
         padding: 15px;
         text-align: left;
         border-bottom: 1px solid #ddd;
+        min-width: 100px;
     }
 
     .table th {
@@ -72,8 +74,9 @@
 
     .actions {
         display: flex;
+        flex-direction: column;
         gap: 10px;
-        justify-content: center;
+        align-items: center;
     }
 
     .actions form {
@@ -95,6 +98,54 @@
         padding: 8px 12px;
         font-size: 14px;
     }
+
+    .container {
+        padding: 0 15px;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+        .table thead {
+            display: none;
+        }
+
+        .table, .table tbody, .table tr, .table td {
+            display: block;
+            width: 100%;
+        }
+
+        .table tr {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .table td {
+            text-align: right;
+            padding-left: 50%;
+            position: relative;
+        }
+
+        .table td::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 15px;
+            width: 45%;
+            padding-right: 10px;
+            white-space: nowrap;
+            text-align: left;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .actions {
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+    }
 </style>
 
 <div class="container">
@@ -104,37 +155,23 @@
 
     {% if productos %}
         <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Categorías</th>
-                    <th>Secciones</th>
-                    <th>Tallas</th>
-                    <th>Descripción</th>
-                    <th>Precio</th>
-                    <th>Stock Total</th>
-                    <th>Imágenes</th>
-                    <th>Acciones</th>
-                </tr>
-            </thead>
             <tbody>
                 {% for producto in productos %}
                     <tr>
-                        <td>{{ producto.id_producto }}</td>
-                        <td>{{ producto.nombre }}</td>
-                        <td>{{ producto.categorias }}</td>
-                        <td>{{ producto.secciones }}</td>
-                        <td>{{ producto.tallas }}</td>
-                        <td>{{ producto.descripcion }}</td>
-                        <td>{{ producto.precio }}</td>
-                        <td>{{ producto.stock_total }}</td>
-                        <td class="image-column">
+                        <td data-label="ID">{{ producto.id_producto }}</td>
+                        <td data-label="Nombre">{{ producto.nombre }}</td>
+                        <td data-label="Categorías">{{ producto.categorias }}</td>
+                        <td data-label="Secciones">{{ producto.secciones }}</td>
+                        <td data-label="Tallas">{{ producto.tallas }}</td>
+                        <td data-label="Descripción">{{ producto.descripcion }}</td>
+                        <td data-label="Precio">{{ producto.precio }}</td>
+                        <td data-label="Stock Total">{{ producto.stock_total }}</td>
+                        <td data-label="Imágenes" class="image-column">
                             {% for imagen in producto.imagenes %}
                                 <img src="{{ imagen.imagen_url }}" alt="Imagen del producto">
                             {% endfor %}
                         </td>
-                        <td class="actions">
+                        <td data-label="Acciones" class="actions">
                             <form action="/producto/eliminar/{{ producto.id_producto }}" method="POST" style="display:inline;">
                                 <button type="submit" class="delete-button" onclick="return confirm('¿Seguro que deseas eliminar este producto?');">
                                     Eliminar

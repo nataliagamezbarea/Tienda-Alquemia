@@ -28,7 +28,6 @@ def busqueda():
 
     # Si no se encuentran productos, renderiza un mensaje adecuado
     if not productos_paginados.items:
-        print(f"No se encontraron productos que coincidan con: {busqueda}")
         return render_template(
             'components/busqueda.html',
             busqueda=busqueda,

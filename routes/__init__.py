@@ -69,5 +69,12 @@ from .administrador.categoria.categorias import listar_categorias
 from routes.administrador.categoria.crear_categoria import crear_categoria
 from routes.administrador.categoria.categorias_editar import editar_categoria
 from routes.administrador.categoria.categorias_eliminar import eliminar_categoria
-from routes.administrador.devoluciones.devoluciones import crear_devolucion_view, editar_devolucion_view, eliminar_devolucion_view, lista_devoluciones_view, obtener_devolucion_view
 from routes.administrador.pedido.pedido import pedido
+
+# Devoluciones
+from .administrador.devoluciones.crear_devolucion import crear_devolucion
+from .administrador.devoluciones.editar_devolucion import editar_devolucion
+from .administrador.devoluciones.eliminar_devolucion import eliminar_devolucion
+from .administrador.devoluciones.editar_devolucion import editar_devolucion
+from .administrador.devoluciones.obtener_devolucion import obtener_devolucion
+from .administrador.devoluciones.lista_devoluciones import lista_devoluciones
