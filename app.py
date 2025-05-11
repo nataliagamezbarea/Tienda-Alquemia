@@ -6,6 +6,7 @@ from flask_caching import Cache
 
 from routes import *
 
+
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()
 
@@ -121,7 +122,7 @@ app.add_url_rule('/devoluciones/eliminar/<int:id_devolucion>', 'eliminar_devoluc
 
 # Pedido
 
-app.add_url_rule('/pedido', 'pedido',pedido, methods=['GET' , 'POST'])
+app.add_url_rule("/pagar" , 'pagar' , pagar )
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True)
