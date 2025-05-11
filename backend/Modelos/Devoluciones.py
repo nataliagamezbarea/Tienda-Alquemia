@@ -11,3 +11,5 @@ class Devoluciones(db.Model):
     fecha_devolucion = db.Column(db.DateTime, default=db.func.current_timestamp(), nullable=False)
     hecha = db.Column(db.Boolean, default=False, nullable=False)
 
+    # Relación con el modelo 'DevolucionesTiendas'
+    devoluciones_tiendas = db.relationship('DevolucionesTiendas', backref='devolucion_relacionada', lazy=True , cascade="all, delete-orphan")

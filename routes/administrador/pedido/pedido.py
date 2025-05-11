@@ -1,8 +1,10 @@
-from flask import render_template, request, redirect, url_for, flash
+from flask import render_template, request, redirect, session, url_for, flash
 from backend.Modelos.Pedido import Pedido
 from backend.Modelos.database import db
 
 def pedido():
+    if "user" not in session or not session.get("is_admin"):
+        return redirect(url_for("login"))
     if request.method == 'POST':
         pedido_id = request.form.get('pedido_id')
         nuevo_estado = request.form.get('estado')

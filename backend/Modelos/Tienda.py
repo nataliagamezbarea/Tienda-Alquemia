@@ -1,5 +1,4 @@
-from backend.Modelos.database import db 
-from sqlalchemy.orm import relationship
+from backend.Modelos.database import db
 
 class Tienda(db.Model):
     __tablename__ = 'tiendas'
@@ -10,3 +9,11 @@ class Tienda(db.Model):
     ciudad = db.Column(db.String(100))
     codigo_postal = db.Column(db.String(10))
     maps_url = db.Column(db.String(500))       
+
+    # Relación con el modelo 'DevolucionesTiendas'
+    devoluciones_tiendas = db.relationship(
+            'DevolucionesTiendas', 
+            backref='tienda_relacionada', 
+            lazy=True, 
+            cascade="all, delete-orphan"
+        )

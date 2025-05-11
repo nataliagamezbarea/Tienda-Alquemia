@@ -5,11 +5,6 @@ from backend.Modelos.database import init_db
 from flask_caching import Cache
 
 from routes import *
-from routes.administrador.categoria.crear_categoria import crear_categoria
-from routes.administrador.categoria.categorias_editar import editar_categoria
-from routes.administrador.categoria.categorias_eliminar import eliminar_categoria
-from routes.administrador.devoluciones.devoluciones import crear_devolucion_view, editar_devolucion_view, eliminar_devolucion_view, lista_devoluciones_view, obtener_devolucion_view
-from routes.administrador.pedido import pedido
 
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()
