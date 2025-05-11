@@ -2,11 +2,11 @@
 
 {% block head_extra %}
   <link href="{{ url_for('static', filename='css/productos/producto_detalle.css') }}" rel="stylesheet">
+  <script src="{{ url_for('static', filename='js/producto_detalle.js') }}"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer">
 {% endblock %}
 
 {% block content %}
-
 
 <section id="producto">
   <div id="contenedor-producto">
@@ -43,16 +43,14 @@
           {% endif %}
         {% endwith %}
 
-      
         <!-- Formulario -->
-       <form id="form-añadir-cesta" method="POST" action="{{ url_for('añadir_producto_cesta') }}">
+        <form id="form-añadir-cesta" method="POST" action="{{ url_for('añadir_producto_cesta') }}">
 
           <!-- Opciones de color -->
           <div class="color-options">
             {% set colores_vistos = [] %}
             {% for variante in producto.variantes %}
               {% if variante.color and variante.color.id_color not in colores_vistos %}
-                <!-- Color label encima del input -->
                 <div class="flex column">
                   <p>{{ variante.color.color }}</p>
                   
@@ -67,11 +65,11 @@
                   >
 
                   <label 
-                  for="color-{{ variante.color.id_color }}" 
-                  class="color-label" 
-                  style="background-image: url('{{ variante.color.img_color }}');" 
-                  title="{{ variante.color.color }}">
-                </label>
+                    for="color-{{ variante.color.id_color }}" 
+                    class="color-label" 
+                    style="background-image: url('{{ variante.color.img_color }}');" 
+                    title="{{ variante.color.color }}">
+                  </label>
                 </div>
                 {% set _ = colores_vistos.append(variante.color.id_color) %}
               {% endif %}
@@ -92,7 +90,6 @@
               {% endfor %}
             </select>
           </div>
-          
 
           <!-- Campos ocultos -->
           <input type="hidden" name="id_producto" value="{{ producto.id_producto }}">
@@ -151,9 +148,9 @@
 
 <script>
   window.imagenesPorColor = JSON.parse('{{ imagenes_por_color | tojson | safe }}');
+
+
 </script>
-
-
 
 
 {% endblock %}
