@@ -37,7 +37,6 @@ app.add_url_rule('/busqueda','busqueda', busqueda, methods=["GET" , "POST"])
 @app.context_processor
 def inyectar_menu():
     menu_data = obtener_menu(cache)
-    print(menu_data)  # Verifica los datos que se están obteniendo
     return dict(menu=obtener_menu(cache))
 
 
@@ -113,11 +112,11 @@ app.add_url_rule('/categorias/eliminar/<int:categoria_id>', 'eliminar_categoria'
 
 # Devoluciones
 
-app.add_url_rule('/devoluciones', 'lista_devoluciones', lista_devoluciones_view, methods=['GET'])
-app.add_url_rule('/devoluciones/nueva', 'nueva_devolucion', crear_devolucion_view, methods=['GET', 'POST'])
-app.add_url_rule('/devoluciones/<int:id_devolucion>', 'obtener_devolucion', obtener_devolucion_view, methods=['GET'])
-app.add_url_rule('/devoluciones/editar/<int:id_devolucion>', 'editar_devolucion', editar_devolucion_view, methods=['GET', 'POST'])
-app.add_url_rule('/devoluciones/eliminar/<int:id_devolucion>', 'eliminar_devolucion', eliminar_devolucion_view, methods=['POST'])
+app.add_url_rule('/devoluciones', 'lista_devoluciones', lista_devoluciones, methods=['GET'])
+app.add_url_rule('/devoluciones/nueva', 'nueva_devolucion', crear_devolucion, methods=['GET', 'POST'])
+app.add_url_rule('/devoluciones/<int:id_devolucion>', 'obtener_devolucion', obtener_devolucion, methods=['GET'])
+app.add_url_rule('/devoluciones/editar/<int:id_devolucion>', 'editar_devolucion', editar_devolucion, methods=['GET', 'POST'])
+app.add_url_rule('/devoluciones/eliminar/<int:id_devolucion>', 'eliminar_devolucion', eliminar_devolucion, methods=['POST'])
 
 
 # Pedido

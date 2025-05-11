@@ -1,7 +1,7 @@
 from flask import redirect, render_template, session, url_for
 from datetime import datetime, timedelta
 from sqlalchemy.orm import joinedload
-from backend.Modelos import Pedido, PedidoProducto, ProductoVariante, ProductoColor, Producto, Talla
+from backend.Modelos import Pedido, PedidoProducto, ProductoVariante
 
 def compras():
     # Obtiene el user_id

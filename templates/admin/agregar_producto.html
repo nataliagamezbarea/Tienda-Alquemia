@@ -2,7 +2,6 @@
 {% block contenido %}
 
 <style>
-    /* Estilo general para el formulario */
     body {
         font-family: Arial, sans-serif;
         margin: 0;
@@ -69,58 +68,14 @@
         background-color: #f9f9f9;
     }
 
-    .variante select, .variante input {
-        width: 48%;
-        margin-right: 2%;
-        display: inline-block;
-    }
-
-    .variante input[type="file"] {
-        width: 100%;
-        margin-top: 10px;
-    }
-
-    .imagen-previa {
-        margin-top: 10px;
-    }
-
-    .imagen-container {
-        display: inline-block;
-        margin-right: 10px;
-        position: relative;
-    }
-
-    .imagen-container img {
-        width: 100px;
-        height: 100px;
-        border-radius: 5px;
-    }
-
-    .imagen-container button {
-        position: absolute;
-        top: 0;
-        right: 0;
-        background-color: red;
-        color: white;
-        border: none;
-        padding: 5px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .imagen-container button:hover {
-        background-color: darkred;
-    }
-
     .form-group {
         margin-bottom: 20px;
     }
-
-    
 </style>
+
 <form method="POST" enctype="multipart/form-data">
     <h2>Crear Producto</h2>
-    
+
     <div class="form-group">
         <label for="nombre">Nombre del Producto</label>
         <input type="text" name="nombre" id="nombre" required>
@@ -230,7 +185,7 @@
 
             <div class="form-group">
                 <label for="imagenes_nuevas">Agregar nuevas imágenes:</label>
-                <input type="file" name="variantes[${nuevaVarianteIndex}][imagenes_nuevas]" accept="image/*" multiple>
+                <input type="file" name="variantes[${nuevaVarianteIndex}][imagenes][]" accept="image/*" multiple>
             </div>
         `;
         container.appendChild(nuevaVariante);
