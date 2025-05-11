@@ -121,6 +121,8 @@ app.add_url_rule('/devoluciones/eliminar/<int:id_devolucion>', 'eliminar_devoluc
 
 
 # Pedido
+app.add_url_rule('/pedido', 'pedido', pedido, methods=['GET' , 'POST'])
+
 
 app.add_url_rule("/pagar" , 'pagar' , pagar )
 app.add_url_rule("/pedido_exitoso" , 'pedido_exitoso' , pedido_exitoso )

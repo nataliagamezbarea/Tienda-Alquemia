@@ -69,7 +69,7 @@ from .administrador.categoria.categorias import listar_categorias
 from routes.administrador.categoria.crear_categoria import crear_categoria
 from routes.administrador.categoria.categorias_editar import editar_categoria
 from routes.administrador.categoria.categorias_eliminar import eliminar_categoria
-from routes.administrador.pedido.pedido import pedido
+from routes.administrador.pedido.pedidos import pedido
 
 # Devoluciones
 from .administrador.devoluciones.crear_devolucion import crear_devolucion
@@ -84,3 +84,8 @@ from .administrador.devoluciones.lista_devoluciones import lista_devoluciones
 # PAGAR
 
 from routes.pedido.pagar import pagar
+
+
+# PEDIDO
+
+from routes.administrador.pedido.pedidos import pedido
