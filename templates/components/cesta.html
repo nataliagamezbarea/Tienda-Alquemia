@@ -31,8 +31,7 @@
               <img src="{{ producto.imagen_url }}" alt="Imagen del producto">
               <div class="column">
                 <h3>{{ producto.nombre }}</h3>
-                <div class="flex">
-                  <!-- Corregido el nombre de la variable para usar "producto" en lugar de "producto_cesta" -->
+                <div class="flex align-center">
                   <form method="post" action="{{ url_for('eliminar_producto_cesta', id_variante=producto.variante.id_variante) }}">
                     <button><i class="fas fa-trash-alt"></i></button>
                   </form>

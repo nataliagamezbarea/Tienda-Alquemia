@@ -1,11 +1,10 @@
 {% extends "base.html" %} 
-{% block title %}Login{% endblock %} {% block
+{% block title %}Olvidado Contraseña{% endblock %} {% block
 content %}
 
 <link href="{{ url_for('static', filename='css/form.css') }}" rel="stylesheet" />
-<link href="{{ url_for('static', filename='css/authentication/login.css') }}"rel="stylesheet"/>
 
-<section title="login" class="flex justify-center align-start contenedor flex-wrap form-contenedor">
+<section  class="flex justify-center align-start contenedor flex-wrap form-contenedor">
   <form method="POST">
     {% if tipo_mensaje in ['exito', 'error'] %}
     <div class="{{ 'exito' if tipo_mensaje == 'exito' else 'error' }}">
