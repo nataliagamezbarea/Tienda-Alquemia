@@ -6,7 +6,6 @@ from backend.Modelos import Producto  # Asegúrate de importar tu modelo Product
 def busqueda():
     # Se obtiene el parámetro 'busqueda' de la URL, que es el término que el usuario busca
     busqueda = request.args.get('busqueda', '')  # Obtiene el parámetro 'busqueda'
-    print(f"Busqueda realizada: {busqueda}")  # Verificación de la búsqueda
 
     # Si no se proporciona un término de búsqueda, se renderiza la página de búsqueda vacía
     if not busqueda:
@@ -19,14 +18,10 @@ def busqueda():
     # Construimos la consulta base con filtro por nombre de producto
     query = db.session.query(Producto).filter(Producto.nombre.ilike(f"%{busqueda}%"))
     
-    # Verifica que la consulta se esté construyendo correctamente
-    print(f"Consulta de productos: {query}")
 
     # Realiza la paginación de la consulta
     productos_paginados = query.order_by(Producto.id_producto).paginate(page=pagina_actual, per_page=productos_por_pagina)
 
-    # Verificar los resultados de la consulta paginada
-    print(f"Productos encontrados: {productos_paginados.items}")
 
     # Calcular el total de páginas
     total_paginas = ceil(query.count() / productos_por_pagina)

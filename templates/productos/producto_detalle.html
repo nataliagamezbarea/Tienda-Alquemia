@@ -167,9 +167,9 @@
           </div>
 
           <!-- Selector de talla -->
-          <div id="selector-talla" style="margin-top: 15px;">
+          <div id="selector-talla" style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
             <label for="talla">Talla:</label>
-            <select id="talla" name="id_talla" required>
+            <select id="talla" name="id_talla" required style="padding: 5px; height: 35px;">
               <option value="">Selecciona una talla</option>
               {% set tallas_vistas = [] %}
               {% for variante in producto.variantes %}
@@ -180,6 +180,7 @@
               {% endfor %}
             </select>
           </div>
+          
 
           <!-- Campos ocultos -->
           <input type="hidden" name="id_producto" value="{{ producto.id_producto }}">

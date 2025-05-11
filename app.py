@@ -32,8 +32,6 @@ init_db(app)
 app.add_url_rule('/', 'home', home)
 app.add_url_rule('/busqueda','busqueda', busqueda, methods=["GET" , "POST"])
 
-app.add_url_rule('/login', 'login', login, methods=["GET", "POST"])
-
 
 
 @app.context_processor

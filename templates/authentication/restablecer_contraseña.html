@@ -1,35 +1,32 @@
 {% extends "base.html" %}
 
+{% block title %}Restablecer Contraseña{% endblock %}
+
 {% block head_extra %}
   <link href="{{ url_for('static', filename='css/form.css') }}" rel="stylesheet" />
   <link href="{{ url_for('static', filename='css/authentication/olvidado_restablecer_contraseña.css') }}" rel="stylesheet" />
 {% endblock %}
 
-{% block title %}Restablecer Contraseña - Alquimia{% endblock %}
-
 {% block content %}
-<div class="olvidado-contrasena-container">
-  <h2>Restablecer Contraseña</h2>
-
-  <!-- Mostrar mensaje de error si es necesario -->
-  {% if tipo_mensaje == 'error' %}
-  <div class="error align-center">{{ error }}</div>
-  {{ mensaje }}
-    </div>
-  {% endif %}
-
+<div  class="flex justify-center align-start contenedor flex-wrap form-contenedor"">
   <form class="center" method="POST">
+    <h2>Restablecer tu contraseña</h2>
+    {% if tipo_mensaje == 'error' %}
+      <div class="error align-center">{{ error }}</div>
+      <div class="mensaje align-center">{{ mensaje }}</div>
+    {% endif %}
+  
     <div class="form-grupo">
-      <label for="nueva_contraseña">Nueva Contraseña</label>
+      <label for="nueva_contraseña">Nueva contraseña</label>
       <input type="password" id="nueva_contraseña" name="nueva_contraseña" required>
     </div>
 
     <div class="form-grupo">
-      <label for="confirmar_contraseña">Confirmar Contraseña</label>
+      <label for="confirmar_contraseña">Confirmar contraseña</label>
       <input type="password" id="confirmar_contraseña" name="confirmar_contraseña" required>
     </div>
 
-    <button type="submit" class="center btn btn-primary">Guardar Contraseña</button>
+    <button type="submit" class="center btn btn-primary">Restablecer contraseña</button>
   </form>
 </div>
 {% endblock %}
