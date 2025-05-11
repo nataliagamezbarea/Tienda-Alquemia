@@ -6,7 +6,7 @@ def login():
     # Si el usuarios ya ha iniciado sesión
     if "user" in session:
         if "is_admin" in session and session["is_admin"]:
-            return render_template("admin/admin.html")
+            return render_template("admin/productos.html")
         return redirect(url_for('informacion_personal'))
 
     # Si es un POST (cuando se envían las credenciales)
@@ -19,7 +19,7 @@ def login():
             session["user"] = usuario_encontrado.id_usuario
             session["is_admin"] = usuario_encontrado.is_admin
             if usuario_encontrado.is_admin:
-                return render_template("admin/admin.html")
+                return render_template("admin/productos.html")
             return redirect(url_for('informacion_personal'))
         else:
             error = "Email o contraseña incorrectos"
