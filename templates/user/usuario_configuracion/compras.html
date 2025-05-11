@@ -42,7 +42,9 @@
                 <div class="contenido-acordeon flex column align-center justify-center">
                   {% set imagenes = pp.producto_variante.producto.imagenes %}
                   {% if imagenes and imagenes|length > 0 %}
-                    <img src="{{ imagenes[0].imagen_url }}" alt="Imagen del producto" />
+                    <a href="{{ url_for('producto_detalle', id_producto=pp.producto_variante.producto.id_producto) }}">
+                      <img src="{{ imagenes[0].imagen_url }}" alt="Imagen del producto" />
+                    </a>
                   {% else %}
                     <p><em>Sin imagen disponible</em></p>
                   {% endif %}

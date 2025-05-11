@@ -5,6 +5,7 @@ from backend.Modelos.database import init_db
 from flask_caching import Cache
 
 from routes import *
+from routes.pedido.pedido_exitoso import pedido_exitoso
 
 
 # Cargar las variables de entorno desde el archivo .env
@@ -122,6 +123,7 @@ app.add_url_rule('/devoluciones/eliminar/<int:id_devolucion>', 'eliminar_devoluc
 # Pedido
 
 app.add_url_rule("/pagar" , 'pagar' , pagar )
+app.add_url_rule("/pedido_exitoso" , 'pedido_exitoso' , pedido_exitoso )
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True)
