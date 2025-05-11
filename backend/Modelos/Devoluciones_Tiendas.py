@@ -7,7 +7,7 @@ class DevolucionesTiendas(db.Model):
     id_tienda = db.Column(db.Integer, db.ForeignKey('tiendas.id_tienda'), primary_key=True)
 
     # Relación con el modelo 'Devoluciones'
-    devolucion = db.relationship('Devoluciones', backref='devoluciones_tiendas', lazy=True)
+    devolucion = db.relationship('Devoluciones', backref='devoluciones_tiendas_relacionadas', lazy=True)
 
-    # Relación con el modelo 'Tiendas'
-    tienda = db.relationship('Tiendas', backref='devoluciones_tiendas', lazy=True)
+    # Relación con el modelo 'Tienda'
+    tienda = db.relationship('Tienda', backref='devoluciones_tienda_relacionadas', lazy=True)

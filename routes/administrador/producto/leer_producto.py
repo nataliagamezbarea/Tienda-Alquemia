@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash, current_app
+from flask import render_template, request, redirect, session, url_for, flash, current_app
 from werkzeug.utils import secure_filename
 from sqlalchemy.exc import SQLAlchemyError
 import os
@@ -24,9 +24,11 @@ def guardar_imagen(imagen):
         return f'/static/uploads/{filename}'
     return None
 
-
 # Obtener productos y renderizar HTML
 def obtener_productos_html():
+    if "user" not in session or not session.get("is_admin"):
+        return redirect(url_for("login"))
+
     productos = Producto.query.all()
     productos_dict = {}
 

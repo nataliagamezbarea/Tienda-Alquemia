@@ -65,3 +65,9 @@ from .administrador.producto.leer_producto import obtener_productos_html
 
 
 from .administrador.categoria.categorias import listar_categorias
+
+from routes.administrador.categoria.crear_categoria import crear_categoria
+from routes.administrador.categoria.categorias_editar import editar_categoria
+from routes.administrador.categoria.categorias_eliminar import eliminar_categoria
+from routes.administrador.devoluciones.devoluciones import crear_devolucion_view, editar_devolucion_view, eliminar_devolucion_view, lista_devoluciones_view, obtener_devolucion_view
+from routes.administrador.pedido.pedido import pedido
