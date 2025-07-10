@@ -102,5 +102,8 @@ app.add_url_rule('/pedido', 'pedido', pedido, methods=['GET', 'POST'])
 app.add_url_rule('/pagar', 'pagar', pagar)
 app.add_url_rule('/pedido_exitoso', 'pedido_exitoso', pedido_exitoso)
 
-if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=5000, debug=True)
+
+if __name__ == "__main__":
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=True)
