@@ -13,5 +13,9 @@ class Pedido(db.Model):
     fecha = db.Column(db.Date, nullable=False)
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id_usuario'), nullable=False)
 
-    pedido_productos = relationship('PedidoProducto', backref='pedidos_productos', lazy=True)
-    
+    pedido_productos = relationship(
+        'PedidoProducto',
+        back_populates='pedido',
+        lazy=True,
+        overlaps='pedido,pedido_productos_rel'
+    )

@@ -1,5 +1,6 @@
 from backend.Modelos.database import db
 
+
 class Tienda(db.Model):
     __tablename__ = 'tiendas'
 
@@ -10,10 +11,9 @@ class Tienda(db.Model):
     codigo_postal = db.Column(db.String(10))
     maps_url = db.Column(db.String(500))       
 
-    # Relación con el modelo 'DevolucionesTiendas'
     devoluciones_tiendas = db.relationship(
-            'DevolucionesTiendas', 
-            backref='tienda_relacionada', 
-            lazy=True, 
-            cascade="all, delete-orphan"
-        )
+        'DevolucionesTiendas',
+        back_populates='tienda',
+        cascade="all, delete-orphan",
+        overlaps="tienda, devoluciones_tiendas"
+    )
