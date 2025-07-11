@@ -32,14 +32,14 @@ init_db(app)
 with app.app_context():
     menu_cache = obtener_menu(cache)
 
-# Context processors
-@app.context_processor
-def inyectar_menu():
-    return dict(menu=menu_cache)
+# # Context processors
+# @app.context_processor
+# def inyectar_menu():
+#     return dict(menu=menu_cache)
 
-@app.context_processor
-def inyectar_cesta():
-    return dict(cesta=obtener_cesta())
+# @app.context_processor
+# def inyectar_cesta():
+#     return dict(cesta=obtener_cesta())
 
 # Rutas principales
 app.add_url_rule('/', 'home', home)
