@@ -4,42 +4,34 @@ from backend.Modelos import Producto
 from backend.Modelos.Seccion import Seccion
 from backend.Modelos.Categoria import Categoria
 from backend.Modelos.ProductoCategoria import ProductoCategoria
-from math import ceil
 from backend.Modelos.database import db
+from math import ceil
 
 def catalogo():
-    # Obtiene el parámetro 'seccion' de la URL, si no se pasa, usa 'hombre' por defecto
     nombre_seccion = request.args.get('seccion', None)
     nombre_categoria = request.args.get('categoria', None)
     pagina_actual = request.args.get('pagina', 1, type=int)
     productos_por_pagina = 42
 
-    # Construir la consulta base
-    query = db.session.query(Producto).\
-        join(Seccion).\
-        join(ProductoCategoria).\
-        join(Categoria)
+    # Consulta base solo productos
+    query = db.session.query(Producto).options(
+        joinedload(Producto.imagenes),    # Eager loading imágenes
+        joinedload(Producto.variantes)    # Eager loading variantes
+    )
 
-    # Filtrar por seccion y categoria si se pasa
+    # Filtrar productos por seccion y categoria mediante joins y filtros
     if nombre_seccion:
-        query = query.filter(Seccion.nombre == nombre_seccion)
+        query = query.join(Producto.seccion).filter(Seccion.nombre == nombre_seccion)
     if nombre_categoria:
-        query = query.filter(Categoria.nombre == nombre_categoria)
+        query = query.join(Producto.categorias).filter(Categoria.nombre == nombre_categoria)
 
-    # Obtener productos únicos (evitar duplicados)
-    query = query.distinct(Producto.id_producto)
+    # Conteo total sin joins innecesarios para evitar sobrecarga
+    total_productos = query.with_entities(Producto.id_producto).distinct().count()
 
-    # Realiza la consulta paginada
-    productos_paginados = query.order_by(Producto.id_producto).paginate(page=pagina_actual, per_page=productos_por_pagina)
+    # Paginación con offset y limit
+    productos = query.order_by(Producto.id_producto).offset((pagina_actual - 1) * productos_por_pagina).limit(productos_por_pagina).all()
 
-    # Obtener las imágenes y variantes de los productos de manera separada
-    productos = productos_paginados.items
-    for producto in productos:
-        producto.imagenes = producto.imagenes  # Esto debería cargar las imágenes de manera eficiente
-        producto.variantes = producto.variantes  # Esto carga las variantes si es necesario
-
-    # Calcular el total de páginas
-    total_paginas = ceil(query.count() / productos_por_pagina)
+    total_paginas = ceil(total_productos / productos_por_pagina) if total_productos else 1
 
     return render_template(
         'productos/catalogo.html',
