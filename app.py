@@ -37,9 +37,9 @@ with app.app_context():
 def inyectar_menu():
     return dict(menu=menu_cache)
 
-# @app.context_processor
-# def inyectar_cesta():
-#     return dict(cesta=obtener_cesta())
+@app.context_processor
+def inyectar_cesta():
+    return dict(cesta=obtener_cesta())
 
 # Rutas principales
 app.add_url_rule('/', 'home', home)
