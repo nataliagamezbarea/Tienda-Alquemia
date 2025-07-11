@@ -13,7 +13,7 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-# Configuración del correo
+# Configuración del correo y caché
 app.config.update({
     'MAIL_SERVER': os.getenv('MAIL_SERVER'),
     'MAIL_PORT': int(os.getenv('MAIL_PORT', 587)),
@@ -28,18 +28,28 @@ app.config.update({
 cache = Cache(app)
 init_db(app)
 
-# Cargar menú una sola vez al iniciar
-with app.app_context():
-    menu_cache = obtener_menu(cache)
+# Flag para controlar carga del menú solo una vez
+menu_cargado = False
 
-# # Context processors
-# @app.context_processor
-# def inyectar_menu():
-#     return dict(menu=menu_cache)
+@app.before_request
+def cargar_menu_si_no_esta():
+    global menu_cargado
+    if not menu_cargado:
+        menu = obtener_menu(cache)
+        cache.set('menu_cache', menu)
+        menu_cargado = True
 
-# @app.context_processor
-# def inyectar_cesta():
-#     return dict(cesta=obtener_cesta())
+@app.context_processor
+def inyectar_menu():
+    menu_cache = cache.get('menu_cache')
+    if menu_cache is None:
+        menu_cache = obtener_menu(cache)
+        cache.set('menu_cache', menu_cache)
+    return dict(menu=menu_cache)
+
+@app.context_processor
+def inyectar_cesta():
+    return dict(cesta=obtener_cesta())
 
 # Rutas principales
 app.add_url_rule('/', 'home', home)
@@ -100,7 +110,6 @@ app.add_url_rule('/pedido', 'pedido', pedido, methods=['GET', 'POST'])
 app.add_url_rule('/pagar', 'pagar', pagar)
 app.add_url_rule('/pedido_exitoso', 'pedido_exitoso', pedido_exitoso)
 
-# Ejecutar servidor
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
