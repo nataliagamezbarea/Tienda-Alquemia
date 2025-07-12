@@ -28,12 +28,26 @@ app.config.update({
 cache = Cache(app)
 init_db(app)
 
+# Función para devolver menú vacío con estructura esperada
+def menu_vacio():
+    return {
+        'categorias_mujer': [],
+        'categorias_mujer_random': [],
+        'imagenes_mujer_random': [],
+        'categorias_hombre': [],
+        'categorias_hombre_random': [],
+        'imagenes_hombre_random': []
+    }
+
 # ================================
 # Inyectar menú y cesta al contexto
 # ================================
 @app.context_processor
 def inyectar_menu():
-    return dict(menu=cache.get('menu_cache'))
+    menu = cache.get('menu_cache')
+    if not menu:
+        menu = menu_vacio()
+    return dict(menu=menu)
 
 @app.context_processor
 def inyectar_cesta():
@@ -107,11 +121,13 @@ if __name__ == "__main__":
     with app.app_context():
         try:
             menu = obtener_menu(cache)
+            if not menu:
+                menu = menu_vacio()
             cache.set('menu_cache', menu)
             print("Menú cargado correctamente")
         except Exception as e:
             print(f"Error cargando menú: {e}")
-            cache.set('menu_cache', [])
+            cache.set('menu_cache', menu_vacio())
 
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=True)
