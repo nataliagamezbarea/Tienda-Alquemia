@@ -1,5 +1,4 @@
 import os
-from threading import Lock
 from dotenv import load_dotenv
 from flask import Flask
 from flask_caching import Cache
@@ -29,33 +28,20 @@ app.config.update({
 cache = Cache(app)
 init_db(app)
 
-menu_cargado = False
-menu_lock = Lock()
-
-@app.before_request
-def inicializar_menu_si_es_necesario():
-    global menu_cargado
-    if not menu_cargado:
-        with menu_lock:
-            if not menu_cargado:  
-                menu = obtener_menu(cache)
-                cache.set('menu_cache', menu)
-                menu_cargado = True
-# ========================================================
-
+# ================================
+# Inyectar menú y cesta al contexto
+# ================================
 @app.context_processor
 def inyectar_menu():
-    menu_cache = cache.get('menu_cache')
-    if menu_cache is None:
-        menu_cache = obtener_menu(cache)
-        cache.set('menu_cache', menu_cache)
-    return dict(menu=menu_cache)
+    return dict(menu=cache.get('menu_cache'))
 
 @app.context_processor
 def inyectar_cesta():
     return dict(cesta=obtener_cesta())
 
+# ================================
 # Rutas principales
+# ================================
 app.add_url_rule('/', 'home', home)
 app.add_url_rule('/busqueda', 'busqueda', busqueda, methods=["GET", "POST"])
 
@@ -114,6 +100,14 @@ app.add_url_rule('/pedido', 'pedido', pedido, methods=['GET', 'POST'])
 app.add_url_rule('/pagar', 'pagar', pagar)
 app.add_url_rule('/pedido_exitoso', 'pedido_exitoso', pedido_exitoso)
 
+# ================================
+# Inicio de servidor
+# ================================
 if __name__ == "__main__":
+    with app.app_context():
+        # Precargar menú una sola vez al arranque dentro del contexto de la app
+        menu = obtener_menu(cache)
+        cache.set('menu_cache', menu)
+
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=port, debug=False)
