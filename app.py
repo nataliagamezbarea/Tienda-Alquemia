@@ -1,4 +1,5 @@
 import os
+from threading import Lock
 from dotenv import load_dotenv
 from flask import Flask
 from flask_caching import Cache
@@ -28,16 +29,19 @@ app.config.update({
 cache = Cache(app)
 init_db(app)
 
-# Flag para controlar carga del menú solo una vez
 menu_cargado = False
+menu_lock = Lock()
 
 @app.before_request
-def cargar_menu_si_no_esta():
+def inicializar_menu_si_es_necesario():
     global menu_cargado
     if not menu_cargado:
-        menu = obtener_menu(cache)
-        cache.set('menu_cache', menu)
-        menu_cargado = True
+        with menu_lock:
+            if not menu_cargado:  
+                menu = obtener_menu(cache)
+                cache.set('menu_cache', menu)
+                menu_cargado = True
+# ========================================================
 
 @app.context_processor
 def inyectar_menu():
