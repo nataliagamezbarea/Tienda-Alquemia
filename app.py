@@ -105,9 +105,13 @@ app.add_url_rule('/pedido_exitoso', 'pedido_exitoso', pedido_exitoso)
 # ================================
 if __name__ == "__main__":
     with app.app_context():
-        # Precargar menú una sola vez al arranque dentro del contexto de la app
-        menu = obtener_menu(cache)
-        cache.set('menu_cache', menu)
+        try:
+            menu = obtener_menu(cache)
+            cache.set('menu_cache', menu)
+            print("Menú cargado correctamente")
+        except Exception as e:
+            print(f"Error cargando menú: {e}")
+            cache.set('menu_cache', [])
 
     port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=port, debug=True)
