@@ -100,21 +100,41 @@
   border-radius: 20px;
 }
 
+
 #selector-talla {
+  margin-top: 10px;
+  padding: 20px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 10px;
   border: 1px solid #ccc;
-  padding: 10px;
+  padding: 0 10px;
   border-radius: 5px;
+  height: 40px;
   cursor: pointer;
+  box-sizing: border-box;
 }
+
+#selector-talla label {
+  margin: 0;
+  font-size: 14px;
+}
+
 #selector-talla select {
   flex: 1;
   border: none;
   background: transparent;
   font-size: 14px;
+  height: 100%;
+  padding: 0 5px;
+  box-sizing: border-box;
 }
+
+#selector-talla select:focus {
+  outline: none;
+}
+
+
 #selector-talla select:focus {
   outline: none;
 }
@@ -173,8 +193,6 @@
   display: none;
 }
 
-
-
 .contenido-centro {
   display: flex;
   align-items: center; /* Centrado vertical */
@@ -182,7 +200,7 @@
 }
 
 .boton-icono {
-  background-color: #22c55e; 
+  background-color: #22c55e;
   color: white;
   border: none;
   padding: 10px;
@@ -255,3 +273,14 @@ li {
   border-color: #2d9cdb;
   box-shadow: 0 0 0 3px rgba(45, 156, 219, 0.3);
 }
+
+
+#recomendado .catalogo {
+  padding: 0;
+  padding-left: 3vw;
+  padding-right: 3vw;
+  
+}
+
+
+

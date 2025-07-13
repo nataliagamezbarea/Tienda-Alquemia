@@ -1,27 +1,22 @@
-{% extends "base.html" %}
-
-{% block head_extra %}
-  <link href="{{ url_for('static', filename='css/productos/producto_detalle.css') }}" rel="stylesheet">
-  <script src="{{ url_for('static', filename='js/producto_detalle.js') }}"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer">
-{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block head_extra %}
+<link href="{{ url_for('static', filename='css/productos/producto_detalle.css') }}" rel="stylesheet" />
+<script src="{{ url_for('static', filename='js/producto_detalle.js') }}"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+{% endblock %} {% block content %}
 
 <section id="producto">
   <div id="contenedor-producto">
-
     <!-- Columna izquierda: imágenes -->
     <div class="columna-imagenes">
       <div class="flex">
         <div id="miniaturas" class="flex column">
           {% for imagen in producto.imagenes[:4] %}
-            <img src="{{ imagen.imagen_url }}" alt="{{ producto.nombre }}" class="miniatura">
+          <img src="{{ imagen.imagen_url }}" alt="{{ producto.nombre }}" class="miniatura" />
           {% endfor %}
         </div>
 
         <div id="imagen-grande">
-          <img id="imagen-principal" src="{{ producto.imagenes[0].imagen_url }}" alt="Imagen principal de {{ producto.nombre }}">
+          <img id="imagen-principal" src="{{ producto.imagenes[0].imagen_url }}" alt="Imagen principal de {{ producto.nombre }}" />
         </div>
       </div>
     </div>
@@ -33,76 +28,47 @@
         <h2>{{ producto.precio }} €</h2>
 
         <!-- Mensajes flash -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-          {% if messages %}
-            {% for category, message in messages %}
-              <div class="flash-message {{ category }}">
-                {{ message }}
-              </div>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if messages %} {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %} {% endif %} {% endwith %}
 
         <!-- Formulario -->
         <form id="form-añadir-cesta" method="POST" action="{{ url_for('añadir_producto_cesta') }}">
-
           <!-- Opciones de color -->
           <div class="color-options">
-            {% set colores_vistos = [] %}
-            {% for variante in producto.variantes %}
-              {% if variante.color and variante.color.id_color not in colores_vistos %}
-                <div class="flex column">
-                  <p>{{ variante.color.color }}</p>
-                  
-                  <input 
-                    type="radio" 
-                    class="color-radio" 
-                    id="color-{{ variante.color.id_color }}" 
-                    name="id_color_radio" 
-                    value="{{ variante.color.id_color }}"
-                    data-color-nombre="{{ variante.color.color }}"
-                    {% if loop.first %}checked{% endif %}
-                  >
+            {% set colores_vistos = [] %} {% for variante in producto.variantes %} {% if variante.color and variante.color.id_color not in colores_vistos %}
+            <div class="flex column">
+              <p>{{ variante.color.color }}</p>
 
-                  <label 
-                    for="color-{{ variante.color.id_color }}" 
-                    class="color-label" 
-                    style="background-image: url('{{ variante.color.img_color }}');" 
-                    title="{{ variante.color.color }}">
-                  </label>
-                </div>
-                {% set _ = colores_vistos.append(variante.color.id_color) %}
-              {% endif %}
-            {% endfor %}
+              <input type="radio" class="color-radio" id="color-{{ variante.color.id_color }}" name="id_color_radio" value="{{ variante.color.id_color }}" data-color-nombre="{{ variante.color.color }}" {% if loop.first %}checked{% endif %} />
+
+              <label for="color-{{ variante.color.id_color }}" class="color-label" style="background-image: url('{{ variante.color.img_color }}');" title="{{ variante.color.color }}"> </label>
+            </div>
+            {% set _ = colores_vistos.append(variante.color.id_color) %} {% endif %} {% endfor %}
           </div>
 
           <!-- Selector de talla -->
-          <div id="selector-talla" style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+          <div id="selector-talla">
             <label for="talla">Talla:</label>
-            <select id="talla" name="id_talla" required style="padding: 5px; height: 35px;">
+            <select id="talla" name="id_talla" required>
               <option value="">Selecciona una talla</option>
-              {% set tallas_vistas = [] %}
-              {% for variante in producto.variantes %}
-                {% if variante.talla and variante.talla.id_talla not in tallas_vistas %}
-                  <option value="{{ variante.talla.id_talla }}">{{ variante.talla.talla }}</option>
-                  {% set _ = tallas_vistas.append(variante.talla.id_talla) %}
-                {% endif %}
-              {% endfor %}
+              {% set tallas_vistas = [] %} {% for variante in producto.variantes %} {% if variante.talla and variante.talla.id_talla not in tallas_vistas %}
+              <option value="{{ variante.talla.id_talla }}">{{ variante.talla.talla }}</option>
+              {% set _ = tallas_vistas.append(variante.talla.id_talla) %} {% endif %} {% endfor %}
             </select>
           </div>
 
           <!-- Campos ocultos -->
-          <input type="hidden" name="id_producto" value="{{ producto.id_producto }}">
+          <input type="hidden" name="id_producto" value="{{ producto.id_producto }}" />
 
           <!-- Botón añadir -->
-          <div id="añadir-cesta" style="margin-top: 20px;">
+          <div id="añadir-cesta" style="margin-top: 20px">
             <button type="submit">Añadir a mi cesta</button>
           </div>
-
         </form>
 
         <!-- Info extra -->
-        <details style="margin-top: 20px;">
+        <details style="margin-top: 20px">
           <summary>Referencia de producto</summary>
           <div class="contenido-centro">
             <p>La referencia del producto es: {{ producto.id_producto }}</p>
@@ -112,45 +78,42 @@
           </div>
         </details>
 
-        <details style="margin-top: 20px;">
+        <details style="margin-top: 20px">
           <summary>Descripción</summary>
           <div class="contenido-centro">
             <p>{{ producto.descripcion }}</p>
           </div>
         </details>
 
-        <details style="margin-top: 10px;">
+        <details style="margin-top: 10px">
           <summary>Envíos y devoluciones</summary>
           <div>
             <p>Recibe tu pedido en 24-48 horas laborables. Devoluciones gratuitas en 30 días para artículos de ropa en perfecto estado. ¡Compra con confianza!</p>
           </div>
         </details>
 
-        <details class="acordeon" style="margin-top: 10px;">
+        <details class="acordeon" style="margin-top: 10px">
           <summary>Categorías</summary>
           <div>
             <ul>
               {% for categoria in producto.categorias %}
-                <li>{{ categoria.nombre }}</li>
+              <li>{{ categoria.nombre }}</li>
               {% endfor %}
             </ul>
           </div>
         </details>
-
       </div>
     </div>
-
   </div>
 </section>
 
-<h2 style="margin-top: 40px;">Recomendado para ti:</h2>
-{% include 'productos/productos.html' %}
+<div id="recomendado">
+  <h2 style="margin-left: 5vw;">Recomendado para ti:</h2>
+  {% include 'productos/productos.html' %}
 
+</div>
 <script>
-  window.imagenesPorColor = JSON.parse('{{ imagenes_por_color | tojson | safe }}');
-
-
+  window.imagenesPorColor = JSON.parse("{{ imagenes_por_color | tojson | safe }}");
 </script>
-
 
 {% endblock %}
