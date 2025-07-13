@@ -103,3 +103,11 @@
 #buttons-menu {
   gap: 20px;
 }
+
+
+@media (max-width: 800px) {
+  #menu {
+    width: auto;
+    height: auto;
+  }
+}

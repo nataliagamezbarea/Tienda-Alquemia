@@ -8,6 +8,7 @@
       <div id="buttons-menu" class="flex">
         <button id="btn_mujer" class="underline" onclick="mostrarGenero('menu_mujer', 'btn_mujer')">MUJER</button>
         <button id="btn_hombre" onclick="mostrarGenero('menu_hombre', 'btn_hombre')">HOMBRE</button>
+        <button popovertarget="menu" popovertargetaction="hide">❌</button>
       </div>
     </div>
   </div>
@@ -16,31 +17,27 @@
   <div id="menu_mujer" class="genero">
     <div class="buttons flex wrap">
       {% for categoria in menu.categorias_mujer_random %}
-        <a href="{{ url_for('catalogo', seccion='mujer', categoria=categoria.nombre) }}">
-          <button>{{ categoria.nombre }}</button>
-        </a>
+      <a href="{{ url_for('catalogo', seccion='mujer', categoria=categoria.nombre) }}">
+        <button>{{ categoria.nombre }}</button>
+      </a>
       {% endfor %}
     </div>
 
     <div class="center wrap align-start">
       <div class="column">
         {% for categoria in menu.categorias_mujer[:(menu.categorias_mujer|length // 2)] %}
-          <a href="{{ url_for('catalogo', seccion='mujer', categoria=categoria.nombre) }}">
-            {{ categoria.nombre|capitalize }}
-          </a>
+        <a href="{{ url_for('catalogo', seccion='mujer', categoria=categoria.nombre) }}"> {{ categoria.nombre|capitalize }} </a>
         {% endfor %}
       </div>
       <div class="column">
         {% for categoria in menu.categorias_mujer[(menu.categorias_mujer|length // 2):] %}
-          <a href="{{ url_for('catalogo', seccion='mujer', categoria=categoria.nombre) }}">
-            {{ categoria.nombre|capitalize }}
-          </a>
+        <a href="{{ url_for('catalogo', seccion='mujer', categoria=categoria.nombre) }}"> {{ categoria.nombre|capitalize }} </a>
         {% endfor %}
       </div>
 
       <div class="grid">
         {% for imagen_url in menu.imagenes_mujer_random %}
-          <img src="{{ imagen_url }}" alt="Imagen de mujer" />
+        <img src="{{ imagen_url }}" alt="Imagen de mujer" />
         {% endfor %}
       </div>
     </div>
@@ -50,31 +47,27 @@
   <div id="menu_hombre" class="genero hidden">
     <div class="buttons">
       {% for categoria in menu.categorias_hombre_random %}
-        <a href="{{ url_for('catalogo', seccion='hombre', categoria=categoria.nombre) }}">
-          <button>{{ categoria.nombre }}</button>
-        </a>
+      <a href="{{ url_for('catalogo', seccion='hombre', categoria=categoria.nombre) }}">
+        <button>{{ categoria.nombre }}</button>
+      </a>
       {% endfor %}
     </div>
 
     <div class="center wrap align-start">
       <div class="column">
         {% for categoria in menu.categorias_hombre[:(menu.categorias_hombre|length // 2)] %}
-          <a href="{{ url_for('catalogo', seccion='hombre', categoria=categoria.nombre) }}">
-            {{ categoria.nombre|capitalize }}
-          </a>
+        <a href="{{ url_for('catalogo', seccion='hombre', categoria=categoria.nombre) }}"> {{ categoria.nombre|capitalize }} </a>
         {% endfor %}
       </div>
       <div class="column">
         {% for categoria in menu.categorias_hombre[(menu.categorias_hombre|length // 2):] %}
-          <a href="{{ url_for('catalogo', seccion='hombre', categoria=categoria.nombre) }}">
-            {{ categoria.nombre|capitalize }}
-          </a>
+        <a href="{{ url_for('catalogo', seccion='hombre', categoria=categoria.nombre) }}"> {{ categoria.nombre|capitalize }} </a>
         {% endfor %}
       </div>
 
       <div class="grid">
         {% for imagen_url in menu.imagenes_hombre_random %}
-          <img src="{{ imagen_url }}" alt="Imagen de hombre" />
+        <img src="{{ imagen_url }}" alt="Imagen de hombre" />
         {% endfor %}
       </div>
     </div>
