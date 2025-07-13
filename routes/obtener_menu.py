@@ -17,11 +17,18 @@ def obtener_menu(cache):
             cache.set(cache_key, categorias, timeout=3600)
         return categorias
 
-    # Función para obtener imágenes aleatorias de una sección
+    # Función para obtener imágenes de productos recientes de una sección, limitado a 30 productos
     def obtener_imagenes_random(seccion, cache_key):
         imagenes_random = cache.get(cache_key)
         if not imagenes_random:
-            productos = Producto.query.join(Seccion).filter(Seccion.nombre == seccion).all()
+            productos = (
+                Producto.query
+                .join(Seccion)
+                .filter(Seccion.nombre == seccion)
+                .order_by(Producto.id_producto.desc())  # Ordenar por producto más reciente (asumiendo que id sube con el tiempo)
+                .limit(30)
+                .all()
+            )
             imagenes = [img.imagen_url for producto in productos for img in producto.imagenes if img.imagen_url]
             imagenes_random = random.sample(imagenes, min(len(imagenes), 9)) if imagenes else []
             cache.set(cache_key, imagenes_random, timeout=3600)
