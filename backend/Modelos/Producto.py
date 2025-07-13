@@ -7,12 +7,15 @@ class Producto(db.Model):
     nombre = db.Column(db.String(255), nullable=False)
     precio = db.Column(db.Numeric(10, 2), nullable=False)
     descripcion = db.Column(db.Text, nullable=True)
-    id_seccion = db.Column(db.Integer, db.ForeignKey('secciones.id_seccion'), nullable=False)  # Clave foránea a la tabla Secciones
+    id_seccion = db.Column(db.Integer, db.ForeignKey('secciones.id_seccion'), nullable=False)
 
-    # Relaciones
     variantes = db.relationship('ProductoVariante', back_populates='producto')
     imagenes = db.relationship('ProductoImagen', back_populates='producto')
+    seccion = db.relationship('Seccion', back_populates='productos')
 
-    seccion = db.relationship('Seccion', back_populates='productos' ,)
-
-    categorias = db.relationship('Categoria', secondary='productos_categorias', backref='productos_relacionados')
+    categorias = db.relationship(
+        'Categoria',
+        secondary='productos_categorias',
+        back_populates='productos',
+        overlaps="productos_relacionados,categorias_relacionadas"
+    )

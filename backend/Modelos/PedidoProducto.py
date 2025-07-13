@@ -11,5 +11,10 @@ class PedidoProducto(db.Model):
     cantidad = db.Column(db.Integer, nullable=False, default=1)
     total_producto = db.Column(db.Float, nullable=False, default=0.00)
 
-    pedido = db.relationship('Pedido', backref='pedido_productos_rel', lazy=True)
-    producto_variante = db.relationship('ProductoVariante', backref='pedidos_productos')
+    pedido = relationship(
+        'Pedido',
+        back_populates='pedido_productos',
+        lazy=True,
+        overlaps='pedido_productos,pedidos_productos'
+    )
+    producto_variante = relationship('ProductoVariante', backref='pedidos_productos')
