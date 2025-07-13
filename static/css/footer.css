@@ -5,6 +5,18 @@ footer {
   padding: 1vw 2vw;
   font-family: "Inter", sans-serif;
   position: relative;
+  display: flex;
+  gap: 20px;
+}
+
+
+
+
+
+.footer-seccion ul   {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85vw;
 }
 
 footer::before {
@@ -36,6 +48,7 @@ footer input[type="checkbox"]:checked {
   margin: 0 auto;
 }
 
+
 .footer-seccion h4 {
   margin-bottom: 10px;
   color: black;
@@ -46,6 +59,12 @@ footer input[type="checkbox"]:checked {
   padding: 0;
 }
 
+#redes_sociales {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10vh;
+}
 
 #redes_sociales a {
   display: inline-flex;
@@ -65,8 +84,7 @@ footer input[type="checkbox"]:checked {
   transform: scale(1.1);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
-
-footer p {
+*/ footer p {
   font-size: 13px;
 }
 
@@ -75,19 +93,11 @@ footer input[type="email"] {
   background: transparent;
   outline: none;
   padding: 0;
+  padding: 2px;
 }
 
-
-
 footer #instagram {
-  background: linear-gradient(
-    45deg,
-    #f09433 0%,
-    #e6683c 25%,
-    #dc2743 50%,
-    #cc2366 75%,
-    #bc1888 100%
-  );
+  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
 }
 
 footer #facebook {
@@ -110,7 +120,7 @@ footer button {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0.3vw;
+  padding: 0.3rem;
   cursor: pointer;
+  font-size: 12px;
 }
-

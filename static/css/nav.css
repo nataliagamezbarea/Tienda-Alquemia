@@ -18,10 +18,9 @@ body:has(#menu:popover-open)::before {
 nav {
   width: 100%;
   gap: 100px;
-  padding: 1.3vw 1vw 0 1vw;
+  padding: 1.5vw;
   font-size: 0.3rem;
   box-sizing: border-box;
-
 }
 
 nav img {
@@ -44,4 +43,3 @@ nav i {
   font-size: 1.2rem;
   cursor: pointer;
 }
-

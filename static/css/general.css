@@ -143,3 +143,8 @@ button span {
 .flex-wrap {
   flex: wrap;
 }
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
