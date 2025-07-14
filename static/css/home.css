@@ -25,6 +25,7 @@ body {
 #mujer,
 #hombre {
   height: 100%;
+  min-height:300px;
   font-family: "Andada Pro", serif;
   font-weight: 300;
   font-size: clamp(60px, 5vw, 5vw);
