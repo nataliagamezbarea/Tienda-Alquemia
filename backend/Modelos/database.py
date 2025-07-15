@@ -19,21 +19,20 @@ def test_connection(uri):
         return False
 
 def init_db(app):
-    # Primero FreeSQLDatabase
-    fs_user = os.getenv("FS_USER", "sql7790139")
-    fs_password = os.getenv("FS_PASSWORD", "y4zICxtkL9")
-    fs_host = os.getenv("FS_HOST", "sql7.freesqldatabase.com")
-    fs_port = os.getenv("FS_PORT", "3306")
-    fs_database = os.getenv("FS_DATABASE", "sql7790139")
+    # Obtener variables de entorno sin valores por defecto
+    fs_user = os.environ["FS_USER"]
+    fs_password = os.environ["FS_PASSWORD"]
+    fs_host = os.environ["FS_HOST"]
+    fs_port = os.environ["FS_PORT"]
+    fs_database = os.environ["FS_DATABASE"]
 
     fs_uri = create_db_uri(fs_user, fs_password, fs_host, fs_port, fs_database)
 
-    # Luego Clever Cloud
-    cc_user = os.getenv("CC_USER", "ubqseyo86kiyzyti")
-    cc_password = os.getenv("CC_PASSWORD", "P8l251fDC1VbceusYIp")
-    cc_host = os.getenv("CC_HOST", "bvxjpato722w4r7ck9cc-mysql.services.clever-cloud.com")
-    cc_port = os.getenv("CC_PORT", "21315")
-    cc_database = os.getenv("CC_DATABASE", "bvxjpato722w4r7ck9cc")
+    cc_user = os.environ["CC_USER"]
+    cc_password = os.environ["CC_PASSWORD"]
+    cc_host = os.environ["CC_HOST"]
+    cc_port = os.environ["CC_PORT"]
+    cc_database = os.environ["CC_DATABASE"]
 
     cc_uri = create_db_uri(cc_user, cc_password, cc_host, cc_port, cc_database)
 
@@ -49,6 +48,6 @@ def init_db(app):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
 
-# Ejemplo de uso con Flask
+# Uso en una app Flask
 app = Flask(__name__)
 init_db(app)
