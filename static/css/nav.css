@@ -4,7 +4,6 @@ body {
   padding: 0;
   height: 100%;
   box-sizing: border-box;
-  font-size: 16px;
 }
 
 body:has(#menu:popover-open)::before {
@@ -12,33 +11,39 @@ body:has(#menu:popover-open)::before {
   position: fixed;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1;
+  z-index: 1; 
 }
 
+/* Navbar */
 nav {
-  gap: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem; /* Mejor que 100px para responsive */
   padding: 1vw 3vw 3vw 3vw;
   font-size: 0.3rem;
   box-sizing: border-box;
+  background-color: white;
+  position: relative;
 }
 
 nav img {
   width: 8vw;
   min-width: 90px;
+  height: auto;
 }
 
 nav i {
   font-size: 5em;
+  cursor: pointer;
 }
 
 .fa-bars {
   font-size: 1.5rem;
-  cursor: pointer;
 }
 
 .fa-magnifying-glass,
 .fa-bag-shopping,
 .fa-regular.fa-user {
   font-size: 1.2rem;
-  cursor: pointer;
 }
