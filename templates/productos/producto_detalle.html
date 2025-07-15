@@ -112,8 +112,12 @@
   {% include 'productos/productos.html' %}
 
 </div>
+
 <script>
-  window.imagenesPorColor = JSON.parse("{{ imagenes_por_color | tojson | safe }}");
+  window.imagenesPorColor = {{ imagenes_por_color | tojson | safe }};
 </script>
+
+
+
 
 {% endblock %}
