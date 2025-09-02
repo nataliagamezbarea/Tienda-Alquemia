@@ -1,45 +1,45 @@
+// Asegurarse de que el DOM se ha cargado completamente antes de ejecutar el código
 document.addEventListener('DOMContentLoaded', function() {
-  // Obtener el id del producto desde una variable global (renderizada por Flask)
-  const productId = window.productId;
 
-  // Obtener las imágenes agrupadas por color para este producto
-  const imagesPorColor = window.imagenesPorColor[productId] || {};
+  // Escuchar el cambio en el radio button para los colores
+  document.querySelectorAll('.color-radio').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      // Obtener el id del color seleccionado
+      const colorId = this.value;
+      const colorNombre = this.getAttribute('data-color-nombre');
 
+      // Actualizar la imagen principal
+      updateMainImage(colorId);
+    });
+  });
+
+  // Función que actualiza la imagen principal con el color seleccionado
   function updateMainImage(colorId) {
-    const images = imagesPorColor[colorId];
+    // Verificar si tenemos las imágenes asociadas a ese color
+    const images = window.imagenesPorColor[colorId];
+    
     if (images && images.length > 0) {
+      // Actualizar la imagen principal
       const mainImage = document.getElementById('imagen-principal');
-      mainImage.src = images[0];
+      mainImage.src = images[0];  // Cambiar la imagen principal a la primera imagen del color seleccionado
 
+      // También cambiar las miniaturas
       const miniaturas = document.querySelectorAll('.miniatura');
       miniaturas.forEach((miniatura, index) => {
         if (images[index]) {
-          miniatura.src = images[index];
-          miniatura.style.display = 'block';
-        } else {
-          miniatura.style.display = 'none';
+          miniatura.src = images[index];  // Actualizar las miniaturas con las imágenes del color
         }
       });
     }
   }
 
-  // Inicializar con el color seleccionado por defecto (radio checked)
-  const checkedRadio = document.querySelector('.color-radio:checked');
-  if (checkedRadio) {
-    updateMainImage(checkedRadio.value);
-  }
-
-  // Escuchar cambios en las opciones de color
-  document.querySelectorAll('.color-radio').forEach(radio => {
-    radio.addEventListener('change', function() {
-      updateMainImage(this.value);
+  // Código JS para cambiar la imagen principal al hacer clic en una miniatura
+  document.querySelectorAll('.miniatura').forEach(function(miniatura, index) {
+    miniatura.addEventListener('click', function() {
+      // Cambiar la imagen principal al hacer clic en una miniatura
+      const mainImage = document.getElementById('imagen-principal');
+      mainImage.src = miniatura.src;
     });
   });
 
-  // Cambiar imagen principal al hacer click en miniatura
-  document.querySelectorAll('.miniatura').forEach(miniatura => {
-    miniatura.addEventListener('click', () => {
-      document.getElementById('imagen-principal').src = miniatura.src;
-    });
-  });
 });

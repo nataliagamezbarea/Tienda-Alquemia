@@ -11,8 +11,7 @@ from routes.pedido.pedido_exitoso import pedido_exitoso
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY")
-
+app.secret_key = os.urandom(24)
 
 # Configuración del correo y caché
 app.config.update({

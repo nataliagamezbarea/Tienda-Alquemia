@@ -145,39 +145,3 @@ label {
   font-weight: 200;
   margin-top: 0.5vw;
 }
-section[title="login"] .contraseña_contenedor {
- padding: 1vw;
- border-radius: 30px;
- border: 1px solid #ccc;
- width: 100%;
-}
-
-
-
-
-section[title="login"] .contraseña_contenedor input {
- padding: 0;
- border-radius: 0;
- border: none;
- font-size: inherit;
- font-family: inherit;
- font-weight: normal;
- margin-top: 0;
-}
-
-
-section[title="login"] .contraseña_contenedor:focus-within , input:focus {
- border-color: #28a745;
- box-shadow: 0 0 5px #28a745;
- outline: none;
-}
-
-
-
-
-section[title="login"] .contraseña_contenedor input:focus-within {
- outline: none;
- box-shadow: none;
- border-color: initial;
- background-color: transparent;
-}

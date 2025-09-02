@@ -1,11 +1,8 @@
-import os
 from flask_sqlalchemy import SQLAlchemy
+from flask import Flask
 from sqlalchemy import create_engine
 from sqlalchemy.exc import OperationalError
-from dotenv import load_dotenv
-
-# Cargar variables desde .env
-load_dotenv()
+import os
 
 db = SQLAlchemy()
 
@@ -18,43 +15,39 @@ def test_connection(uri):
         conn = engine.connect()
         conn.close()
         return True
-    except OperationalError as e:
-        print(f"Error al conectar con la URI {uri}: {e}")
+    except OperationalError:
         return False
 
 def init_db(app):
-    # Freesqldatabase
-    fs_user = os.getenv("FS_USER")
-    fs_password = os.getenv("FS_PASSWORD")
-    fs_host = os.getenv("FS_HOST")
-    fs_port = os.getenv("FS_PORT")
-    fs_database = os.getenv("FS_DATABASE")
-
-    # Clever Cloud
-    cc_user = os.getenv("CC_USER")
-    cc_password = os.getenv("CC_PASSWORD")
-    cc_host = os.getenv("CC_HOST")
-    cc_port = os.getenv("CC_PORT")
-    cc_database = os.getenv("CC_DATABASE")
-
-    # Validar que existan
-    if not fs_user or not fs_password or not fs_host or not fs_port or not fs_database:
-        print("⚠️ Variables FS_* faltan o no se cargaron desde el archivo .env")
-    if not cc_user or not cc_password or not cc_host or not cc_port or not cc_database:
-        print("⚠️ Variables CC_* faltan o no se cargaron desde el archivo .env")
+    # Obtener variables de entorno sin valores por defecto
+    fs_user = os.environ["FS_USER"]
+    fs_password = os.environ["FS_PASSWORD"]
+    fs_host = os.environ["FS_HOST"]
+    fs_port = os.environ["FS_PORT"]
+    fs_database = os.environ["FS_DATABASE"]
 
     fs_uri = create_db_uri(fs_user, fs_password, fs_host, fs_port, fs_database)
+
+    cc_user = os.environ["CC_USER"]
+    cc_password = os.environ["CC_PASSWORD"]
+    cc_host = os.environ["CC_HOST"]
+    cc_port = os.environ["CC_PORT"]
+    cc_database = os.environ["CC_DATABASE"]
+
     cc_uri = create_db_uri(cc_user, cc_password, cc_host, cc_port, cc_database)
 
-    # Probar conexión
     if test_connection(fs_uri):
-        print("✅ Conexión exitosa con FreeSQLDatabase")
         app.config["SQLALCHEMY_DATABASE_URI"] = fs_uri
+        print("Conectado a FreeSQLDatabase")
     elif test_connection(cc_uri):
-        print("✅ Conexión exitosa con Clever Cloud")
         app.config["SQLALCHEMY_DATABASE_URI"] = cc_uri
+        print("Conectado a Clever Cloud")
     else:
-        raise Exception("❌ No se pudo conectar a ninguna base de datos")
+        raise Exception("No se pudo conectar a ninguna base de datos")
 
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
+
+# Uso en una app Flask
+app = Flask(__name__)
+init_db(app)
