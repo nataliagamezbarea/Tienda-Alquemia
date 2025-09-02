@@ -1,53 +1,78 @@
+import os
+import time
+from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
 from sqlalchemy import create_engine
 from sqlalchemy.exc import OperationalError
-import os
+
+load_dotenv()
 
 db = SQLAlchemy()
 
 def create_db_uri(user, password, host, port, database):
     return f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}"
 
-def test_connection(uri):
-    try:
-        engine = create_engine(uri)
-        conn = engine.connect()
-        conn.close()
-        return True
-    except OperationalError:
-        return False
+def test_connection(uri, retries=5, delay=2):
+    for _ in range(retries):
+        try:
+            engine = create_engine(uri)
+            conn = engine.connect()
+            conn.close()
+            return True
+        except OperationalError:
+            time.sleep(delay)
+    return False
 
 def init_db(app):
-    # Obtener variables de entorno sin valores por defecto
-    fs_user = os.environ["FS_USER"]
-    fs_password = os.environ["FS_PASSWORD"]
-    fs_host = os.environ["FS_HOST"]
-    fs_port = os.environ["FS_PORT"]
-    fs_database = os.environ["FS_DATABASE"]
+    connections = []
 
-    fs_uri = create_db_uri(fs_user, fs_password, fs_host, fs_port, fs_database)
+    default_user = os.environ["DEFAULT_USER"]
+    default_password = os.environ["DEFAULT_PASSWORD"]
+    default_host = os.environ["DEFAULT_HOST"]
+    default_port = os.environ["DEFAULT_PORT"]
+    default_database = os.environ["DEFAULT_DATABASE"]
 
-    cc_user = os.environ["CC_USER"]
-    cc_password = os.environ["CC_PASSWORD"]
-    cc_host = os.environ["CC_HOST"]
-    cc_port = os.environ["CC_PORT"]
-    cc_database = os.environ["CC_DATABASE"]
+    connections.append({
+        "USER": default_user,
+        "PASSWORD": default_password,
+        "HOST": default_host,
+        "PORT": default_port,
+        "DATABASE": default_database
+    })
 
-    cc_uri = create_db_uri(cc_user, cc_password, cc_host, cc_port, cc_database)
+    i = 1
+    while True:
+        keys = [f"USER_{i}", f"PASSWORD_{i}", f"HOST_{i}", f"PORT_{i}", f"DATABASE_{i}"]
+        if all(k in os.environ for k in keys):
+            connections.append({
+                "USER": os.environ[f"USER_{i}"],
+                "PASSWORD": os.environ[f"PASSWORD_{i}"],
+                "HOST": os.environ[f"HOST_{i}"],
+                "PORT": os.environ[f"PORT_{i}"],
+                "DATABASE": os.environ[f"DATABASE_{i}"],
+            })
+            i += 1
+        else:
+            break
 
-    if test_connection(fs_uri):
-        app.config["SQLALCHEMY_DATABASE_URI"] = fs_uri
-        print("Conectado a FreeSQLDatabase")
-    elif test_connection(cc_uri):
-        app.config["SQLALCHEMY_DATABASE_URI"] = cc_uri
-        print("Conectado a Clever Cloud")
+    for conn in connections:
+        uri = create_db_uri(
+            conn["USER"],
+            conn["PASSWORD"],
+            conn["HOST"],
+            conn["PORT"],
+            conn["DATABASE"]
+        )
+        if test_connection(uri):
+            app.config["SQLALCHEMY_DATABASE_URI"] = uri
+            break
     else:
         raise Exception("No se pudo conectar a ninguna base de datos")
 
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.init_app(app)
 
-# Uso en una app Flask
+# Inicializar Flask
 app = Flask(__name__)
 init_db(app)
