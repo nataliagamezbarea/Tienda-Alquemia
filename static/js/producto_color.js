@@ -1,33 +1,30 @@
-document.addEventListener('DOMContentLoaded', function () {
-  // Escuchar todos los botones de color con clic
-  document.querySelectorAll('.opciones-color .color').forEach(function (colorBtn) {
-    colorBtn.addEventListener('click', function () {
-      const colorId = this.dataset.idColor;
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll(".opciones-color .color").forEach((colorBtn) => {
+    colorBtn.addEventListener("click", function () {
       const targetId = this.dataset.target;
-      const productoId = targetId.replace('producto-', '');
-
+      const colorId = this.dataset.idColor;
+      const productoId = targetId.replace("producto-", "");
       const targetDiv = document.getElementById(targetId);
-      const imagenes = (window.imagenesPorColor?.[productoId]?.[colorId]) || [];
 
-      if (imagenes.length > 0 && targetDiv) {
-        const defaultDiv = targetDiv.querySelector('.imagen-producto.default');
-        const hoverDiv = targetDiv.querySelector('.imagen-producto.hover');
+      if (!targetDiv) return;
 
-        if (defaultDiv) {
-          defaultDiv.style.backgroundImage = `url('${imagenes[0]}')`;
-        }
+      fetch(`/producto/${productoId}/color/${colorId}`)
+        .then((response) => response.json())
+        .then((imagenes) => {
+          if (imagenes.length === 0) return;
 
-        if (hoverDiv) {
-          hoverDiv.style.backgroundImage = imagenes[1]
-            ? `url('${imagenes[1]}')`
-            : `url('${imagenes[0]}')`; // fallback a la imagen principal si no hay segunda
-        }
-      }
+          const defaultDiv = targetDiv.querySelector(".imagen-producto.default");
+          const hoverDiv = targetDiv.querySelector(".imagen-producto.hover");
 
-      // Opcional: resaltar el color activo, removiendo antes de todos los colores de ese producto
-      const colores = document.querySelectorAll(`.opciones-color .color[data-target="${targetId}"]`);
-      colores.forEach(btn => btn.classList.remove('color-activo'));
-      this.classList.add('color-activo');
+          if (defaultDiv) defaultDiv.style.backgroundImage = `url('${imagenes[0]}')`;
+          if (hoverDiv) hoverDiv.style.backgroundImage = imagenes[1] ? `url('${imagenes[1]}')` : `url('${imagenes[0]}')`;
+
+          // Resaltar color activo
+          const colores = document.querySelectorAll(`.opciones-color .color[data-target="${targetId}"]`);
+          colores.forEach((btn) => btn.classList.remove("color-activo"));
+          this.classList.add("color-activo");
+        })
+        .catch((err) => console.error(err));
     });
   });
 });

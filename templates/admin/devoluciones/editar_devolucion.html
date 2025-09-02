@@ -2,6 +2,8 @@
 
 {% block content %}
 <h2>Editar Devolución</h2>
+<link href="{{ url_for('static', filename='css/admin/editar.css') }}" rel="stylesheet" />
+
 <form method="POST">
     <label for="descripcion">Descripción:</label><br>
     <textarea name="descripcion" id="descripcion" required>{{ devolucion.descripcion }}</textarea><br><br>

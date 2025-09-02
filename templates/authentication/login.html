@@ -1,8 +1,9 @@
 {% extends "base.html" %} 
-{% block title %}Login{% endblock %} {% block
-content %}
+{% block title %}Login{% endblock %} 
+{% block content %}
 
 <link href="{{ url_for('static', filename='css/form.css') }}" rel="stylesheet" />
+<script src="{{ url_for('static', filename='js/ver_contraseña.js') }}"></script>
 
 <section title="login" class="flex justify-center align-start contenedor flex-wrap form-contenedor">
   <form method="POST" action="/login">
@@ -14,16 +15,23 @@ content %}
     {% endif %}
 
     <input type="email" name="email" placeholder="Email" required />
-    <input
-      type="password"
-      name="contrasena"
-      placeholder="Contraseña"
-      required
-    />
-    <a id="olvidado" href="{{ url_for('olvidado_contraseña') }}">¿Has olvidado tu contraseña?</a>
-   <div class="flex center">
-    <button class="button-green" type="submit">Iniciar sesión</button>
-   </div>
+
+    <div class="contraseña_contenedor flex align-center">
+      <input
+        type="password"
+        name="contrasena"
+        id="contrasena"
+        placeholder="Contraseña"
+        required
+      />
+      <span id="OjoContraseña" class="icono-ojo fas fa-eye"></span>
+    </div>
+
+    <a id="olvidado" href="{{ url_for('olvidado_contrasena') }}">¿Has olvidado tu contraseña?</a>
+
+    <div class="flex center">
+      <button class="button-green" type="submit">Iniciar sesión</button>
+    </div>
   </form>
 
   <div id="registro">
@@ -34,7 +42,7 @@ content %}
         Registrarte
       </a>
     </div>
-    
   </div>
 </section>
+
 {% endblock %}

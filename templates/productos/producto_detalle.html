@@ -113,10 +113,13 @@
 
 </div>
 
+
 <script>
+  window.productId = {{ producto.id_producto }};
   window.imagenesPorColor = {{ imagenes_por_color | tojson | safe }};
 </script>
 
+<script src="{{ url_for('static', filename='js/producto_detalle.js') }}"></script>
 
 
 

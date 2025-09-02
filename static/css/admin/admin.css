@@ -4,95 +4,149 @@
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-    
-    body {
-    display: flex;
+}
+
+body {
+    display: flex; /* Hace que sidebar y contenido estén al mismo nivel */
     min-height: 100vh;
     background: linear-gradient(to right, #f0fff5, #e0f7ec);
     color: #333;
-    }
-    
-    /* Barra lateral */
-    #barra-lateral {
-    width: 250px;
-    background-color: #1e3d32; /* verde profundo */
+}
+
+/* Checkbox hack */
+#menu-toggle {
+    display: none;
+}
+
+/* Botón hamburguesa */
+.menu-btn {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background: #1e3d32;
+    color: #fff;
+    border: none;
+    padding: 10px 14px;
+    font-size: 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 1; /* Encima de todo */
+    display: none; /* Visible solo en móvil */
+}
+
+/* Sidebar */
+#barra-lateral {
+    width: 250px; /* Ancho fijo */
+    background-color: #1e3d32;
     color: #fff;
     display: flex;
     flex-direction: column;
-    position: fixed;
+    position: relative; /* No fixed, para que el contenido esté al lado */
     top: 0;
     left: 0;
     bottom: 0;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    z-index: 1400;
+}
+
+/* Sidebar cerrado por defecto en móvil */
+@media (max-width: 1906px) {
+    #barra-lateral {
+        position: fixed; /* Para deslizarlo sobre el contenido */
+        transform: translateX(-100%);
+        top: 0;
+        left: 0;
+        bottom: 0;
     }
-    
-    #barra-lateral .marca {
-    display: block;
+    #menu-toggle:checked ~ #barra-lateral {
+        transform: translateX(0);
+    }
+    .menu-btn {
+        display: block;
+    }
+}
+
+/* Marca / header del sidebar */
+#barra-lateral .marca {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     padding: 20px;
     font-size: 22px;
     font-weight: bold;
-    text-decoration: none;
-    color: #6ef1a2; /* verde menta */
+    color: #6ef1a2;
     background-color: #162e26;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
 
-    .menu-lateral {
+/* Botón cerrar (X) */
+.close-btn {
+    cursor: pointer;
+    font-size: 24px;
+    color: #fff;
+    display: none; /* Oculto por defecto */
+}
+
+/* Mostrar X solo en móvil */
+@media (max-width: 1200px) {
+    .close-btn {
+        display: block;
+    }
+}
+
+/* Menú lateral */
+.menu-lateral {
     list-style: none;
     padding: 20px 0;
-    }
-    
-    .menu-lateral li {
+    flex: 1;
+}
+
+.menu-lateral li {
     position: relative;
-    }
-    
-    .menu-lateral a {
+}
+
+.menu-lateral a {
     display: flex;
     align-items: center;
     padding: 12px 20px;
     text-decoration: none;
     color: #dcdde1;
     transition: background-color 0.3s, color 0.3s;
-    }
-    
-    .menu-lateral a:hover {
+}
+
+.menu-lateral a:hover,
+.menu-lateral a.active {
     background-color: #2f5d4b;
     color: #6ef1a2;
-    }
-    
-    .icono {
+}
+
+.icono {
     margin-right: 12px;
     font-size: 18px;
-    }
-    
-    /* Contenido principal */
-    #contenido {
-    margin-left: 250px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+}
+
+/* Contenido principal */
+#contenido {
+    flex: 1; /* Ocupa todo el espacio restante al lado del sidebar */
     padding: 40px;
-    background-color: #f0fff5;
-    }
-    
-    .panel-principal {
+}
+
+/* Panel principal */
+.panel-principal {
     background-color: #ffffff;
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
-    }
-    
-    .panel-principal h1 {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.05);
+}
+
+.panel-principal h1 {
     font-size: 28px;
     color: #1e3d32;
-    margin-bottom: 10px;
-    }
-    
-    .panel-principal p {
+    margin-bottom: 20px;
+}
+
+.panel-principal p {
     color: #4d665c;
     font-size: 16px;
-    }
-    
-    
-    
+}

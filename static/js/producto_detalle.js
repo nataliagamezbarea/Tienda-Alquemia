@@ -1,45 +1,48 @@
-// Asegurarse de que el DOM se ha cargado completamente antes de ejecutar el código
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener("DOMContentLoaded", function () {
+  const mainImage = document.getElementById("imagen-principal");
+  const miniaturasContainer = document.getElementById("miniaturas");
 
-  // Escuchar el cambio en el radio button para los colores
-  document.querySelectorAll('.color-radio').forEach(function(radio) {
-    radio.addEventListener('change', function() {
-      // Obtener el id del color seleccionado
-      const colorId = this.value;
-      const colorNombre = this.getAttribute('data-color-nombre');
+  // Diccionario de imágenes por color
+  const imagesPorColor = window.imagenesPorColor || {};
 
-      // Actualizar la imagen principal
-      updateMainImage(colorId);
-    });
-  });
+  function updateImages(colorId) {
+    const images = imagesPorColor[colorId] || [];
 
-  // Función que actualiza la imagen principal con el color seleccionado
-  function updateMainImage(colorId) {
-    // Verificar si tenemos las imágenes asociadas a ese color
-    const images = window.imagenesPorColor[colorId];
-    
-    if (images && images.length > 0) {
-      // Actualizar la imagen principal
-      const mainImage = document.getElementById('imagen-principal');
-      mainImage.src = images[0];  // Cambiar la imagen principal a la primera imagen del color seleccionado
+    // Actualiza imagen principal
+    if (mainImage && images.length > 0) mainImage.src = images[0];
 
-      // También cambiar las miniaturas
-      const miniaturas = document.querySelectorAll('.miniatura');
+    // Actualiza miniaturas
+    if (miniaturasContainer) {
+      const miniaturas = miniaturasContainer.querySelectorAll(".miniatura");
+
       miniaturas.forEach((miniatura, index) => {
         if (images[index]) {
-          miniatura.src = images[index];  // Actualizar las miniaturas con las imágenes del color
+          miniatura.src = images[index];
+          miniatura.style.display = "block";
+        } else {
+          miniatura.style.display = "none";
         }
       });
     }
   }
 
-  // Código JS para cambiar la imagen principal al hacer clic en una miniatura
-  document.querySelectorAll('.miniatura').forEach(function(miniatura, index) {
-    miniatura.addEventListener('click', function() {
-      // Cambiar la imagen principal al hacer clic en una miniatura
-      const mainImage = document.getElementById('imagen-principal');
-      mainImage.src = miniatura.src;
+  // Inicializa con el color seleccionado por defecto
+  const checkedRadio = document.querySelector(".color-radio:checked");
+  if (checkedRadio) updateImages(checkedRadio.value);
+
+  // Cambiar imágenes al seleccionar un color
+  document.querySelectorAll(".color-radio").forEach((radio) => {
+    radio.addEventListener("change", () => {
+      updateImages(radio.value);
     });
   });
 
+  // Cambiar imagen principal al hacer click en miniatura
+  if (miniaturasContainer) {
+    miniaturasContainer.addEventListener("click", (e) => {
+      if (e.target.classList.contains("miniatura")) {
+        mainImage.src = e.target.src;
+      }
+    });
+  }
 });

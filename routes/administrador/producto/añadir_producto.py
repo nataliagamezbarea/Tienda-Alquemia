@@ -8,6 +8,7 @@ from backend.Modelos import (
     Talla, Color, Seccion, Categoria
 )
 from backend.Modelos.database import db
+from routes.administrador.producto.local import es_local  # Función que detecta localhost
 
 # Verificar extensiones permitidas
 def allowed_file(filename):
@@ -50,8 +51,9 @@ def crear_producto():
             for id_categoria in id_categorias:
                 prod_cat = ProductoCategoria(id_producto=producto.id_producto, id_categoria=id_categoria)
                 db.session.add(prod_cat)
+            db.session.commit()
 
-            # Procesar variantes e imágenes
+            # Procesar variantes
             i = 0
             while True:
                 id_color = request.form.get(f'variantes[{i}][id_color]')
@@ -61,7 +63,6 @@ def crear_producto():
                 if not id_color or not id_talla or not stock:
                     break
 
-                # Crear variante
                 producto_variante = ProductoVariante(
                     id_producto=producto.id_producto,
                     id_color=id_color,
@@ -71,22 +72,33 @@ def crear_producto():
                 db.session.add(producto_variante)
                 db.session.commit()
 
-                # Obtener imágenes específicas de esta variante
+                # Guardar imágenes desde URLs dinámicas
+                for key in request.form:
+                    if key.startswith(f'variantes[{i}][imagen_url]'):
+                        url = request.form[key]
+                        if url:
+                            prod_img = ProductoImagen(
+                                id_producto=producto.id_producto,
+                                id_color=id_color,
+                                imagen_url=url
+                            )
+                            db.session.add(prod_img)
+
+                # Guardar imágenes subidas
                 imagenes = request.files.getlist(f'variantes[{i}][imagenes][]')
                 for imagen in imagenes:
                     ruta = guardar_imagen(imagen)
                     if ruta:
                         prod_img = ProductoImagen(
                             id_producto=producto.id_producto,
-                            id_color=id_color,  # Asociar por color o producto_variante.id_variante si usas eso
+                            id_color=id_color,
                             imagen_url=ruta
                         )
                         db.session.add(prod_img)
 
-                i += 1  # siguiente variante
+                i += 1
 
             db.session.commit()
-
             flash("Producto creado exitosamente", "success")
             return redirect(url_for('productos'))
 
@@ -100,7 +112,12 @@ def crear_producto():
     colores = Color.query.all()
     secciones = Seccion.query.all()
     categorias = Categoria.query.all()
+
     return render_template(
-        'admin/agregar_producto.html',
-        tallas=tallas, colores=colores, secciones=secciones, categorias=categorias
+        'admin/productos/agregar_producto.html',
+        tallas=tallas,
+        colores=colores,
+        secciones=secciones,
+        categorias=categorias,
+        es_localhost=es_local()
     )

@@ -1,0 +1,106 @@
+{% extends "admin/admin.html" %}
+
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/tabla_responsive.css') }}">
+{% endblock %}
+
+{% block contenido %}
+<div class="flex center">
+  <div class="container">
+    <h1>Lista de Productos</h1>
+
+    <a href="/producto/nuevo" class="add-update-button">Añadir Nuevo Producto</a>
+
+    {% if productos %}
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Categorías</th>
+            <th>Secciones</th>
+            <th>Tallas</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Imágenes</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for producto in productos %}
+          <tr>
+            <td>{{ producto.id_producto }}</td>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.categorias }}</td>
+            <td>{{ producto.secciones }}</td>
+            <td>{{ producto.tallas }}</td>
+            <td>
+              <div class="clamp-wrapper">
+                <div class="clamp-3-lines">{{ producto.descripcion }}</div>
+              </div>
+            </td>
+            <td>{{ producto.precio }}</td>
+            <td>{{ producto.stock_total }}</td>
+            <td class="image-column">
+              {% if producto.imagenes and producto.imagenes|length > 0 %}
+                {% for imagen in producto.imagenes %}
+                  <img src="{{ imagen.imagen_url }}" alt="Imagen del producto">
+                {% endfor %}
+              {% else %}
+                <span class="no-images">Sin imagen</span>
+              {% endif %}
+            </td>
+            <td class="actions">
+              <form action="/producto/eliminar/{{ producto.id_producto }}" method="POST" class="inline-form">
+                <button type="submit" class="delete-button" onclick="return confirm('¿Seguro que deseas eliminar este producto?');">Eliminar</button>
+              </form>
+              <a href="/producto/editar/{{ producto.id_producto }}" class="add-update-button">Editar</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p>No hay productos disponibles.</p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="pagination">
+  {% if pagina_actual > 1 %}
+    <a href="?pagina={{ pagina_actual - 1 }}" class="page-link">Anterior</a>
+  {% else %}
+    <span class="page-link disabled">Anterior</span>
+  {% endif %}
+
+  {% set start_page = pagina_actual - 2 if pagina_actual - 2 > 1 else 1 %}
+  {% set end_page = pagina_actual + 2 if pagina_actual + 2 < total_paginas else total_paginas %}
+
+  {% if start_page > 1 %}
+    <a href="?pagina=1">1</a>
+    {% if start_page > 2 %} ... {% endif %}
+  {% endif %}
+
+  {% for p in range(start_page, end_page + 1) %}
+    {% if p == pagina_actual %}
+      <strong>{{ p }}</strong>
+    {% else %}
+      <a href="?pagina={{ p }}">{{ p }}</a>
+    {% endif %}
+  {% endfor %}
+
+  {% if end_page < total_paginas %}
+    {% if end_page < total_paginas - 1 %} ... {% endif %}
+    <a href="?pagina={{ total_paginas }}">{{ total_paginas }}</a>
+  {% endif %}
+
+  {% if pagina_actual < total_paginas %}
+    <a href="?pagina={{ pagina_actual + 1 }}" class="page-link">Siguiente</a>
+  {% else %}
+    <span class="page-link disabled">Siguiente</span>
+  {% endif %}
+</div>
+{% endblock %}

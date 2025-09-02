@@ -6,20 +6,22 @@ import bcrypt
 def registro():
     if request.method == "POST":
         # Recoger datos del formulario
-        nombre = request.form["nombre"]
-        apellido1 = request.form.get("apellido1", "")
-        apellido2 = request.form.get("apellido2", "")
-        email = request.form["email"]
-        contrasena = request.form["contrasena"]
-        confirmar_contrasena = request.form["confirmar_contrasena"]
-        cliente_tipo = request.form.get("cliente_tipo", "False")
+        nombre = request.form.get("nombre", "").strip()
+        apellido1 = request.form.get("apellido1", "").strip()
+        apellido2 = request.form.get("apellido2", "").strip()
+        email = request.form.get("email", "").strip()
+        contrasena = request.form.get("contrasena", "")
+        confirmar_contrasena = request.form.get("confirmar_contrasena", "")
+        
+        # Convertir el valor del radio a booleano
+        cliente_tipo = request.form.get("cliente_tipo", "False") == "True"
 
         # Validar registro como empresa
-        if cliente_tipo == "True" and not email.endswith("@tienda_alquemia.com"):
+        if cliente_tipo and not email.endswith("@tiendaalquemia.com"):
             return render_template(
                 "authentication/registro.html",
-                error="Solo los correos con dominio @tienda_alquemia.com pueden registrarse como empresa.",
-                cliente_tipo="False"
+                error="Solo los correos con dominio @tiendaalquemia.com pueden registrarse como empresa.",
+                cliente_tipo=False
             )
 
         # Validar contraseñas
@@ -31,16 +33,12 @@ def registro():
             )
 
         # Comprobar si el correo ya está registrado
-        usuario_existente = Usuario.query.filter_by(email=email).first()
-        if usuario_existente:
+        if Usuario.query.filter_by(email=email).first():
             return render_template(
                 "authentication/registro.html",
                 error="Correo electrónico ya registrado.",
                 cliente_tipo=cliente_tipo
             )
-
-        # Determinar si es admin (empresa)
-        is_admin = True if cliente_tipo == "True" else False
 
         # Hashear la contraseña
         contrasena_encriptada = bcrypt.hashpw(contrasena.encode("utf-8"), bcrypt.gensalt())
@@ -52,7 +50,7 @@ def registro():
             apellido2=apellido2,
             email=email,
             contrasena=contrasena_encriptada,
-            is_admin=is_admin
+            is_admin=cliente_tipo  # True si es empresa, False si es particular
         )
 
         # Guardar en la base de datos
@@ -61,4 +59,5 @@ def registro():
 
         return redirect(url_for("login"))
 
+    # GET request
     return render_template("authentication/registro.html", cliente_tipo=None)

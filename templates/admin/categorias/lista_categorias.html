@@ -1,13 +1,20 @@
 {% extends 'admin/admin.html' %}
 
-{% block contenido %}
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/tabla_responsive.css') }}">
+{% endblock %}
 
-<div class="container">
+{% block contenido %}
+<div class="flex center">
+  <div class="container">
     <h1>Lista de Categorías</h1>
 
-    <a href="{{ url_for('crear_categoria') }}" class="add-update-button">Añadir Nueva Categoría</a>
+    <a href="{{ url_for('crear_categoria') }}" class="add-update-button" ">
+        Añadir Nueva Categoría
+    </a>
 
     {% if categorias %}
+    <div class="table-container">
         <table class="table">
             <thead>
                 <tr>
@@ -18,24 +25,27 @@
             </thead>
             <tbody>
                 {% for categoria in categorias %}
-                    <tr>
-                        <td>{{ categoria.id_categoria }}</td>
-                        <td>{{ categoria.nombre }}</td>
-                        <td class="actions">
-                            <a href="{{ url_for('editar_categoria', categoria_id=categoria.id_categoria) }}" class="add-update-button">Editar</a>
-                            <form action="{{ url_for('eliminar_categoria', categoria_id=categoria.id_categoria) }}" method="POST" style="display:inline;">
-                                <button type="submit" class="delete-button" onclick="return confirm('¿Seguro que deseas eliminar esta categoría?');">
-                                    Eliminar
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
+                <tr>
+                    <td>{{ categoria.id_categoria }}</td>
+                    <td>{{ categoria.nombre }}</td>
+                    <td class="actions">
+                        <a href="{{ url_for('editar_categoria', categoria_id=categoria.id_categoria) }}" class="add-update-button">
+                            Editar
+                        </a>
+                        <form action="{{ url_for('eliminar_categoria', categoria_id=categoria.id_categoria) }}" method="POST">
+                            <button type="submit" class="delete-button" onclick="return confirm('¿Seguro que deseas eliminar esta categoría?');">
+                                Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
+    </div>
     {% else %}
-        <p>No hay categorías disponibles.</p>
+    <p>No hay categorías disponibles.</p>
     {% endif %}
+  </div>
 </div>
-
 {% endblock %}

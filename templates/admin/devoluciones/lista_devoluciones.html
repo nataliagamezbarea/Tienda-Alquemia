@@ -1,46 +1,63 @@
-{% extends 'base.html' %}
+{% extends "admin/admin.html" %}
 
-{% block content %}
-    <h2>Lista de Devoluciones</h2>
-    <table border="1" cellpadding="5" cellspacing="0">
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/tabla_responsive.css') }}">
+{% endblock %}
+
+{% block contenido %}
+<div class="flex center">
+  <div class="container">
+    <h2 class="titulo-tabla">Lista de Devoluciones</h2>
+
+    {% if devoluciones %}
+    <div class="table-container">
+      <table class="table">
         <thead>
-            <tr>
-                <th>ID</th>
-                <th>Descripción</th>
-                <th>ID Pedido</th>
-                <th>ID Variante</th>
-                <th>Fecha Devolución</th>
-                <th>Hecha</th>
-                <th>Tienda</th>
-                <th>Acciones</th>
-            </tr>
+          <tr>
+            <th>ID</th>
+            <th>Descripción</th>
+            <th>ID Pedido</th>
+            <th>ID Variante</th>
+            <th>Fecha Devolución</th>
+            <th>Hecha</th>
+            <th>Tienda</th>
+            <th>Acciones</th>
+          </tr>
         </thead>
         <tbody>
-            {% for item in devoluciones %}
-            <tr>
-                <td>{{ item.devolucion.id_devolucion }}</td>
-                <td>{{ item.devolucion.descripcion }}</td>
-                <td>{{ item.devolucion.id_pedido }}</td>
-                <td>{{ item.devolucion.id_variante }}</td>
-                <td>{{ item.devolucion.fecha_devolucion.strftime('%Y-%m-%d') }}</td>
-                <td>{{ 'Sí' if item.devolucion.hecha else 'No' }}</td>
-                <td>
-                    {% if item.tienda %}
-                        ID: {{ item.tienda.id_tienda }}<br>
-                        {{ item.tienda.ciudad }}, {{ item.tienda.provincia }}, {{ item.tienda.pais }}<br>
-                        CP: {{ item.tienda.codigo_postal }}<br>
-                    {% else %}
-                        Sin tienda asociada
-                    {% endif %}
-                </td>
-                <td>
-                    <a href="{{ url_for('editar_devolucion', id_devolucion=item.devolucion.id_devolucion) }}">Editar</a> |
-                    <form action="{{ url_for('eliminar_devolucion', id_devolucion=item.devolucion.id_devolucion) }}" method="POST" style="display:inline;">
-                        <button type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar esta devolución?')">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
+          {% for item in devoluciones %}
+          <tr>
+            <td>{{ item.devolucion.id_devolucion }}</td>
+            <td>{{ item.devolucion.descripcion }}</td>
+            <td>{{ item.devolucion.id_pedido }}</td>
+            <td>{{ item.devolucion.id_variante }}</td>
+            <td>{{ item.devolucion.fecha_devolucion.strftime('%Y-%m-%d') }}</td>
+            <td>{{ 'Sí' if item.devolucion.hecha else 'No' }}</td>
+            <td>
+              {% if item.tienda %}
+                ID: {{ item.tienda.id_tienda }}<br>
+                {{ item.tienda.ciudad }}, {{ item.tienda.provincia }}, {{ item.tienda.pais }}<br>
+                CP: {{ item.tienda.codigo_postal }}
+              {% else %}
+                Sin tienda asociada
+              {% endif %}
+            </td>
+            <td class="actions">
+              <a href="{{ url_for('editar_devolucion', id_devolucion=item.devolucion.id_devolucion) }}" class="add-update-button">
+                Editar
+              </a>
+              <form action="{{ url_for('eliminar_devolucion', id_devolucion=item.devolucion.id_devolucion) }}" method="POST">
+                <button type="submit" class="delete-button" onclick="return confirm('¿Estás seguro de que deseas eliminar esta devolución?')">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
         </tbody>
-    </table>
+      </table>
+    </div>
+    {% else %}
+      <p>No hay devoluciones disponibles.</p>
+    {% endif %}
+  </div>
+</div>
 {% endblock %}

@@ -14,8 +14,8 @@ from .obtener_cesta import obtener_cesta
 # AUTENTIFICACIÓN
 from .autentificacion.login import login
 from .autentificacion.registro import registro
-from .autentificacion.restablecer_contraseña import restablecer_contraseña
-from .autentificacion.olvidado_contraseña import olvidado_contraseña
+from .autentificacion.restablecer_contrasena import restablecer_contrasena
+from .autentificacion.olvidado_contrasena import olvidado_contrasena
 
 
 
@@ -46,6 +46,7 @@ from .contacto.contacto_particular import contacto_particular
 # PRODUCTOS
 
 from .productos.catalogo import catalogo
+from .productos.imagenes_color import imagenes_color
 from .productos.producto_detalle import producto_detalle
 
 # Cesta

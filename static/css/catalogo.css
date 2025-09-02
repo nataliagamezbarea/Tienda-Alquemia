@@ -85,10 +85,9 @@ html, body {
 }
 
 .opciones-color {
-  display: grid;
-  grid-auto-flow: column;
+  display: flex;
   gap: 12px;
-  margin-top: 12px;
+  justify-content: center;
 }
 
 .color {
@@ -117,4 +116,10 @@ html, body {
   font-size: 1.25rem;
   color: #888;
   padding: 40px;
+}
+
+
+.color-activo {
+  outline: 2px solid #000;
+  border-radius: 50%;
 }

@@ -3,15 +3,15 @@ SET NAMES 'utf8mb4';
 
 INSERT INTO usuarios (nombre, apellido1, apellido2, email, contrasena, is_admin) VALUES
 ('Pedro', 'Lopez', 'Ruiz', 'pedro.lopez@example.com', '$2b$12$zeOTT1HubRNW5KsZQp97A.zlsL3RmPpj9l1Xc.Ww7Phpcejsesqru', FALSE),
-('Laura', 'Pérez', NULL, 'laura.pérez@example.com', '$2b$12$L0Wf.TXmTSpC2sYsOfQraOCAtZPFWRzColtlPcv3a2W2UGU9wkT0W', TRUE),
-('Laura', 'García', 'Pérez', 'laura.garcía@example.com', '$2b$12$/oOrqw6bJeJJyGdg.pk9XOMVzLIFKoeb8/1pPxSmfm8yCye/820EO', FALSE),
-('Laura', 'Martínez', 'Jiménez', 'laura.martínez@example.com', '$2b$12$5.Q/jNlKR0W4gdO.w.ITi.WLPPXR7V7SsldvKHpxLgNVf0hwtmnbK', FALSE),
-('Maria', 'García', 'Jiménez', 'maria.garcía@example.com', '$2b$12$/t5YPRTnqDisA7uRKnL6Z.qUyABlcCnexze.L0GjlRIkSjgfFXLQK', FALSE),
-('David', 'García', NULL, 'david.garcía@example.com', '$2b$12$RvgNbeRcpylzb70T1QI5l.t6AEaHacbzuux2k0peAel/Xlxpbf4Ku', FALSE),
-('Marta', 'Pérez', NULL, 'marta.pérez@example.com', '$2b$12$i9cet9RLcY3gMGFn8XewGuhC9Z5h35iKurdhRGChvIPcee5otWGnC', FALSE),
-('Laura', 'Rodríguez', NULL, 'laura.rodríguez@example.com', '$2b$12$0uKKhAzqqbUM78BE/YSBruFwR.uZulvpYsZQ0n2KtNLqv3Ht/vzF6', FALSE),
-('Laura', 'González', NULL, 'laura.gonzález@example.com', '$2b$12$IkJoB9ZVt6F9ZZL/eki7dOa5.4uruW9Rx.6mWr7jM2HaeCz8qElG.', FALSE),
-('Luis', 'González', 'Jiménez', 'luis.gonzález@example.com', '$2b$12$KqpGEhQDDa9x5UmzY59QHeitlBzJ9FJczw5Xp7GJXM4Sj8Uf7nXIO', FALSE);
+('Laura', 'Pérez', NULL, 'laura.perez@example.com', '$2b$12$L0Wf.TXmTSpC2sYsOfQraOCAtZPFWRzColtlPcv3a2W2UGU9wkT0W', TRUE),
+('Laura', 'García', 'Pérez', 'laura.garcia@example.com', '$2b$12$/oOrqw6bJeJJyGdg.pk9XOMVzLIFKoeb8/1pPxSmfm8yCye/820EO', FALSE),
+('Laura', 'Martínez', 'Jiménez', 'laura.martinez@example.com', '$2b$12$5.Q/jNlKR0W4gdO.w.ITi.WLPPXR7V7SsldvKHpxLgNVf0hwtmnbK', FALSE),
+('Maria', 'García', 'Jiménez', 'maria.garcia@example.com', '$2b$12$/t5YPRTnqDisA7uRKnL6Z.qUyABlcCnexze.L0GjlRIkSjgfFXLQK', FALSE),
+('David', 'García', NULL, 'david.garcia@example.com', '$2b$12$RvgNbeRcpylzb70T1QI5l.t6AEaHacbzuux2k0peAel/Xlxpbf4Ku', FALSE),
+('Marta', 'Pérez', NULL, 'marta.perez@example.com', '$2b$12$i9cet9RLcY3gMGFn8XewGuhC9Z5h35iKurdhRGChvIPcee5otWGnC', FALSE),
+('Laura', 'Rodríguez', NULL, 'laura.rodriguez@example.com', '$2b$12$0uKKhAzqqbUM78BE/YSBruFwR.uZulvpYsZQ0n2KtNLqv3Ht/vzF6', FALSE),
+('Laura', 'González', NULL, 'laura.gonzalez@example.com', '$2b$12$IkJoB9ZVt6F9ZZL/eki7dOa5.4uruW9Rx.6mWr7jM2HaeCz8qElG.', FALSE),
+('Luis', 'González', 'Jiménez', 'luis.gonzalez@example.com', '$2b$12$KqpGEhQDDa9x5UmzY59QHeitlBzJ9FJczw5Xp7GJXM4Sj8Uf7nXIO', FALSE);
 
 
 INSERT INTO cestas (id_usuario, fecha_creacion) VALUES

@@ -1,0 +1,164 @@
+{% extends "admin/admin.html" %}
+{% block contenido %}
+
+<link href="{{ url_for('static', filename='css/admin/agregar.css') }}" rel="stylesheet" />
+<form method="POST" enctype="multipart/form-data">
+    <h2>Crear Producto</h2>
+
+    <div class="form-group">
+        <label for="nombre">Nombre del Producto</label>
+        <input type="text" name="nombre" id="nombre" required>
+    </div>
+
+    <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <textarea name="descripcion" id="descripcion"></textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="precio">Precio</label>
+        <input type="number" name="precio" id="precio" required>
+    </div>
+
+    <div class="form-group">
+        <label for="id_seccion">Sección</label>
+        <select name="id_seccion" id="id_seccion" required>
+            {% for seccion in secciones %}
+            <option value="{{ seccion.id_seccion }}">{{ seccion.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="id_categoria">Categoría</label>
+        <select name="id_categoria" id="id_categoria" required multiple>
+            {% for categoria in categorias %}
+            <option value="{{ categoria.id_categoria }}">{{ categoria.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Variantes -->
+    <div id="variantes-container">
+        <div class="variante" data-variante="0">
+            <div class="form-group">
+                <a href="javascript:void(0);" onclick="eliminarVariante(0)">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </a>
+                <label for="id_color">Color</label>
+                <select name="variantes[0][id_color]" required>
+                    {% for color in colores %}
+                    <option value="{{ color.id_color }}">{{ color.color }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="id_talla">Talla</label>
+                <select name="variantes[0][id_talla]" required>
+                    {% for talla in tallas %}
+                    <option value="{{ talla.id_talla }}">{{ talla.talla }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="stock">Stock</label>
+                <input type="number" name="variantes[0][stock]" required>
+            </div>
+
+            <div class="form-group imagenes-container" id="imagenes-container-0">
+                <!-- URLs se agregarán dinámicamente -->
+            </div>
+            
+            <button type="button" onclick="agregarURL(0)">Agregar URL</button>
+
+            {% if es_localhost %}
+            <div class="form-group">
+                <label for="imagenes_nuevas">Subir archivo:</label>
+                <input type="file" name="variantes[0][imagenes][]" accept="image/*" multiple>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <button type="button" onclick="agregarVariante()">Agregar Variante</button><br><br>
+    <button type="submit">Crear Producto</button>
+</form>
+
+<script>
+let urlCounters = [0]; // Contador de URLs por variante
+
+function agregarURL(varianteIndex) {
+    const container = document.getElementById(`imagenes-container-${varianteIndex}`);
+    const urlIndex = urlCounters[varianteIndex]++;
+    const inputDiv = document.createElement('div');
+    inputDiv.classList.add('url-input');
+
+    inputDiv.innerHTML = `
+        <input type="text" name="variantes[${varianteIndex}][imagen_url][${urlIndex}]" placeholder="http://...">
+        <a href="javascript:void(0);" onclick="eliminarURL(this)">Eliminar</a>
+    `;
+    container.appendChild(inputDiv);
+}
+
+function eliminarURL(element) {
+    element.parentElement.remove();
+}
+
+function agregarVariante() {
+    const container = document.getElementById('variantes-container');
+    const nuevaVarianteIndex = container.children.length;
+    urlCounters[nuevaVarianteIndex] = 0; // Inicializar contador de URLs
+    const nuevaVariante = document.createElement('div');
+    nuevaVariante.classList.add('variante');
+    nuevaVariante.setAttribute('data-variante', nuevaVarianteIndex);
+
+    nuevaVariante.innerHTML = `
+        <div class="form-group">
+            <a href="javascript:void(0);" onclick="eliminarVariante(${nuevaVarianteIndex})">
+                <i class="fas fa-trash-alt"></i> Eliminar
+            </a>
+            <label for="id_color">Color</label>
+            <select name="variantes[${nuevaVarianteIndex}][id_color]" required>
+                {% for color in colores %}
+                <option value="{{ color.id_color }}">{{ color.color }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="id_talla">Talla</label>
+            <select name="variantes[${nuevaVarianteIndex}][id_talla]" required>
+                {% for talla in tallas %}
+                <option value="{{ talla.id_talla }}">{{ talla.talla }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="stock">Stock</label>
+            <input type="number" name="variantes[${nuevaVarianteIndex}][stock]" required>
+        </div>
+
+        <div class="form-group imagenes-container" id="imagenes-container-${nuevaVarianteIndex}"></div>
+        <button type="button" onclick="agregarURL(${nuevaVarianteIndex})">Agregar URL</button>
+
+        {% if es_localhost %}
+        <div class="form-group">
+            <label for="imagenes_nuevas">Subir archivo:</label>
+            <input type="file" name="variantes[${nuevaVarianteIndex}][imagenes][]" accept="image/*" multiple>
+        </div>
+        {% endif %}
+    `;
+
+    container.appendChild(nuevaVariante);
+}
+
+function eliminarVariante(varianteIndex) {
+    const variante = document.querySelector(`[data-variante="${varianteIndex}"]`);
+    if (variante) variante.remove();
+}
+</script>
+
+{% endblock %}

@@ -6,7 +6,7 @@ from backend.Modelos.Usuario import Usuario
 from backend.Modelos.database import db
 from routes.autentificacion.tokens import obtener_clave_secreta
 
-def restablecer_contraseña(token):
+def restablecer_contrasena(token):
     # Obtener la instancia del serializador (con clave secreta interna)
     s = obtener_clave_secreta()
 
@@ -42,4 +42,4 @@ def restablecer_contraseña(token):
             return redirect(url_for("login"))
 
     # Si es GET (o si algo falló), renderizar el formulario de restablecimiento
-    return render_template("authentication/restablecer_contraseña.html", token=token)
+    return render_template("authentication/restablecer_contrasena.html", token=token)

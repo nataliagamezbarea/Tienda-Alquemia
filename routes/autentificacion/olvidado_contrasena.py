@@ -5,7 +5,7 @@ from routes.autentificacion.enviar_correo import enviar_correo
 from routes.autentificacion.tokens import obtener_clave_secreta
 
 # Funcion de olvidado contraseña
-def olvidado_contraseña():
+def olvidado_contrasena():
    mensaje = None
    tipo_mensaje = None
 
@@ -26,7 +26,7 @@ def olvidado_contraseña():
            # Convierte con el correo y el salto de la contraseña en un token de seguridad
            token = s.dumps(correo, salt='password-reset-salt')
            # Le das la url para poder recuperar la contraseña pero añade el token generado
-           url_restablecer = f"http://localhost:5000/restablecer_contraseña/{token}"
+           url_restablecer = f"http://localhost:5000/restablecer_contrasena/{token}"
 
             # Defines el mensaje del correo y le pasas la url
            cuerpo = f'Haz clic en el siguiente enlace para restablecer tu contraseña: {url_restablecer}'
@@ -45,7 +45,7 @@ def olvidado_contraseña():
            tipo_mensaje = "error"
 
    # Aqui pasas el mensaje y el tipo de mensjae
-   return render_template('authentication/olvidado_contraseña.html', mensaje=mensaje, tipo_mensaje=tipo_mensaje)
+   return render_template('authentication/olvidado_contrasena.html', mensaje=mensaje, tipo_mensaje=tipo_mensaje)
 
 
 

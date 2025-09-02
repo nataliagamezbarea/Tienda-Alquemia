@@ -21,9 +21,11 @@
   </div>
 
   <div id="iconos-navbar" class="center">
-    <a href="{{ url_for('busqueda') }}">
-      <i class="fa-solid fa-magnifying-glass"></i>
+    <a href="{{ url_for('busqueda') }}" aria-label="Buscar">
+      <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
     </a>
+    
+    
 
     <button popovertarget="cesta">
       {% if session.get("user") %}
@@ -38,8 +40,10 @@
 
     
     <a href="{{ url_for('login') }}">
-      <i class="fa-regular fa-user"></i>
+      <i class="fa-regular fa-user" aria-hidden="true"></i>
+      <span class="sr-only">Iniciar sesión</span>
     </a>
+    
   </div>
 </nav>
 

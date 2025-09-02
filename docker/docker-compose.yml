@@ -12,7 +12,7 @@ services:
     volumes:
       - ./base_de_datos:/docker-entrypoint-initdb.d:ro
     ports:
-      - "3306:3306"  
+       - "3307:3306"
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin

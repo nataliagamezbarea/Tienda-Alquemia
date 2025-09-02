@@ -11,7 +11,7 @@ from routes.pedido.pedido_exitoso import pedido_exitoso
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+app.secret_key = os.environ.get("SECRET_KEY")
 
 # Configuración del correo y caché
 app.config.update({
@@ -58,15 +58,15 @@ app.add_url_rule('/busqueda', 'busqueda', busqueda, methods=["GET", "POST"])
 # Autenticación
 app.add_url_rule('/login', 'login', login, methods=["GET", "POST"])
 app.add_url_rule('/registro', 'registro', registro, methods=["GET", "POST"])
-app.add_url_rule('/olvidado_contraseña', 'olvidado_contraseña', olvidado_contraseña, methods=["GET", "POST"])
-app.add_url_rule('/restablecer_contraseña/<token>', 'restablecer_contraseña', restablecer_contraseña, methods=["GET", "POST"])
+app.add_url_rule('/olvidado_contrasena', 'olvidado_contrasena', olvidado_contrasena, methods=["GET", "POST"])
+app.add_url_rule('/restablecer_contrasena/<token>', 'restablecer_contrasena', restablecer_contrasena, methods=["GET", "POST"])
 
 # Usuario
 app.add_url_rule('/informacion_personal', 'informacion_personal', informacion_personal)
 app.add_url_rule('/update_usuario', 'update_usuario', update_usuario, methods=['POST'])
 app.add_url_rule('/compras', 'compras', compras, methods=["GET", "POST"])
 app.add_url_rule('/cerrar_sesion', 'cerrar_sesion', cerrar_sesion, methods=["GET", "POST"])
-app.add_url_rule('/cambiar_contraseña', 'cambiar_contraseña', update_contraseña, methods=["GET", "POST"])
+app.add_url_rule('/cambiar_contrasena', 'cambiar_contrasena', update_contraseña, methods=["GET", "POST"])
 
 # Tienda
 app.add_url_rule('/nosotros', 'nosotros', nosotros, methods=["GET"])
@@ -82,7 +82,7 @@ app.add_url_rule('/catalogo', 'catalogo', catalogo, methods=["GET"])
 app.add_url_rule('/producto/<int:id_producto>', 'producto_detalle', producto_detalle, methods=["GET"])
 
 # Cesta
-app.add_url_rule('/cesta/añadir', 'añadir_producto_cesta', añadir_producto_cesta, methods=["POST"])
+app.add_url_rule('/cesta/add', 'añadir_producto_cesta', añadir_producto_cesta, methods=["POST"])
 app.add_url_rule('/cesta/actualizar/<int:id_variante>', 'actualizar_cantidad_producto', actualizar_cantidad_producto, methods=["POST"])
 app.add_url_rule('/cesta/eliminar/<int:id_variante>', 'eliminar_producto_cesta', eliminar_producto_cesta, methods=["POST"])
 
@@ -109,6 +109,7 @@ app.add_url_rule('/devoluciones/eliminar/<int:id_devolucion>', 'eliminar_devoluc
 app.add_url_rule('/pedido', 'pedido', pedido, methods=['GET', 'POST'])
 app.add_url_rule('/pagar', 'pagar', pagar)
 app.add_url_rule('/pedido_exitoso', 'pedido_exitoso', pedido_exitoso)
+app.add_url_rule('/producto/<int:id_producto>/color/<int:id_color>',  'imagenes_color' , imagenes_color )
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

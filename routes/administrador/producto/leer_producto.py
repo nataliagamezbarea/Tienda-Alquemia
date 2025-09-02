@@ -1,7 +1,6 @@
-from flask import render_template, request, redirect, session, url_for, flash, current_app
-from werkzeug.utils import secure_filename
-from sqlalchemy.exc import SQLAlchemyError
-import os
+from flask import render_template, request, redirect, session, url_for, current_app
+from sqlalchemy.orm import joinedload
+from math import ceil
 
 from backend.Modelos import (
     Producto, ProductoVariante, ProductoCategoria, ProductoImagen,
@@ -9,27 +8,25 @@ from backend.Modelos import (
 )
 from backend.Modelos.database import db
 
-# Verificar extensiones permitidas
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'gif'}
-
-# Guardar imagen y devolver ruta relativa
-def guardar_imagen(imagen):
-    if imagen and allowed_file(imagen.filename):
-        filename = secure_filename(imagen.filename)
-        upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
-        os.makedirs(upload_folder, exist_ok=True)
-        filepath = os.path.join(upload_folder, filename)
-        imagen.save(filepath)
-        return f'/static/uploads/{filename}'
-    return None
-
-# Obtener productos y renderizar HTML
 def obtener_productos_html():
     if "user" not in session or not session.get("is_admin"):
         return redirect(url_for("login"))
 
-    productos = Producto.query.all()
+    pagina_actual = request.args.get('pagina', 1, type=int)
+    productos_por_pagina = 50
+
+    query = db.session.query(Producto).options(
+        joinedload(Producto.variantes).joinedload(ProductoVariante.color),
+        joinedload(Producto.variantes).joinedload(ProductoVariante.talla),
+        joinedload(Producto.imagenes).joinedload(ProductoImagen.color),
+        joinedload(Producto.categorias),
+        joinedload(Producto.seccion)
+    )
+
+    # Orden descendente por id_producto para mostrar los más recientes primero
+    productos_paginados = query.order_by(Producto.id_producto.desc()).paginate(page=pagina_actual, per_page=productos_por_pagina, error_out=False)
+    productos = productos_paginados.items
+
     productos_dict = {}
 
     for producto in productos:
@@ -67,18 +64,23 @@ def obtener_productos_html():
         productos_dict[pid]['colores'] = ', '.join(productos_dict[pid]['colores'])
         productos_dict[pid]['tallas'] = ', '.join(productos_dict[pid]['tallas'])
 
-    productos_ordenados = sorted(productos_dict.values(), key=lambda x: x['precio'], reverse=True)
+    # No ordenar aquí, ya está ordenado desde el query
+    productos_ordenados = list(productos_dict.values())
 
     secciones = [(s.id_seccion, s.nombre) for s in Seccion.query.all()]
     colores = [(c.id_color, c.color) for c in Color.query.all()]
     tallas = [(t.id_talla, t.talla) for t in Talla.query.all()]
     categorias = [(c.id_categoria, c.nombre) for c in Categoria.query.all()]
 
+    total_paginas = ceil(query.count() / productos_por_pagina)
+
     return render_template(
-        'admin/productos.html',
+        'admin/productos/productos.html',
         productos=productos_ordenados,
         secciones=secciones,
         colores=colores,
         tallas=tallas,
-        categorias=categorias
+        categorias=categorias,
+        pagina_actual=pagina_actual,
+        total_paginas=total_paginas
     )

@@ -40,4 +40,4 @@ def update_contraseña():
             mensaje = "Contraseña actualizada correctamente."
             tipo_mensaje = "exito"
 
-    return render_template("user/usuario_configuracion/cambiar_contraseña.html", mensaje=mensaje,tipo_mensaje=tipo_mensaje)
+    return render_template("user/usuario_configuracion/cambiar_contrasena.html", mensaje=mensaje,tipo_mensaje=tipo_mensaje)

@@ -4,79 +4,79 @@ from backend.Modelos import Producto, ProductoVariante
 from backend.Modelos.database import db
 
 def producto_detalle(id_producto):
-    producto = db.session.query(Producto).\
-        options(
+    # --- Cargar producto con todas sus relaciones necesarias
+    producto = (
+        db.session.query(Producto)
+        .options(
             joinedload(Producto.variantes).joinedload(Producto.variantes.property.mapper.class_.color),
             joinedload(Producto.variantes).joinedload(Producto.variantes.property.mapper.class_.talla),
             joinedload(Producto.imagenes),
             joinedload(Producto.categorias)
-        ).\
-        filter(Producto.id_producto == id_producto).\
-        first()
+        )
+        .filter(Producto.id_producto == id_producto)
+        .first()
+    )
 
     if not producto:
         return "Producto no encontrado", 404
 
+    # --- Organizar imágenes por color
     imagenes_por_color = {}
     for imagen in producto.imagenes:
-        if imagen.id_color not in imagenes_por_color:
-            imagenes_por_color[imagen.id_color] = []
-        imagenes_por_color[imagen.id_color].append(imagen.imagen_url)
+        color_id = imagen.id_color or 0  # Por si hay imágenes sin color
+        imagenes_por_color.setdefault(color_id, []).append(imagen.imagen_url)
 
-    categorias_ids = [categoria.id_categoria for categoria in producto.categorias]
+    # --- IDs de categorías del producto actual
+    categorias_ids = [c.id_categoria for c in producto.categorias]
 
-    # --- ⚡ Backend corregido para productos recomendados
-    productos_recomendados = db.session.query(Producto).\
-        options(
+    # --- Productos recomendados: mismos IDs de categorías, excluyendo el actual
+    productos_recomendados = (
+        db.session.query(Producto)
+        .options(
             joinedload(Producto.variantes).joinedload(Producto.variantes.property.mapper.class_.color),
             joinedload(Producto.variantes).joinedload(Producto.variantes.property.mapper.class_.talla),
             joinedload(Producto.imagenes),
-            joinedload(Producto.categorias),
-            joinedload(Producto.seccion)  # <-- añadido por compatibilidad
-        ).\
-        join(Producto.categorias).\
-        filter(
+            joinedload(Producto.categorias)
+        )
+        .join(Producto.categorias)
+        .filter(
             Producto.id_producto != id_producto,
-            Producto.imagenes.any(),
-            Producto.categorias.any(Producto.categorias.property.mapper.class_.id_categoria.in_(categorias_ids))
-        ).\
-        distinct().\
-        limit(4).\
-        all()
+            Producto.categorias.any(Producto.categorias.property.mapper.class_.id_categoria.in_(categorias_ids)),
+            Producto.imagenes.any()
+        )
+        .distinct()
+        .limit(4)
+        .all()
+    )
 
-    # --- ⚡ Normalizar imágenes para productos recomendados
+    # --- Normalizar imágenes de productos recomendados
     for prod in productos_recomendados:
-        imagenes_validas = [img for img in prod.imagenes if hasattr(img, 'imagen_url') and img.imagen_url]
-
-        if len(imagenes_validas) == 0:
-            # Añadir dos placeholders si no hay imágenes
+        valid_imgs = [img for img in prod.imagenes if getattr(img, 'imagen_url', None)]
+        if not valid_imgs:
             placeholder = type('MockImage', (object,), {'imagen_url': '/static/img/placeholder.jpg'})()
-            imagenes_validas = [placeholder, placeholder]
-        elif len(imagenes_validas) == 1:
-            # Duplicar si solo hay una imagen
-            imagenes_validas.append(imagenes_validas[0])
+            prod.imagenes = [placeholder, placeholder]
+        elif len(valid_imgs) == 1:
+            prod.imagenes = [valid_imgs[0], valid_imgs[0]]
+        else:
+            prod.imagenes = valid_imgs
 
-        # Reemplazamos imágenes antiguas
-        prod.imagenes = imagenes_validas
-
-    # Verifica si se pasó el color y la talla en el formulario POST
-    id_color = request.form.get('id_color', None)
-    id_talla = request.form.get('id_talla', None)
-
-    # Si se recibieron el color y la talla, buscar la variante
+    # --- Buscar variante seleccionada si se envió POST
     id_variante = None
+    id_color = request.form.get('id_color')
+    id_talla = request.form.get('id_talla')
     if id_color and id_talla:
-        id_variante = db.session.query(ProductoVariante).\
-            filter_by(id_producto=id_producto, id_color=id_color, id_talla=id_talla).\
-            first()
-
-        if id_variante:
-            id_variante = id_variante.id_variante
+        variante = db.session.query(ProductoVariante).filter_by(
+            id_producto=id_producto,
+            id_color=id_color,
+            id_talla=id_talla
+        ).first()
+        if variante:
+            id_variante = variante.id_variante
 
     return render_template(
         'productos/producto_detalle.html',
         producto=producto,
         imagenes_por_color=imagenes_por_color,
         productos=productos_recomendados,
-        id_variante=id_variante  # Pasamos el id_variante a la plantilla
+        id_variante=id_variante
     )

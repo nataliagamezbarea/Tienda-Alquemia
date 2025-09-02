@@ -1,0 +1,175 @@
+{% extends "admin/admin.html" %}
+{% block contenido %}
+
+<link href="{{ url_for('static', filename='css/admin/editar.css') }}" rel="stylesheet" />
+
+<form method="POST" enctype="multipart/form-data">
+    <h2>Actualizar Producto</h2>
+
+    <!-- Campos del Producto -->
+    <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" name="nombre" required value="{{ producto.nombre }}">
+    </div>
+
+    <div class="form-group">
+        <label>Descripción</label>
+        <textarea name="descripcion">{{ producto.descripcion }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label>Precio</label>
+        <input type="number" name="precio" required value="{{ producto.precio }}">
+    </div>
+
+    <div class="form-group">
+        <label>Sección</label>
+        <select name="id_seccion" required>
+            {% for seccion in secciones %}
+            <option value="{{ seccion.id_seccion }}" {% if producto.id_seccion == seccion.id_seccion %}selected{% endif %}>{{ seccion.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Categoría</label>
+        <select name="id_categoria" required multiple>
+            {% for categoria in categorias %}
+            <option value="{{ categoria.id_categoria }}" {% if categoria.id_categoria in categorias_producto %}selected{% endif %}>{{ categoria.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <!-- Variantes -->
+    <div id="variantes-container">
+        {% for variante in variantes %}
+        {% set i = loop.index0 %}
+        <div class="variante" data-variante="{{ i }}">
+            <div class="form-group">
+                <a href="javascript:void(0);" onclick="eliminarVariante({{ i }})" class="btn-eliminar">Eliminar Variante</a>
+                <label>Color</label>
+                <select name="variantes[{{ i }}][id_color]" required>
+                    {% for color in colores %}
+                    <option value="{{ color.id_color }}" {% if color.id_color == variante.id_color %}selected{% endif %}>{{ color.color }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Talla</label>
+                <select name="variantes[{{ i }}][id_talla]" required>
+                    {% for talla in tallas %}
+                    <option value="{{ talla.id_talla }}" {% if talla.id_talla == variante.id_talla %}selected{% endif %}>{{ talla.talla }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Stock</label>
+                <input type="number" name="variantes[{{ i }}][stock]" required value="{{ variante.stock }}">
+            </div>
+
+            <!-- Imágenes existentes -->
+            <div class="form-group imagenes-previas" id="imagenes-previas-{{ i }}">
+                {% for imagen in variante.imagenes %}
+                <div class="imagen-container" data-imagen-url="{{ imagen.imagen_url }}">
+                    <img src="{{ imagen.imagen_url }}" width="100" height="100">
+                    <button type="button" onclick="eliminarImagen({{ i }}, '{{ imagen.imagen_url }}')">Eliminar</button>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- URLs dinámicas (siempre disponibles) -->
+            <div class="form-group imagenes-url" id="imagenes-url-{{ i }}">
+                {% for imagen in variante.imagenes %}
+                    {% if imagen.imagen_url.startswith('http') %}
+                    <div class="url-input" data-imagen-url="{{ imagen.imagen_url }}">
+                        <input type="text" name="variantes[{{ i }}][imagen_url][]" value="{{ imagen.imagen_url }}">
+                        <a href="javascript:void(0);" onclick="eliminarURL(this)">Eliminar</a>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <button type="button" onclick="agregarURL({{ i }})" class="btn-agregar">Agregar URL</button>
+
+            {% if es_localhost %}
+            <!-- Subir nuevas imágenes solo en localhost -->
+            <div class="form-group">
+                <label>Agregar nuevas imágenes</label>
+                <input type="file" name="variantes[{{ i }}][imagenes_nuevas]" accept="image/*" multiple>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <button type="button" onclick="agregarVariante()" class="btn-agregar">Agregar Variante</button><br><br>
+    <button type="submit" class="btn-submit">Actualizar Producto</button>
+</form>
+
+<script>
+let urlCounters = [];
+{% for idx in range(variantes|length) %}
+urlCounters[{{ idx }}] = 0;
+{% endfor %}
+
+// Agregar URL dinámica
+function agregarURL(varianteIndex) {
+    const container = document.getElementById(`imagenes-url-${varianteIndex}`);
+    const div = document.createElement('div');
+    div.classList.add('url-input');
+    div.setAttribute('data-imagen-url', '');
+    div.innerHTML = `<input type="text" name="variantes[${varianteIndex}][imagen_url][]" placeholder="http://...">
+                     <a href="javascript:void(0);" onclick="eliminarURL(this)">Eliminar</a>`;
+    container.appendChild(div);
+}
+function eliminarURL(element) { element.parentElement.remove(); }
+
+// Agregar/eliminar variantes
+function agregarVariante() {
+    const container = document.getElementById('variantes-container');
+    const nuevaIndex = container.children.length;
+    const div = container.children[0].cloneNode(true);
+    div.setAttribute('data-variante', nuevaIndex);
+
+    // Limpiar campos
+    div.querySelectorAll('input').forEach(input => input.value = '');
+    div.querySelectorAll('select').forEach(sel => sel.selectedIndex = 0);
+    div.querySelectorAll('.imagen-container').forEach(img => img.remove());
+    div.querySelectorAll('.imagenes-url .url-input').forEach(urlDiv => urlDiv.remove());
+
+    container.appendChild(div);
+}
+
+function eliminarVariante(idx) {
+    const v = document.querySelector(`[data-variante="${idx}"]`);
+    if (v) v.remove();
+}
+
+// Eliminar imagen y eliminar la url asociada solo en el variante correspondiente
+function eliminarImagen(varianteIndex, imagenUrl) {
+    // 1. Obtener el color actual del variante donde diste click
+    const variante = document.querySelector(`[data-variante="${varianteIndex}"]`);
+    if (!variante) return;
+    const colorSelect = variante.querySelector('select[name^="variantes"][name$="[id_color]"]');
+    if (!colorSelect) return;
+    const colorId = colorSelect.value;
+
+    // 2. Buscar todas las variantes con ese color y eliminar la imagen/URL en ellas
+    document.querySelectorAll('.variante').forEach(function(v) {
+        const vColorSelect = v.querySelector('select[name^="variantes"][name$="[id_color]"]');
+        if (vColorSelect && vColorSelect.value === colorId) {
+            // Eliminar imagen
+            v.querySelectorAll('.imagen-container').forEach(container => {
+                if (container.getAttribute('data-imagen-url') === imagenUrl) container.remove();
+            });
+            // Eliminar URL asociada
+            v.querySelectorAll('.imagenes-url .url-input').forEach(urlDiv => {
+                if (urlDiv.getAttribute('data-imagen-url') === imagenUrl) urlDiv.remove();
+            });
+        }
+    });
+}
+</script>
+
+{% endblock %}
