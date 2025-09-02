@@ -1,0 +1,23 @@
+USE tienda_alquemia;
+SET NAMES 'utf8mb4';
+
+INSERT INTO colores (color, img_color) VALUES ('verde', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dw7cc87f79/images/swatch/P_683924721C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('coral', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dwa0c4b6dd/images/swatch/P_998985863C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('turquesa', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dwd58dbb44/images/swatch/P_998985887C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('marfil', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dw3cbfa068/images/swatch/P_998985896C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('negro', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dw5c531b26/images/swatch/P_021914001C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('blanco', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dw0f7bd3e1/images/swatch/P_021914099C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('azul', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dw9ced07f0/images/swatch/P_688913716C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('gris', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dwef7c414e/images/swatch/P_142916648C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('beige', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dwa69b7d86/images/swatch/P_037923950C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('naranja', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dw7f7804ce/images/swatch/P_037923165C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('amarillo', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dw0b0e9f0c/images/swatch/P_855108804C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('estampado', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dwac3b8eb7/images/swatch/P_855108858C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('fucsia', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dwfc6ea445/images/swatch/P_855108874C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('rojo', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dw9a6288bc/images/swatch/P_855108861C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('burdeos', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dw059b64e8/images/swatch/P_855108869C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('marrón', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dw5d5e0162/images/swatch/P_820905030C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('rosa', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dw37a9cfa4/images/swatch/P_912915170C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('kaki', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dw9dc8fb12/images/swatch/P_440901594C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('nude', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dwcdb0230e/images/swatch/P_142916936C.jpg?sw=10&sh=10');
+INSERT INTO colores (color, img_color) VALUES ('morado/lila', 'https://myspringfield.com/dw/image/v2/AAYL_PRD/on/demandware.static/-/Sites-gc-spf-master-catalog/default/dwd81676ae/images/swatch/P_679971178C.jpg?sw=10&sh=10');
