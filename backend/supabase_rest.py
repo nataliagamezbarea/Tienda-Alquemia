@@ -6,26 +6,42 @@ from urllib.error import HTTPError, URLError
 
 
 def _headers(schema: str = "tienda_alquemia"):
-    key = os.getenv("SUPABASE_SERVICE_KEY", "") or os.getenv("SUPABASE_KEY", "")
-    return {
-        "apikey": key,
-        "Authorization": f"Bearer {key}",
+    headers = {
         "Accept": "application/json",
         "Accept-Profile": schema,
         "Content-Profile": schema,
     }
+    
+    # Añadir API key solo si existe (necesario para Supabase Cloud)
+    api_key = os.getenv("SUPABASE_KEY", "").strip()
+    if api_key:
+        headers["apikey"] = api_key
+        headers["Authorization"] = f"Bearer {api_key}"
+    
+    return headers
 
 
 def _request(method: str, table: str, params: dict | None = None, payload: dict | list | None = None, schema: str = "tienda_alquemia"):
     base = os.getenv("SUPABASE_URL", "").rstrip("/")
     if not base:
+        print(f"[ERROR] SUPABASE_URL no configurado")
         return []
 
     query = urlencode(params or {}, doseq=True)
-    url = f"{base}/rest/v1/{table}"
+    
+    # Detectar si es PostgREST puro o Supabase Cloud
+    # Supabase Cloud usa /rest/v1/, PostgREST puro no
+    is_postgrest = "postgrest" in base or "localhost" in base or "127.0.0.1" in base
+    if is_postgrest:
+        url = f"{base}/{table}"
+    else:
+        url = f"{base}/rest/v1/{table}"
+    
     if query:
         url = f"{url}?{query}"
 
+    print(f"[DEBUG] Llamando a: {url}")
+    
     headers = _headers(schema)
     data = None
     if payload is not None:
@@ -37,7 +53,9 @@ def _request(method: str, table: str, params: dict | None = None, payload: dict 
     try:
         with urlopen(req, timeout=12) as resp:
             body = resp.read().decode("utf-8")
-            return json.loads(body) if body else []
+            result = json.loads(body) if body else []
+            print(f"[DEBUG] Respuesta: {len(result) if isinstance(result, list) else 'dict'} elementos")
+            return result
     except HTTPError as e:
         try:
             body = e.read().decode("utf-8")

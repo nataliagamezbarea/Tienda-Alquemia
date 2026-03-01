@@ -1,31 +1,100 @@
-version: "3.8"
-
 services:
+  # PostgreSQL Database
   db:
-    image: mysql:5.7
+    image: postgres:15-alpine
+    container_name: tienda_alquemia_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 123
-      MYSQL_DATABASE: tienda_alquemia
-    tmpfs:
-      - /var/lib/mysql
+      POSTGRES_DB: tienda_alquemia
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ZBcDttpuipJCZHFb
+    ports:
+      - "5432:5432"
     volumes:
+      - postgres_data:/var/lib/postgresql/data
       - ./base_de_datos:/docker-entrypoint-initdb.d:ro
-    ports:
-       - "3307:3306"
+    networks:
+      - tienda_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+  # PostgREST API (Supabase REST API alternativa)
+  postgrest:
+    image: postgrest/postgrest:latest
+    container_name: tienda_alquemia_api
     restart: always
     ports:
-      - "8080:80"
+      - "3000:3000"
     environment:
-      PMA_HOST: db
-      PMA_USER: root
-      PMA_PASSWORD: 123
+      PGRST_DB_URI: postgresql://postgres:ZBcDttpuipJCZHFb@db:5432/tienda_alquemia
+      PGRST_DB_SCHEMA: tienda_alquemia
+      PGRST_DB_ANON_ROLE: postgres
+      PGRST_JWT_SECRET: Qazwsx123!@#Fl4skS3cretK3y123456789
+      # Permitir acceso sin JWT para usuarios anónimos
+      PGRST_JWT_AUD: ""
+    depends_on:
+      - db
+    networks:
+      - tienda_network
 
+  # Aplicación Flask
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: tienda_alquemia_app
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      # Local Supabase Configuration (Docker)
+      SUPABASE_URL: http://postgrest:3000
+      SUPABASE_KEY: Qazwsx123!@#Fl4skS3cretK3y123456789
+      SUPABASE_SERVICE_KEY: Qazwsx123!@#Fl4skS3cretK3y123456789
+      SUPABASE_REST_ONLY: "true"
+      
+      # Database Configuration
+      DATABASE_URL: postgresql://postgres:ZBcDttpuipJCZHFb@db:5432/tienda_alquemia
+      
+      # Flask Configuration
+      SECRET_KEY: Qazwsx123!@#Fl4skS3cretK3y
+      FLASK_ENV: production
+      FLASK_APP: app.py
+      
+      # Mail Configuration
+      MAIL_SERVER: mailhog
+      MAIL_PORT: 1025
+      MAIL_USE_TLS: "False"
+      MAIL_USERNAME: ""
+      MAIL_PASSWORD: ""
+      MAIL_DEFAULT_SENDER: no-reply@tienda.com
+      ADMIN_EMAIL_DOMAIN: tiendaalquemia.com
+    
+    depends_on:
+      - db
+      - postgrest
+      - mailhog
+    
+    networks:
+      - tienda_network
+
+  # Mailhog para pruebas de email
   mailhog:
     image: mailhog/mailhog
+    container_name: tienda_alquemia_mailhog
+    restart: always
     ports:
       - "1025:1025"
       - "8025:8025"
+    networks:
+      - tienda_network
+
+volumes:
+  postgres_data:
+
+networks:
+  tienda_network:
+    driver: bridge

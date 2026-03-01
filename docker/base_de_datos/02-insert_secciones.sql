@@ -1,5 +1,3 @@
-USE tienda_alquemia;
-SET NAMES 'utf8mb4';
 
-INSERT INTO secciones (nombre) VALUES ('hombre');
-INSERT INTO secciones (nombre) VALUES ('mujer');
+INSERT INTO tienda_alquemia.secciones (nombre) VALUES ('hombre');
+INSERT INTO tienda_alquemia.secciones (nombre) VALUES ('mujer');

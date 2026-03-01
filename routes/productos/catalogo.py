@@ -8,6 +8,8 @@ def catalogo():
     pagina_actual = request.args.get('pagina', 1, type=int)
     productos_por_pagina = 42
 
+    print(f"[CATALOGO] Inicio - seccion={nombre_seccion}, categoria={nombre_categoria}")
+
     params = {
         "select": "id_producto,nombre_producto,precio,id_variante,color,img_color,imagen_url,seccion,nombre_categoria",
         "order": "id_producto.asc",
@@ -17,7 +19,9 @@ def catalogo():
     if nombre_categoria:
         params["nombre_categoria"] = f"eq.{nombre_categoria}"
 
+    print(f"[CATALOGO] Buscando en vista_productos_completa con params: {params}")
     filas = select("vista_productos_completa", params)
+    print(f"[CATALOGO] Resultado vista_productos_completa: {len(filas) if filas else 0} filas")
 
     # Fallback: si la vista completa no devuelve filas, usar tablas base
     if not filas:
