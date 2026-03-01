@@ -103,14 +103,3 @@ Puedes acceder con cualquiera de los siguientes correos, **todas las contraseña
   Usuario: `root`  
   Contraseña: `123`
 
----
-
-## 🌐 Acceso en producción
-
-La versión pública está desplegada en:
-
-**[https://tienda-alquemia.vercel.app](https://tienda-alquemia.vercel.app)**
-
-- En la versión local, el envío de correos se prueba utilizando el contenedor MailHog.  
-- En la versión desplegada en [https://tienda-alquemia.vercel.app](https://tienda-alquemia.vercel.app), el envío de correos funciona de forma real y puedes probar la experiencia completa (registro, pedidos, contacto).
-
