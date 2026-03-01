@@ -1,5 +1,5 @@
 from flask import render_template, session, redirect, url_for
-from backend.Modelos.Usuario import Usuario
+from backend.supabase_rest import select
 
 def informacion_personal():
 
@@ -11,10 +11,15 @@ def informacion_personal():
         # Devuelve a la función para que inicie sesión
         return redirect(url_for("login"))
 
-    # Filtra el usuario para obtener su información personal
-    usuario = Usuario.query.filter_by(id_usuario=user_id).first()
+    # Filtra el usuario para obtener su información personal desde Supabase
+    usuarios = select("usuarios", {
+        "select": "id_usuario,nombre,apellido1,apellido2,email,is_admin",
+        "id_usuario": f"eq.{user_id}",
+        "limit": "1"
+    })
+    usuario = usuarios[0] if usuarios else None
 
-     # Si el usuario no se existe
+    # Si el usuario no se existe
     if not usuario:
         # Devuelve usuario no encontrado
         return "Usuario no encontrado", 404

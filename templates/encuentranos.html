@@ -16,21 +16,21 @@
         <select id="select-pais">
             <option value="">Seleccionar País</option>
             {% for pais in paises %}
-                <option value="{{ pais[0] }}" {% if pais[0] == selected_pais %}selected{% endif %}>{{ pais[0] }}</option>
+                <option value="{{ pais }}">{{ pais }}</option>
             {% endfor %}
         </select>
 
         <select id="select-provincia">
             <option value="">Seleccionar Provincia</option>
             {% for provincia in provincias %}
-                <option value="{{ provincia[0] }}" {% if provincia[0] == selected_provincia %}selected{% endif %}>{{ provincia[0] }}</option>
+                <option value="{{ provincia }}">{{ provincia }}</option>
             {% endfor %}
         </select>
 
         <select id="select-ciudad">
             <option value="">Seleccionar Ciudad</option>
             {% for ciudad in ciudades %}
-                <option value="{{ ciudad[0] }}" {% if ciudad[0] == selected_ciudad %}selected{% endif %}>{{ ciudad[0] }}</option>
+                <option value="{{ ciudad }}">{{ ciudad }}</option>
             {% endfor %}
         </select>
 
@@ -42,11 +42,18 @@
                      data-provincia="{{ tienda.provincia }}"
                      data-ciudad="{{ tienda.ciudad }}"
                      data-url="{{ tienda.maps_url }}"
-                     onclick="mostrar_mapa(this)">
+                     onclick="mostrar_mapa(this)"
+                     style="cursor: pointer;">
                     <h3>{{ tienda.ciudad }}</h3>
+                    <p><strong>País:</strong> {{ tienda.pais }}</p>
                     <p><strong>Provincia:</strong> {{ tienda.provincia }}</p>
                     <p><strong>CP:</strong> {{ tienda.codigo_postal }}</p>
+                    {% if tienda.direccion %}<p><strong>Dirección:</strong> {{ tienda.direccion }}</p>{% endif %}
+                    {% if tienda.telefono %}<p><strong>Teléfono:</strong> {{ tienda.telefono }}</p>{% endif %}
+                    <p style="margin-top: 10px; font-size: 0.9em; color: #999;">Haz clic para ver en el mapa</p>
                 </div>
+            {% else %}
+                <p>No hay tiendas disponibles</p>
             {% endfor %}
         </div>
     </div>

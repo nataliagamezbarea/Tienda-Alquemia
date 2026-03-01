@@ -1,6 +1,5 @@
 from flask import request, redirect, url_for, session, render_template
-from backend.Modelos.Usuario import Usuario
-from backend.Modelos.database import db  
+from backend.supabase_rest import select, _request
 
 def update_usuario():
     # Obtiene el usuario id
@@ -10,8 +9,13 @@ def update_usuario():
     if not user_id:
         return redirect(url_for("login"))
 
-    # Filtra el usuario por el id del que se ha logeadp
-    usuario = Usuario.query.filter_by(id_usuario=user_id).first()
+    # Verificar que el usuario existe
+    usuarios = select("usuarios", {
+        "select": "id_usuario",
+        "id_usuario": f"eq.{user_id}",
+        "limit": "1"
+    })
+    usuario = usuarios[0] if usuarios else None
 
     # Si no se encuentra el usuario
     if not usuario:
@@ -23,14 +27,17 @@ def update_usuario():
     apellido2 = request.form.get("apellido2")
     email = request.form.get("email")
 
-    # Actualizar los campos
-    usuario.nombre = nombre
-    usuario.apellido1 = apellido1
-    usuario.apellido2 = apellido2
-    usuario.email = email
-
-    # Guardar cambios en la base de datos
-    db.session.commit()
+    # Actualizar los campos en Supabase
+    payload = {
+        "nombre": nombre,
+        "apellido1": apellido1,
+        "apellido2": apellido2,
+        "email": email
+    }
+    
+    _request("PATCH", "usuarios", 
+             params={"id_usuario": f"eq.{user_id}"},
+             payload=payload)
 
     # Redirigir a la página de información personal con los datos actualizados
     return redirect(url_for("informacion_personal"))

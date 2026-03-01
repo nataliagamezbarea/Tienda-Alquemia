@@ -1,12 +1,8 @@
 from flask import flash, redirect, render_template, request, url_for
-from backend.Modelos.ProductoVariante import ProductoVariante
-from backend.Modelos.Talla import Talla
-from backend.Modelos.database import db
-from backend.Modelos import Categoria, Color, Producto, ProductoCategoria, ProductoImagen, Seccion
+from backend.supabase_rest import select, insert, _request
 from werkzeug.utils import secure_filename
 import os
 import time
-from sqlalchemy.exc import SQLAlchemyError
 from routes.administrador.producto.local import es_local  # función para localhost
 
 UPLOAD_FOLDER = 'static/uploads'
@@ -16,7 +12,14 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def actualizar_producto(producto_id):
-    producto = Producto.query.get_or_404(producto_id)
+    producto_rows = select(
+        "productos",
+        {"select": "id_producto,nombre,descripcion,precio,id_seccion", "id_producto": f"eq.{producto_id}", "limit": "1"},
+    )
+    if not producto_rows:
+        flash("Producto no encontrado", "error")
+        return redirect(url_for('productos'))
+    producto = producto_rows[0]
 
     if request.method == 'POST':
         nombre = request.form['nombre']
@@ -29,77 +32,102 @@ def actualizar_producto(producto_id):
             flash("Sección y categorías son obligatorias", "error")
             return redirect(request.url)
 
-        try:
-            # Actualizar datos del producto
-            producto.nombre = nombre
-            producto.descripcion = descripcion
-            producto.precio = precio
-            producto.id_seccion = id_seccion
-            db.session.commit()
+        _request(
+            "PATCH",
+            "productos",
+            params={"id_producto": f"eq.{producto_id}"},
+            payload={"nombre": nombre, "descripcion": descripcion, "precio": precio, "id_seccion": id_seccion},
+        )
 
-            # Actualizar categorías
-            ProductoCategoria.query.filter_by(id_producto=producto.id_producto).delete()
-            for id_cat in id_categorias:
-                db.session.add(ProductoCategoria(id_producto=producto.id_producto, id_categoria=id_cat))
-            db.session.commit()
+        # Actualizar categorías
+        _request("DELETE", "productos_categorias", params={"id_producto": f"eq.{producto_id}"})
+        rels = [{"id_producto": producto_id, "id_categoria": int(id_cat)} for id_cat in id_categorias]
+        if rels:
+            insert("productos_categorias", rels)
 
-            # Eliminar variantes e imágenes anteriores
-            ProductoVariante.query.filter_by(id_producto=producto.id_producto).delete()
-            ProductoImagen.query.filter_by(id_producto=producto.id_producto).delete()
-            db.session.commit()
+        # Reemplazar variantes e imágenes
+        _request("DELETE", "productos_variantes", params={"id_producto": f"eq.{producto_id}"})
+        _request("DELETE", "productos_imagenes_colores", params={"id_producto": f"eq.{producto_id}"})
 
-            # Procesar variantes
-            i = 0
-            while True:
-                id_color = request.form.get(f'variantes[{i}][id_color]')
-                id_talla = request.form.get(f'variantes[{i}][id_talla]')
-                stock = request.form.get(f'variantes[{i}][stock]')
-                if not id_color or not id_talla or not stock:
-                    break
+        i = 0
+        while True:
+            id_color = request.form.get(f'variantes[{i}][id_color]')
+            id_talla = request.form.get(f'variantes[{i}][id_talla]')
+            stock = request.form.get(f'variantes[{i}][stock]')
+            if not id_color or not id_talla or not stock:
+                break
 
-                variante = ProductoVariante(id_producto=producto.id_producto, id_color=id_color, id_talla=id_talla, stock=stock)
-                db.session.add(variante)
-                db.session.commit()
+            insert(
+                "productos_variantes",
+                {
+                    "id_producto": int(producto_id),
+                    "id_color": int(id_color),
+                    "id_talla": int(id_talla),
+                    "stock": int(stock),
+                },
+            )
 
-                # URLs (siempre se permiten)
-                urls = request.form.getlist(f'variantes[{i}][imagen_url][]')
-                for url in urls:
-                    if url:
-                        db.session.add(ProductoImagen(id_producto=producto.id_producto, id_color=id_color, imagen_url=url))
+            # URLs (siempre se permiten)
+            urls = request.form.getlist(f'variantes[{i}][imagen_url][]')
+            for url in urls:
+                url = (url or "").strip()
+                if url:
+                    insert(
+                        "productos_imagenes_colores",
+                        {
+                            "id_producto": int(producto_id),
+                            "id_color": int(id_color),
+                            "imagen_url": url,
+                        },
+                    )
 
-                # Imágenes subidas (solo si es local)
-                if es_local():
-                    imagenes_nuevas = request.files.getlist(f'variantes[{i}][imagenes_nuevas]')
-                    for imagen in imagenes_nuevas:
-                        if imagen and allowed_file(imagen.filename):
-                            filename = secure_filename(imagen.filename)
-                            unique_name = f"{int(time.time())}_{filename}"
-                            ruta = os.path.join(UPLOAD_FOLDER, unique_name)
-                            os.makedirs(os.path.dirname(ruta), exist_ok=True)
-                            imagen.save(ruta)
-                            # Guardar la ruta como url relativo para usar en frontend
-                            db.session.add(ProductoImagen(id_producto=producto.id_producto, id_color=id_color, imagen_url='/' + ruta))
+            # Imágenes subidas (solo si es local)
+            if es_local():
+                imagenes_nuevas = request.files.getlist(f'variantes[{i}][imagenes_nuevas]')
+                for imagen in imagenes_nuevas:
+                    if imagen and allowed_file(imagen.filename):
+                        filename = secure_filename(imagen.filename)
+                        unique_name = f"{int(time.time())}_{filename}"
+                        ruta = os.path.join(UPLOAD_FOLDER, unique_name)
+                        os.makedirs(os.path.dirname(ruta), exist_ok=True)
+                        imagen.save(ruta)
+                        insert(
+                            "productos_imagenes_colores",
+                            {
+                                "id_producto": int(producto_id),
+                                "id_color": int(id_color),
+                                "imagen_url": '/' + ruta,
+                            },
+                        )
 
-                i += 1
+            i += 1
 
-            db.session.commit()
-            flash("Producto actualizado exitosamente", "success")
-            return redirect(url_for('productos'))
-
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(f"Error en la base de datos: {str(e)}", 'error')
-            return redirect(url_for('productos'))
+        flash("Producto actualizado exitosamente", "success")
+        return redirect(url_for('productos'))
 
     # GET: recuperar datos para el formulario
-    tallas = Talla.query.all()
-    colores = Color.query.all()
-    secciones = Seccion.query.all()
-    categorias = Categoria.query.all()
-    categorias_producto = [pc.id_categoria for pc in producto.categorias]
-    variantes = ProductoVariante.query.filter_by(id_producto=producto.id_producto).all()
+    tallas = select("tallas", {"select": "id_talla,talla", "order": "id_talla.asc"})
+    colores = select("colores", {"select": "id_color,color", "order": "id_color.asc"})
+    secciones = select("secciones", {"select": "id_seccion,nombre", "order": "id_seccion.asc"})
+    categorias = select("categorias", {"select": "id_categoria,nombre", "order": "id_categoria.asc"})
+
+    rels = select("productos_categorias", {"select": "id_categoria", "id_producto": f"eq.{producto_id}"})
+    categorias_producto = [r.get("id_categoria") for r in rels]
+
+    variantes = select(
+        "productos_variantes",
+        {"select": "id_variante,id_producto,id_color,id_talla,stock", "id_producto": f"eq.{producto_id}", "order": "id_variante.asc"},
+    )
+    imagenes = select(
+        "productos_imagenes_colores",
+        {"select": "id_producto,id_color,imagen_url", "id_producto": f"eq.{producto_id}"},
+    )
     for variante in variantes:
-        variante.imagenes = ProductoImagen.query.filter_by(id_producto=producto.id_producto, id_color=variante.id_color).all()
+        variante["imagenes"] = [
+            {"imagen_url": i.get("imagen_url")}
+            for i in imagenes
+            if i.get("id_color") == variante.get("id_color")
+        ]
 
     return render_template(
         'admin/productos/editar_producto.html',

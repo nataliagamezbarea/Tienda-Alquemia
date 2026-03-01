@@ -1,6 +1,7 @@
 # backend/Modelos/__init__.py
 
-from .database import db
+from .database import db, get_db
+
 from .Categoria import Categoria
 from .CestaProducto import CestaProducto
 from .DetallesPedido import DetallesPedido

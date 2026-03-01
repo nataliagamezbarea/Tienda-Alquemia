@@ -2,8 +2,7 @@ import bcrypt
 from flask import render_template, request, redirect, url_for
 from itsdangerous import SignatureExpired, BadSignature
 
-from backend.Modelos.Usuario import Usuario
-from backend.Modelos.database import db
+from backend.supabase_rest import select, _request
 from routes.autentificacion.tokens import obtener_clave_secreta
 
 def restablecer_contrasena(token):
@@ -27,7 +26,8 @@ def restablecer_contrasena(token):
         nueva_contraseña = request.form.get("nueva_contraseña")
 
         # Buscar al usuario por su correo
-        usuario = Usuario.query.filter_by(email=correo).first()
+        usuarios = select("usuarios", {"select": "id_usuario,email", "email": f"eq.{correo}", "limit": "1"})
+        usuario = usuarios[0] if usuarios else None
 
         # Si el usuario existe y se ingresó una nueva contraseña
         if usuario and nueva_contraseña:
@@ -35,8 +35,12 @@ def restablecer_contrasena(token):
             hash_pw = bcrypt.hashpw(nueva_contraseña.encode("utf-8"), bcrypt.gensalt())
 
             # Guardar la contraseña encriptada en la base de datos
-            usuario.contrasena = hash_pw.decode("utf-8")
-            db.session.commit()
+            _request(
+                "PATCH",
+                "usuarios",
+                params={"id_usuario": f"eq.{usuario.get('id_usuario')}"},
+                payload={"contrasena": hash_pw.decode("utf-8")},
+            )
 
             # Redirigir al login tras restablecer la contraseña
             return redirect(url_for("login"))

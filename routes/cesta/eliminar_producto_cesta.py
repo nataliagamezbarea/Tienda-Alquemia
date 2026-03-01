@@ -1,10 +1,5 @@
-
 from flask import request, redirect, url_for, session
-
-from backend.Modelos.database import db
-from backend.Modelos.Cesta import Cesta
-from backend.Modelos.CestaProducto import CestaProducto
-from backend.Modelos.ProductoVariante import ProductoVariante
+from backend.supabase_rest import select, _request
 
 def eliminar_producto_cesta(id_variante):
     user_id = session.get("user")
@@ -13,20 +8,31 @@ def eliminar_producto_cesta(id_variante):
         session['message_type'] = 'error'
         return redirect(url_for('login'))
 
-    cesta = Cesta.query.filter_by(id_usuario=user_id).first()
-    if not cesta:
+    # Obtener la cesta del usuario
+    cestas = select("cestas", {
+        "select": "id_cesta,id_usuario",
+        "id_usuario": f"eq.{user_id}",
+        "limit": "1"
+    })
+    
+    if not cestas:
         session['message'] = 'No tienes una cesta activa.'
         session['message_type'] = 'error'
         return redirect(request.referrer or url_for('home'))
 
-    producto_cesta = CestaProducto.query.filter_by(
-        id_cesta=cesta.id_cesta,
-        id_variante=id_variante
-    ).first()
+    id_cesta = cestas[0]["id_cesta"]
 
-    if producto_cesta:
-        db.session.delete(producto_cesta)
-        db.session.commit()
+    # Buscar el producto en la cesta
+    productos_cesta = select("cestas_productos", {
+        "select": "id_cesta,id_variante,cantidad",
+        "id_cesta": f"eq.{id_cesta}",
+        "id_variante": f"eq.{id_variante}",
+        "limit": "1"
+    })
+
+    if productos_cesta:
+        _request("DELETE", "cestas_productos",
+                params={"id_cesta": f"eq.{id_cesta}", "id_variante": f"eq.{id_variante}"})
 
     session['message'] = 'Producto eliminado de tu cesta.'
     session['message_type'] = 'success'
@@ -41,25 +47,36 @@ def actualizar_cantidad_producto(id_variante):
 
     nueva_cantidad = int(request.form.get('cantidad', 1))
 
-    cesta = Cesta.query.filter_by(id_usuario=user_id).first()
-    if not cesta:
+    # Obtener la cesta del usuario
+    cestas = select("cestas", {
+        "select": "id_cesta,id_usuario",
+        "id_usuario": f"eq.{user_id}",
+        "limit": "1"
+    })
+    
+    if not cestas:
         session['message'] = 'No tienes una cesta activa.'
         session['message_type'] = 'error'
         return redirect(request.referrer or url_for('home'))
 
-    producto_cesta = CestaProducto.query.filter_by(
-        id_cesta=cesta.id_cesta,
-        id_variante=id_variante
-    ).first()
+    id_cesta = cestas[0]["id_cesta"]
 
-    if producto_cesta:
+    # Buscar el producto en la cesta
+    productos_cesta = select("cestas_productos", {
+        "select": "id_cesta,id_variante,cantidad",
+        "id_cesta": f"eq.{id_cesta}",
+        "id_variante": f"eq.{id_variante}",
+        "limit": "1"
+    })
+
+    if productos_cesta:
         if nueva_cantidad >= 1:
-            producto_cesta.cantidad = nueva_cantidad
-            db.session.commit()
+            _request("PATCH", "cestas_productos",
+                    params={"id_cesta": f"eq.{id_cesta}", "id_variante": f"eq.{id_variante}"},
+                    payload={"cantidad": nueva_cantidad})
         else:
-            # Si la cantidad es menor que 1, elimina el producto
-            db.session.delete(producto_cesta)
-            db.session.commit()
+            _request("DELETE", "cestas_productos",
+                    params={"id_cesta": f"eq.{id_cesta}", "id_variante": f"eq.{id_variante}"})
 
     session['message'] = 'Cantidad actualizada correctamente.'
     session['message_type'] = 'success'

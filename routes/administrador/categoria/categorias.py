@@ -1,9 +1,9 @@
 from flask import render_template, session, redirect, url_for
-from backend.Modelos import Categoria
+from backend.supabase_rest import select
 
 def listar_categorias():
     if "user" not in session or not session.get("is_admin"):
         return redirect(url_for('login'))  
     
-    categorias = Categoria.query.all()
+    categorias = select("categorias", {"select": "id_categoria,nombre", "order": "id_categoria.asc"})
     return render_template('admin/categorias/lista_categorias.html', categorias=categorias)

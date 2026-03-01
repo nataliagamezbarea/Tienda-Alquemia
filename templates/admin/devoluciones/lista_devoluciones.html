@@ -31,7 +31,7 @@
             <td>{{ item.devolucion.descripcion }}</td>
             <td>{{ item.devolucion.id_pedido }}</td>
             <td>{{ item.devolucion.id_variante }}</td>
-            <td>{{ item.devolucion.fecha_devolucion.strftime('%Y-%m-%d') }}</td>
+            <td>{{ item.devolucion.fecha_devolucion[:10] if item.devolucion.fecha_devolucion else '' }}</td>
             <td>{{ 'Sí' if item.devolucion.hecha else 'No' }}</td>
             <td>
               {% if item.tienda %}

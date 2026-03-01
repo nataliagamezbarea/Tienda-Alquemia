@@ -1,6 +1,5 @@
 from flask import render_template, request, redirect, url_for
-from backend.Modelos.database import db
-from backend.Modelos.Usuario import Usuario
+from backend.supabase_rest import select, insert
 import bcrypt
 
 def registro():
@@ -9,7 +8,7 @@ def registro():
         nombre = request.form.get("nombre", "").strip()
         apellido1 = request.form.get("apellido1", "").strip()
         apellido2 = request.form.get("apellido2", "").strip()
-        email = request.form.get("email", "").strip()
+        email = request.form.get("email", "").strip().lower()
         contrasena = request.form.get("contrasena", "")
         confirmar_contrasena = request.form.get("confirmar_contrasena", "")
         
@@ -24,6 +23,10 @@ def registro():
                 cliente_tipo=False
             )
 
+        # Cualquier correo corporativo de tiendaalquemia es administrador,
+        # incluso si en el formulario se marcó "Particular".
+        is_admin = cliente_tipo or email.endswith("@tiendaalquemia.com")
+
         # Validar contraseñas
         if contrasena != confirmar_contrasena:
             return render_template(
@@ -33,7 +36,8 @@ def registro():
             )
 
         # Comprobar si el correo ya está registrado
-        if Usuario.query.filter_by(email=email).first():
+        existente = select("usuarios", {"select": "id_usuario", "email": f"eq.{email}", "limit": "1"})
+        if existente:
             return render_template(
                 "authentication/registro.html",
                 error="Correo electrónico ya registrado.",
@@ -41,21 +45,26 @@ def registro():
             )
 
         # Hashear la contraseña
-        contrasena_encriptada = bcrypt.hashpw(contrasena.encode("utf-8"), bcrypt.gensalt())
+        contrasena_encriptada = bcrypt.hashpw(contrasena.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
-        # Crear el usuario
-        nuevo_usuario = Usuario(
-            nombre=nombre,
-            apellido1=apellido1,
-            apellido2=apellido2,
-            email=email,
-            contrasena=contrasena_encriptada,
-            is_admin=cliente_tipo  # True si es empresa, False si es particular
+        creado = insert(
+            "usuarios",
+            {
+                "nombre": nombre,
+                "apellido1": apellido1,
+                "apellido2": apellido2 if apellido2 else None,
+                "email": email,
+                "contrasena": contrasena_encriptada,
+                "is_admin": is_admin,
+            },
         )
 
-        # Guardar en la base de datos
-        db.session.add(nuevo_usuario)
-        db.session.commit()
+        if not creado:
+            return render_template(
+                "authentication/registro.html",
+                error="No se pudo crear el usuario en Supabase.",
+                cliente_tipo=cliente_tipo,
+            )
 
         return redirect(url_for("login"))
 

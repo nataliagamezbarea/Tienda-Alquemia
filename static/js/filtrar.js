@@ -1,56 +1,140 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Filtrar tiendas según las opciones seleccionadas
-  function filtrarTiendas() {
-    // Obtener los valores seleccionados de los filtros
-    var paisSeleccionado = document.getElementById("select-pais").value;
-    var provinciaSeleccionada =
-      document.getElementById("select-provincia").value;
-    var ciudadSeleccionada = document.getElementById("select-ciudad").value;
+  // Esperar a que el DOM esté completamente listo
+  setTimeout(function() {
+    initializarFiltros();
+  }, 100);
+});
 
-    // Obtener todas las tarjetas de tiendas
-    var tiendas = document.querySelectorAll(".tienda-card");
+function initializarFiltros() {
+  // Obtener datos de tiendas desde el DOM (del template Jinja2)
+  const tiendas = document.querySelectorAll(".tienda-card");
+  
+  if (tiendas.length === 0) {
+    console.warn("No tiendas encontradas en el DOM");
+    return;
+  }
 
-    // Recorrer todas las tarjetas de tiendas
-    tiendas.forEach(function (tienda) {
-      // Obtener los datos de cada tienda (país, provincia, ciudad)
-      var paisTienda = tienda.getAttribute("data-pais");
-      var provinciaTienda = tienda.getAttribute("data-provincia");
-      var ciudadTienda = tienda.getAttribute("data-ciudad");
+  const tiendaData = Array.from(tiendas).map(tienda => ({
+    element: tienda,
+    pais: tienda.getAttribute("data-pais"),
+    provincia: tienda.getAttribute("data-provincia"),
+    ciudad: tienda.getAttribute("data-ciudad")
+  }));
 
-      // Verificar si la tienda debe mostrarse (coincide con los filtros seleccionados)
-      var mostrarTienda = true; // Asumimos que se debe mostrar
+  console.log("Tiendas cargadas:", tiendaData.length);
 
-      // Comprobar si la tienda coincide con los filtros
-      if (paisSeleccionado && paisTienda !== paisSeleccionado) {
-        mostrarTienda = false;
+  // Selects
+  const selectPais = document.getElementById("select-pais");
+  const selectProvincia = document.getElementById("select-provincia");
+  const selectCiudad = document.getElementById("select-ciudad");
+
+  if (!selectPais || !selectProvincia || !selectCiudad) {
+    console.error("Selects no encontrados en el DOM");
+    return;
+  }
+
+  // Función para obtener países únicos y ordenados
+  function obtenerPaises() {
+    const paises = new Set();
+    tiendaData.forEach(tienda => {
+      if (tienda.pais) {
+        paises.add(tienda.pais);
       }
-      if (provinciaSeleccionada && provinciaTienda !== provinciaSeleccionada) {
-        mostrarTienda = false;
-      }
-      if (ciudadSeleccionada && ciudadTienda !== ciudadSeleccionada) {
-        mostrarTienda = false;
-      }
+    });
+    return Array.from(paises).sort();
+  }
 
-      // Mostrar u ocultar la tienda según si coincide con los filtros
-      if (mostrarTienda) {
-        tienda.style.display = "block"; // Mostrar la tienda
-      } else {
-        tienda.style.display = "none"; // Ocultar la tienda
+  // Función para actualizar las opciones de provincia según el país seleccionado
+  function actualizarProvincias() {
+    const paisSeleccionado = selectPais.value;
+    const provinciasDisponibles = new Set();
+
+    tiendaData.forEach(tienda => {
+      if (!paisSeleccionado || tienda.pais === paisSeleccionado) {
+        if (tienda.provincia) {
+          provinciasDisponibles.add(tienda.provincia);
+        }
       }
+    });
+
+    // Limpiar y repoblar el select de provincias
+    selectProvincia.innerHTML = '<option value="">Seleccionar Provincia</option>';
+    Array.from(provinciasDisponibles).sort().forEach(provincia => {
+      const option = document.createElement("option");
+      option.value = provincia;
+      option.textContent = provincia;
+      selectProvincia.appendChild(option);
+    });
+
+    // Reset ciudad cuando cambia país
+    selectCiudad.value = "";
+    actualizarCiudades();
+  }
+
+  // Función para actualizar las opciones de ciudad según país y provincia
+  function actualizarCiudades() {
+    const paisSeleccionado = selectPais.value;
+    const provinciaSeleccionada = selectProvincia.value;
+    const ciudadesDisponibles = new Set();
+
+    tiendaData.forEach(tienda => {
+      const paisCoinc = !paisSeleccionado || tienda.pais === paisSeleccionado;
+      const provinciaCoinc = !provinciaSeleccionada || tienda.provincia === provinciaSeleccionada;
+
+      if (paisCoinc && provinciaCoinc && tienda.ciudad) {
+        ciudadesDisponibles.add(tienda.ciudad);
+      }
+    });
+
+    // Limpiar y repoblar el select de ciudades
+    selectCiudad.innerHTML = '<option value="">Seleccionar Ciudad</option>';
+    Array.from(ciudadesDisponibles).sort().forEach(ciudad => {
+      const option = document.createElement("option");
+      option.value = ciudad;
+      option.textContent = ciudad;
+      selectCiudad.appendChild(option);
     });
   }
 
-  // Asociar el evento de cambio a los filtros (selectores)
-  document
-    .getElementById("select-pais")
-    .addEventListener("change", filtrarTiendas);
-  document
-    .getElementById("select-provincia")
-    .addEventListener("change", filtrarTiendas);
-  document
-    .getElementById("select-ciudad")
-    .addEventListener("change", filtrarTiendas);
+  // Función para filtrar tiendas según los criterios seleccionados
+  function filtrarTiendas() {
+    const paisSeleccionado = selectPais.value;
+    const provinciaSeleccionada = selectProvincia.value;
+    const ciudadSeleccionada = selectCiudad.value;
 
-  // Llamar a la función de filtrado al cargar la página
-  filtrarTiendas();
-});
+    let tiendaVisiblesCount = 0;
+    tiendaData.forEach(tienda => {
+      const paisCoinc = !paisSeleccionado || tienda.pais === paisSeleccionado;
+      const provinciaCoinc = !provinciaSeleccionada || tienda.provincia === provinciaSeleccionada;
+      const ciudadCoinc = !ciudadSeleccionada || tienda.ciudad === ciudadSeleccionada;
+
+      if (paisCoinc && provinciaCoinc && ciudadCoinc) {
+        tienda.element.style.display = "block";
+        tiendaVisiblesCount++;
+      } else {
+        tienda.element.style.display = "none";
+      }
+    });
+
+    console.log("Tiendas visibles:", tiendaVisiblesCount);
+  }
+
+  // Eventos de cambio
+  selectPais.addEventListener("change", () => {
+    actualizarProvincias();
+    filtrarTiendas();
+  });
+
+  selectProvincia.addEventListener("change", () => {
+    actualizarCiudades();
+    filtrarTiendas();
+  });
+
+  selectCiudad.addEventListener("change", () => {
+    filtrarTiendas();
+  });
+
+  // Inicializar selects con datos
+  console.log("Inicializando filtros...");
+  actualizarProvincias();
+}

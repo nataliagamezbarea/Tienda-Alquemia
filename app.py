@@ -86,7 +86,7 @@ app.add_url_rule('/cesta/add', 'añadir_producto_cesta', añadir_producto_cesta,
 app.add_url_rule('/cesta/actualizar/<int:id_variante>', 'actualizar_cantidad_producto', actualizar_cantidad_producto, methods=["POST"])
 app.add_url_rule('/cesta/eliminar/<int:id_variante>', 'eliminar_producto_cesta', eliminar_producto_cesta, methods=["POST"])
 
-# CRUD Productos
+# CRUD \.query\(|db\.session (**/routes/obtener*.py), no resultsProductos
 app.add_url_rule('/productos', 'productos', obtener_productos_html, methods=['GET'])
 app.add_url_rule('/producto/nuevo', 'crear_producto', crear_producto, methods=['GET', 'POST'])
 app.add_url_rule('/producto/editar/<int:producto_id>', 'actualizar_producto', actualizar_producto, methods=['GET', 'POST'])

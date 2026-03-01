@@ -1,17 +1,19 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-from backend.Modelos import Categoria  # Importa el modelo de Categoria
-from backend.Modelos.database import db  # Importa el objeto db
+from backend.supabase_rest import select, _request
 
 def editar_categoria(categoria_id):
     # Obtener la categoría a editar
-    categoria = Categoria.query.get_or_404(categoria_id)
+    rows = select("categorias", {"select": "id_categoria,nombre", "id_categoria": f"eq.{categoria_id}", "limit": "1"})
+    if not rows:
+        return "Categoría no encontrada", 404
+    categoria = rows[0]
     
     if request.method == 'POST':
         # Obtener los datos del formulario
-        categoria.nombre = request.form['nombre']
+        nombre = request.form['nombre']
         
         # Guardar los cambios en la base de datos
-        db.session.commit()
+        _request("PATCH", "categorias", params={"id_categoria": f"eq.{categoria_id}"}, payload={"nombre": nombre})
         
         flash('Categoría actualizada exitosamente', 'success')
         return redirect(url_for('listar_categorias'))  # Redirige a la lista de categorías

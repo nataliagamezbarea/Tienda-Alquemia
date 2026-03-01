@@ -1,78 +1,53 @@
 import os
-import time
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask
-from sqlalchemy import create_engine
-from sqlalchemy.exc import OperationalError
 
 load_dotenv()
 
 db = SQLAlchemy()
 
-def create_db_uri(user, password, host, port, database):
-    return f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}"
 
-def test_connection(uri, retries=5, delay=2):
-    for _ in range(retries):
-        try:
-            engine = create_engine(uri)
-            conn = engine.connect()
-            conn.close()
-            return True
-        except OperationalError:
-            time.sleep(delay)
-    return False
+def _build_database_url() -> str:
+    # Conexión directa (sin pooler)
+    database_url = os.getenv("DATABASE_URL", "").strip()
+
+    if not database_url:
+        raise ValueError("Falta DATABASE_URL en .env")
+
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+
+    if "sslmode=" not in database_url:
+        joiner = "&" if "?" in database_url else "?"
+        database_url = f"{database_url}{joiner}sslmode=require"
+
+    return database_url
+
 
 def init_db(app):
-    connections = []
+    rest_only = os.getenv("SUPABASE_REST_ONLY", "true").lower() in ("1", "true", "yes")
 
-    default_user = os.environ["DEFAULT_USER"]
-    default_password = os.environ["DEFAULT_PASSWORD"]
-    default_host = os.environ["DEFAULT_HOST"]
-    default_port = os.environ["DEFAULT_PORT"]
-    default_database = os.environ["DEFAULT_DATABASE"]
+    # Evita intentos de conexión directa PostgreSQL (IPv6) cuando trabajamos por REST
+    if rest_only:
+        app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+        app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+        db.init_app(app)
+        return
 
-    connections.append({
-        "USER": default_user,
-        "PASSWORD": default_password,
-        "HOST": default_host,
-        "PORT": default_port,
-        "DATABASE": default_database
-    })
+    database_url = _build_database_url()
 
-    i = 1
-    while True:
-        keys = [f"USER_{i}", f"PASSWORD_{i}", f"HOST_{i}", f"PORT_{i}", f"DATABASE_{i}"]
-        if all(k in os.environ for k in keys):
-            connections.append({
-                "USER": os.environ[f"USER_{i}"],
-                "PASSWORD": os.environ[f"PASSWORD_{i}"],
-                "HOST": os.environ[f"HOST_{i}"],
-                "PORT": os.environ[f"PORT_{i}"],
-                "DATABASE": os.environ[f"DATABASE_{i}"],
-            })
-            i += 1
-        else:
-            break
-
-    for conn in connections:
-        uri = create_db_uri(
-            conn["USER"],
-            conn["PASSWORD"],
-            conn["HOST"],
-            conn["PORT"],
-            conn["DATABASE"]
-        )
-        if test_connection(uri):
-            app.config["SQLALCHEMY_DATABASE_URI"] = uri
-            break
-    else:
-        raise Exception("No se pudo conectar a ninguna base de datos")
-
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_pre_ping": True,
+        "connect_args": {
+            "options": "-csearch_path=tienda_alquemia,public",
+            "connect_timeout": 8,
+        }
+    }
+
     db.init_app(app)
 
-# Inicializar Flask
-app = Flask(__name__)
-init_db(app)
+
+def get_db():
+    return db

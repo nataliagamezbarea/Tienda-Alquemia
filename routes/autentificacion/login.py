@@ -1,5 +1,6 @@
 from flask import redirect, render_template, request, session, url_for
-from backend.Modelos.Usuario import Usuario
+from backend.supabase_rest import select, _request
+import os
 import bcrypt
 
 def login():
@@ -11,14 +12,29 @@ def login():
 
     # Si es un POST (cuando se envían las credenciales)
     if request.method == "POST":
-        email = request.form["email"]
+        email = request.form["email"].strip().lower()
         contrasena = request.form["contrasena"]
+        admin_domain = os.getenv("ADMIN_EMAIL_DOMAIN", "tiendaalquemia.com").lower().lstrip("@")
 
-        usuario_encontrado = Usuario.query.filter_by(email=email).first()
-        if usuario_encontrado and bcrypt.checkpw(contrasena.encode("utf-8"), usuario_encontrado.contrasena.encode("utf-8")):
-            session["user"] = usuario_encontrado.id_usuario
-            session["is_admin"] = usuario_encontrado.is_admin
-            if usuario_encontrado.is_admin:
+        usuarios = select("usuarios", {"select": "id_usuario,email,contrasena,is_admin", "email": f"eq.{email}", "limit": "1"})
+        usuario_encontrado = usuarios[0] if usuarios else None
+
+        if usuario_encontrado and bcrypt.checkpw(contrasena.encode("utf-8"), str(usuario_encontrado.get("contrasena", "")).encode("utf-8")):
+            email_usuario = str(usuario_encontrado.get("email", "")).lower()
+            es_admin = bool(usuario_encontrado.get("is_admin")) or email_usuario.endswith(f"@{admin_domain}")
+
+            # Corrige usuarios ya existentes que se registraron como particular
+            if es_admin and not bool(usuario_encontrado.get("is_admin")):
+                _request(
+                    "PATCH",
+                    "usuarios",
+                    params={"id_usuario": f"eq.{usuario_encontrado.get('id_usuario')}"},
+                    payload={"is_admin": True},
+                )
+
+            session["user"] = usuario_encontrado.get("id_usuario")
+            session["is_admin"] = es_admin
+            if session["is_admin"]:
                 return redirect(url_for('productos'))
             return redirect(url_for('informacion_personal'))
         else:

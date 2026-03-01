@@ -1,15 +1,26 @@
 from flask import render_template
-from backend.Modelos.database import db
-from backend.Modelos.Tienda import Tienda
+from backend.supabase_rest import select
 
 def encuentranos():
-    # Obtener todos los países, provincias y ciudades disponibles en la base de datos
-    paises = db.session.query(Tienda.pais).distinct().all()
-    provincias = db.session.query(Tienda.provincia).distinct().all()
-    ciudades = db.session.query(Tienda.ciudad).distinct().all()
+    # Obtener todas las tiendas desde Supabase
+    tiendas = select("tiendas", {
+        "select": "id_tienda,pais,provincia,ciudad,codigo_postal,maps_url"
+    })
+    
+    print(f"[DEBUG encuentranos] Tiendas recibidas: {len(tiendas) if isinstance(tiendas, list) else 'No es lista'}")
+    print(f"[DEBUG encuentranos] Tipo de tiendas: {type(tiendas)}")
+    
+    if not isinstance(tiendas, list):
+        tiendas = []
 
-    # Obtener todas las tiendas sin aplicar filtros
-    tiendas = Tienda.query.all()
+    # Obtener valores únicos para los filtros, ordenados
+    paises = sorted(list(set([t.get("pais") for t in tiendas if t.get("pais")])))
+    provincias = sorted(list(set([t.get("provincia") for t in tiendas if t.get("provincia")])))
+    ciudades = sorted(list(set([t.get("ciudad") for t in tiendas if t.get("ciudad")])))
+
+    print(f"[DEBUG encuentranos] Paises: {paises}")
+    print(f"[DEBUG encuentranos] Provincias: {provincias}")
+    print(f"[DEBUG encuentranos] Ciudades: {ciudades}")
 
     # Pasar los datos a la plantilla
     return render_template(

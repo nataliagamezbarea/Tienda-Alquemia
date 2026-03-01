@@ -1,13 +1,8 @@
 from flask import render_template, request, redirect, url_for, flash, current_app
 from werkzeug.utils import secure_filename
-from sqlalchemy.exc import SQLAlchemyError
 import os
 
-from backend.Modelos import (
-    Producto, ProductoVariante, ProductoCategoria, ProductoImagen,
-    Talla, Color, Seccion, Categoria
-)
-from backend.Modelos.database import db
+from backend.supabase_rest import select, insert
 from routes.administrador.producto.local import es_local  # Función que detecta localhost
 
 # Verificar extensiones permitidas
@@ -41,77 +36,85 @@ def crear_producto():
             flash("Error: Se deben seleccionar al menos una categoría.", "error")
             return redirect(request.url)
 
-        try:
-            # Crear producto
-            producto = Producto(nombre=nombre, descripcion=descripcion, precio=precio, id_seccion=id_seccion)
-            db.session.add(producto)
-            db.session.commit()
+        creado = insert(
+            "productos",
+            {
+                "nombre": nombre,
+                "descripcion": descripcion,
+                "precio": precio,
+                "id_seccion": id_seccion,
+            },
+        )
+        if not creado:
+            flash("Error al crear el producto", "error")
+            return redirect(url_for('productos'))
 
-            # Asociar categorías
-            for id_categoria in id_categorias:
-                prod_cat = ProductoCategoria(id_producto=producto.id_producto, id_categoria=id_categoria)
-                db.session.add(prod_cat)
-            db.session.commit()
+        producto = creado[0]
+        id_producto = producto.get("id_producto")
 
-            # Procesar variantes
-            i = 0
-            while True:
-                id_color = request.form.get(f'variantes[{i}][id_color]')
-                id_talla = request.form.get(f'variantes[{i}][id_talla]')
-                stock = request.form.get(f'variantes[{i}][stock]')
+        # Asociar categorías
+        rels = [{"id_producto": id_producto, "id_categoria": int(id_categoria)} for id_categoria in id_categorias]
+        if rels:
+            insert("productos_categorias", rels)
 
-                if not id_color or not id_talla or not stock:
-                    break
+        # Procesar variantes
+        i = 0
+        while True:
+            id_color = request.form.get(f'variantes[{i}][id_color]')
+            id_talla = request.form.get(f'variantes[{i}][id_talla]')
+            stock = request.form.get(f'variantes[{i}][stock]')
 
-                producto_variante = ProductoVariante(
-                    id_producto=producto.id_producto,
-                    id_color=id_color,
-                    id_talla=id_talla,
-                    stock=stock
-                )
-                db.session.add(producto_variante)
-                db.session.commit()
+            if not id_color or not id_talla or not stock:
+                break
 
-                # Guardar imágenes desde URLs dinámicas
-                for key in request.form:
-                    if key.startswith(f'variantes[{i}][imagen_url]'):
-                        url = request.form[key]
-                        if url:
-                            prod_img = ProductoImagen(
-                                id_producto=producto.id_producto,
-                                id_color=id_color,
-                                imagen_url=url
-                            )
-                            db.session.add(prod_img)
+            insert(
+                "productos_variantes",
+                {
+                    "id_producto": id_producto,
+                    "id_color": int(id_color),
+                    "id_talla": int(id_talla),
+                    "stock": int(stock),
+                },
+            )
 
-                # Guardar imágenes subidas
-                imagenes = request.files.getlist(f'variantes[{i}][imagenes][]')
-                for imagen in imagenes:
-                    ruta = guardar_imagen(imagen)
-                    if ruta:
-                        prod_img = ProductoImagen(
-                            id_producto=producto.id_producto,
-                            id_color=id_color,
-                            imagen_url=ruta
+            # Guardar imágenes desde URLs dinámicas
+            for key in request.form:
+                if key.startswith(f'variantes[{i}][imagen_url]'):
+                    url = request.form[key].strip()
+                    if url:
+                        insert(
+                            "productos_imagenes_colores",
+                            {
+                                "id_producto": id_producto,
+                                "id_color": int(id_color),
+                                "imagen_url": url,
+                            },
                         )
-                        db.session.add(prod_img)
 
-                i += 1
+            # Guardar imágenes subidas
+            imagenes = request.files.getlist(f'variantes[{i}][imagenes][]')
+            for imagen in imagenes:
+                ruta = guardar_imagen(imagen)
+                if ruta:
+                    insert(
+                        "productos_imagenes_colores",
+                        {
+                            "id_producto": id_producto,
+                            "id_color": int(id_color),
+                            "imagen_url": ruta,
+                        },
+                    )
 
-            db.session.commit()
-            flash("Producto creado exitosamente", "success")
-            return redirect(url_for('productos'))
+            i += 1
 
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            flash(f"Error en la base de datos: {str(e)}", 'error')
-            return redirect(url_for('productos'))
+        flash("Producto creado exitosamente", "success")
+        return redirect(url_for('productos'))
 
     # GET
-    tallas = Talla.query.all()
-    colores = Color.query.all()
-    secciones = Seccion.query.all()
-    categorias = Categoria.query.all()
+    tallas = select("tallas", {"select": "id_talla,talla", "order": "id_talla.asc"})
+    colores = select("colores", {"select": "id_color,color", "order": "id_color.asc"})
+    secciones = select("secciones", {"select": "id_seccion,nombre", "order": "id_seccion.asc"})
+    categorias = select("categorias", {"select": "id_categoria,nombre", "order": "id_categoria.asc"})
 
     return render_template(
         'admin/productos/agregar_producto.html',

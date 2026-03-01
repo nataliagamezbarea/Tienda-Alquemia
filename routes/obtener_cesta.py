@@ -1,61 +1,91 @@
 from flask import session
-from backend.Modelos.Cesta import Cesta
-from backend.Modelos.CestaProducto import CestaProducto
-from backend.Vistas.VistaProductoCompleto import VistaProductoCompleto
-from decimal import Decimal
+from backend.supabase_rest import select
 
 def obtener_cesta():
-    # Obtener el ID del usuario desde la sesión
-    id_usuario = session.get("user")
+    # Fallback seguro para no romper la navegación si no hay Postgres directo
+    if not session.get("user"):
+        return {"productos_cesta": [], "numero_de_productos": 0, "total": 0.00}
+
+    id_usuario = session.get("id_usuario") or session.get("user")
     if not id_usuario:
-        return None  # Si no hay usuario logueado, retornamos None
+        return {"productos_cesta": [], "numero_de_productos": 0, "total": 0.00}
 
-    # Buscar la cesta del usuario
-    cesta = Cesta.query.filter_by(id_usuario=id_usuario).first()
-    if not cesta:
-        return {
-            "productos_cesta": [],
-            "numero_de_productos": 0,
-            "total": 0.00
-        }
+    # Obtener la cesta del usuario
+    cestas = select("cestas", {"id_usuario": f"eq.{id_usuario}"})
 
-    # Obtener los productos en la cesta
-    productos_en_cesta = CestaProducto.query.filter_by(id_cesta=cesta.id_cesta).all()
-    ids_variante = [producto.id_variante for producto in productos_en_cesta]
+    if not cestas:
+        return {"productos_cesta": [], "numero_de_productos": 0, "total": 0.00}
 
-    # Consultar los datos completos desde la vista
-    productos_vista = {
-        producto.id_variante: producto
-        for producto in VistaProductoCompleto.query.filter(
-            VistaProductoCompleto.id_variante.in_(ids_variante)
-        ).all()
-    }
+    id_cesta = cestas[0].get("id_cesta")
 
-    # Generar lista de productos con comprensión de listas
-    lista_productos = [
-        {
-            "id_producto": vista.id_producto,
-            "nombre": vista.nombre_producto,
-            "precio_unitario": float(vista.precio),
-            "cantidad": producto.cantidad,
-            "subtotal": round(float(Decimal(vista.precio) * producto.cantidad), 2),
-            "imagen_url": vista.imagen_url,
+    # Obtener productos en la cesta
+    cesta_productos = select("cestas_productos", {"id_cesta": f"eq.{id_cesta}"})
+
+    if not cesta_productos:
+        return {"productos_cesta": [], "numero_de_productos": 0, "total": 0.00}
+
+    productos_cesta = []
+    total = 0.0
+    numero_productos = 0
+
+    for cp in cesta_productos:
+        id_variante = cp.get("id_variante")
+        cantidad = cp.get("cantidad", 1)
+
+        # Obtener detalles de la variante
+        variantes = select("productos_variantes", {"id_variante": f"eq.{id_variante}"})
+        if not variantes:
+            continue
+
+        variante = variantes[0]
+        id_producto = variante.get("id_producto")
+
+        # Obtener detalles del producto
+        productos = select("productos", {"id_producto": f"eq.{id_producto}"})
+        if not productos:
+            continue
+
+        producto = productos[0]
+
+        # Obtener color y talla
+        colores = select("colores", {"id_color": f"eq.{variante.get('id_color')}"}) if variante.get("id_color") else []
+        tallas = select("tallas", {"id_talla": f"eq.{variante.get('id_talla')}"}) if variante.get("id_talla") else []
+
+        color_nombre = colores[0].get("color") if colores else "Sin color"
+        talla_nombre = tallas[0].get("talla") if tallas else "Sin talla"
+
+        imagenes = select(
+            "productos_imagenes_colores",
+            {
+                "select": "imagen_url",
+                "id_producto": f"eq.{id_producto}",
+                "id_color": f"eq.{variante.get('id_color')}",
+                "limit": "1",
+            },
+        )
+        imagen_url = imagenes[0].get("imagen_url") if imagenes else "/static/img/placeholder.jpg"
+
+        precio = float(producto.get("precio", 0))
+        subtotal = precio * cantidad
+        total += subtotal
+        numero_productos += cantidad
+
+        productos_cesta.append({
+            "id_producto": id_producto,
+            "nombre": producto.get("nombre", ""),
+            "imagen_url": imagen_url,
             "variante": {
-                "id_variante": vista.id_variante,
-                "descripcion": vista.descripcion,
-                "color": vista.color,
-                "talla": vista.talla
-            }
-        }
-        for producto in productos_en_cesta
-        if (vista := productos_vista.get(producto.id_variante)) is not None
-    ]
-
-    # Calcular el total de la cesta
-    total = sum(Decimal(p["precio_unitario"]) * p["cantidad"] for p in lista_productos)
+                "id_variante": id_variante,
+                "color": color_nombre,
+                "talla": talla_nombre,
+            },
+            "precio": precio,
+            "cantidad": cantidad,
+            "subtotal": subtotal,
+        })
 
     return {
-        "productos_cesta": lista_productos,
-        "numero_de_productos": sum(p["cantidad"] for p in lista_productos),
-        "total": round(float(total), 2)
+        "productos_cesta": productos_cesta,
+        "numero_de_productos": numero_productos,
+        "total": round(total, 2)
     }

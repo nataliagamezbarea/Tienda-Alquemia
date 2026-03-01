@@ -1,35 +1,48 @@
 from flask import url_for
 import random
-from backend.Modelos import Categoria
-from backend.Modelos.Producto import Producto
-from backend.Modelos.ProductoCategoria import ProductoCategoria
-from backend.Modelos.Seccion import Seccion
+from backend.supabase_rest import select
 
 def obtener_menu(cache):
-    # Función para obtener categorías de cache o BD
-    def obtener_categorias(cache_key, filtro_seccion=None):
+    # Función para obtener categorías de cache o API
+    def obtener_categorias(cache_key, seccion=None):
         categorias = cache.get(cache_key)
         if not categorias:
-            query = Categoria.query
-            if filtro_seccion:
-                query = query.join(ProductoCategoria).join(Producto).join(Seccion).filter(Seccion.nombre == filtro_seccion)
-            categorias = query.all()
+            if not seccion:
+                categorias = select("categorias", {"select": "id_categoria,nombre", "order": "nombre.asc"})
+            else:
+                categorias = select(
+                    "vista_productos_completa",
+                    {
+                        "select": "id_categoria,nombre_categoria",
+                        "seccion": f"eq.{seccion}",
+                        "order": "nombre_categoria.asc",
+                    },
+                )
+                unicas = {}
+                for c in categorias:
+                    key = c.get("id_categoria")
+                    if key is not None and key not in unicas:
+                        unicas[key] = {"id_categoria": key, "nombre": c.get("nombre_categoria", "")}
+                categorias = list(unicas.values())
+
             cache.set(cache_key, categorias, timeout=3600)
         return categorias
 
-    # Función para obtener imágenes de productos recientes de una sección, limitado a 30 productos
+    # Función para obtener imágenes por sección desde la vista
     def obtener_imagenes_random(seccion, cache_key):
         imagenes_random = cache.get(cache_key)
         if not imagenes_random:
-            productos = (
-                Producto.query
-                .join(Seccion)
-                .filter(Seccion.nombre == seccion)
-                .order_by(Producto.id_producto.desc())  # Ordenar por producto más reciente (asumiendo que id sube con el tiempo)
-                .limit(30)
-                .all()
+            filas = select(
+                "vista_productos_completa",
+                {
+                    "select": "imagen_url",
+                    "seccion": f"eq.{seccion}",
+                    "order": "id_producto.desc",
+                    "limit": "60",
+                },
             )
-            imagenes = [img.imagen_url for producto in productos for img in producto.imagenes if img.imagen_url]
+
+            imagenes = [f.get("imagen_url") for f in filas if f.get("imagen_url")]
             imagenes_random = random.sample(imagenes, min(len(imagenes), 9)) if imagenes else []
             cache.set(cache_key, imagenes_random, timeout=3600)
         return imagenes_random

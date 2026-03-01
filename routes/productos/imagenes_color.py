@@ -1,13 +1,15 @@
 from flask import jsonify
-from backend.Modelos import ProductoImagen
-from backend.Modelos.database import db
+from backend.supabase_rest import select
 
 def imagenes_color(id_producto, id_color):
-    # Traer solo las imágenes de ese producto y color
-    imagenes = (
-        db.session.query(ProductoImagen)
-        .filter_by(id_producto=id_producto, id_color=id_color)
-        .all()
+    filas = select(
+        "productos_imagenes_colores",
+        {
+            "select": "imagen_url",
+            "id_producto": f"eq.{id_producto}",
+            "id_color": f"eq.{id_color}",
+            "order": "id_imagen.asc",
+        },
     )
-    urls = [img.imagen_url for img in imagenes if img.imagen_url]
+    urls = [f.get("imagen_url") for f in filas if f.get("imagen_url")]
     return jsonify(urls)

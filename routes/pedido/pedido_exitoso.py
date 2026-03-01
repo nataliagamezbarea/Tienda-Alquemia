@@ -1,11 +1,5 @@
 from flask import render_template, redirect, url_for, session
-from backend.Modelos import Usuario
-from backend.Modelos.database import db
-from backend.Modelos.Pedido import Pedido
-from backend.Modelos.PedidoProducto import PedidoProducto
-from backend.Modelos.Cesta import Cesta
-from backend.Modelos.CestaProducto import CestaProducto
-from backend.Vistas.VistaProductoCompleto import VistaProductoCompleto
+from backend.supabase_rest import select, insert, _request
 from datetime import datetime
 from decimal import Decimal
 from routes.obtener_cesta import obtener_cesta
@@ -20,38 +14,47 @@ def pedido_exitoso():
     if not datos_cesta or not datos_cesta["productos_cesta"]:
         return redirect("/compras")
 
-    usuario = Usuario.query.get(id_usuario)
+    usuarios = select("usuarios", {"select": "id_usuario,nombre,apellido1,apellido2", "id_usuario": f"eq.{id_usuario}", "limit": "1"})
+    usuario = usuarios[0] if usuarios else None
     
     if not usuario:
         return redirect(url_for('login'))
 
-    nuevo_pedido = Pedido(
-        id_usuario=id_usuario,
-        nombre_envio=usuario.nombre, 
-        apellido1_envio=usuario.apellido1, 
-        apellido2_envio=usuario.apellido2,
-        fecha=datetime.utcnow(),
-        estado="pendiente",
-        tipo_pedido="domicilio"
+    nuevo_pedido = insert(
+        "pedidos",
+        {
+            "id_usuario": id_usuario,
+            "nombre_envio": usuario.get("nombre"),
+            "apellido1_envio": usuario.get("apellido1"),
+            "apellido2_envio": usuario.get("apellido2") or "",
+            "fecha": datetime.utcnow().date().isoformat(),
+            "estado": "pendiente",
+            "tipo_pedido": "domicilio",
+        },
     )
-    db.session.add(nuevo_pedido)
-    db.session.commit()  # Commit para guardar el pedido y obtener su id_pedido
+    if not nuevo_pedido:
+        return redirect(url_for('compras'))
 
-    total = sum(Decimal(producto["precio_unitario"]) * producto["cantidad"] for producto in datos_cesta["productos_cesta"])
+    id_pedido = nuevo_pedido[0].get("id_pedido")
 
+    total = sum(Decimal(str(producto["precio"])) * producto["cantidad"] for producto in datos_cesta["productos_cesta"])
+
+    lineas = []
     for producto in datos_cesta["productos_cesta"]:
-        pedido_producto = PedidoProducto(
-            id_pedido=nuevo_pedido.id_pedido,  # Ahora el id_pedido está disponible
-            id_variante=producto["variante"]["id_variante"],
-            cantidad=producto["cantidad"],
-            total_producto=producto["subtotal"]
+        lineas.append(
+            {
+                "id_pedido": id_pedido,
+                "id_variante": producto["variante"]["id_variante"],
+                "cantidad": producto["cantidad"],
+                "total_producto": producto["subtotal"],
+            }
         )
-        db.session.add(pedido_producto)
 
-    cesta = Cesta.query.filter_by(id_usuario=id_usuario).first()
-    if cesta:
-        CestaProducto.query.filter_by(id_cesta=cesta.id_cesta).delete()
+    if lineas:
+        insert("pedidos_productos", lineas)
 
-    db.session.commit()
+    cestas = select("cestas", {"select": "id_cesta", "id_usuario": f"eq.{id_usuario}", "limit": "1"})
+    if cestas:
+        _request("DELETE", "cestas_productos", params={"id_cesta": f"eq.{cestas[0].get('id_cesta')}"})
 
     return redirect(url_for('compras'))
