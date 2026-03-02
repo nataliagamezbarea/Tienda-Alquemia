@@ -1,4 +1,5 @@
 
+import os
 from flask import render_template, request, current_app
 from backend.supabase_rest import select
 from routes.autentificacion.enviar_correo import enviar_correo
@@ -26,7 +27,8 @@ def olvidado_contrasena():
             # Convierte con el correo y el salto de la contraseña en un token de seguridad
             token = s.dumps(correo, salt='password-reset-salt')
             # Le das la url para poder recuperar la contraseña pero añade el token generado
-            url_restablecer = f"http://localhost:5000/restablecer_contrasena/{token}"
+            app_url = os.getenv('APP_URL', 'http://localhost:5000')
+            url_restablecer = f"{app_url}/restablecer_contrasena/{token}"
 
             # Defines el mensaje del correo y le pasas la url
             cuerpo = f'Haz clic en el siguiente enlace para restablecer tu contraseña: {url_restablecer}'
