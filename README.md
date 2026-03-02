@@ -1,10 +1,12 @@
-# 🛍️ Tienda de Ropa - Alquemia
+# Tienda de Ropa - Alquemia
 
 Bienvenido al repositorio de **Alquemia**, una aplicación web para la gestión de una tienda de ropa. Aquí puedes ver productos, gestionarlos y realizar compras desde una interfaz amigable y moderna.
 
+**Aplicación en producción:** https://tienda-alquemia.vercel.app/
+
 ---
 
-## 🚀 Características
+## Características
 
 - Catálogo de ropa con fotos, precios y descripciones
 - Carrito de compras funcional
@@ -16,7 +18,7 @@ Bienvenido al repositorio de **Alquemia**, una aplicación web para la gestión 
 
 ---
 
-## ⚙️ Instalación en local
+## Instalación en local
 
 ### 1. Clona este repositorio
 
@@ -37,13 +39,13 @@ pip install -r requirements.txt
 
 ### 3. Configura el entorno
 
-Copia el archivo `.env.example` a `.env` y rellena tus variables (o revisa que los valores por defecto sean válidos para desarrollo).
+Copia el archivo `.env` y rellena tus variables (o revisa que los valores por defecto sean válidos para desarrollo).
 
 ---
 
-## 🐳 Ejecución con Docker Compose
+## Ejecución con Docker Compose
 
-Toda la infraestructura necesaria para desarrollo (base de datos MySQL, phpMyAdmin y Mailhog para pruebas de correo) se levanta con Docker Compose.
+Toda la infraestructura necesaria para desarrollo (base de datos PostgreSQL, PostgREST API, aplicación Flask y Mailhog para pruebas de correo) se levanta con Docker Compose.
 
 1. Ve a la carpeta `docker`:
 
@@ -58,24 +60,19 @@ docker-compose up -d
 ```
 
 Esto iniciará:
-- **MySQL** en el puerto `3307`
-- **phpMyAdmin** en el puerto `8080`
+- **PostgreSQL** en el puerto `5432`
+- **PostgREST** (API REST) en el puerto `3000`
+- **Aplicación Flask** en el puerto `5000`
+- **pgAdmin** en el puerto `5050`
 - **Mailhog** en los puertos `1025` (SMTP) y `8025` (web)
 
 > **Nota:** Mailhog se utiliza solo para desarrollo local y pruebas de envío de correos.
 
-3. Espera unos segundos a que MySQL esté listo antes de lanzar la aplicación Flask.
-
-4. Vuelve a la raíz del proyecto y ejecuta la aplicación:
-
-```bash
-cd ..
-python app.py
-```
+3. La aplicación estará disponible en [http://localhost:5000](http://localhost:5000)
 
 ---
 
-## 🧪 Usuarios de ejemplo
+## Usuarios de ejemplo
 
 Puedes acceder con cualquiera de los siguientes correos, **todas las contraseñas son `123`**:
 
@@ -96,10 +93,17 @@ Puedes acceder con cualquiera de los siguientes correos, **todas las contraseña
 
 ---
 
-## 📬 Pruebas de correo
+## Herramientas de desarrollo
 
 - **Mailhog** está disponible en [http://localhost:8025](http://localhost:8025) para ver todos los correos enviados en local.
-- **phpMyAdmin** para gestión de base de datos: [http://localhost:8080](http://localhost:8080)  
-  Usuario: `root`  
-  Contraseña: `123`
+- **pgAdmin** para gestión de base de datos PostgreSQL: [http://localhost:5050](http://localhost:5050)  
+  Usuario: `admin@tienda.com`  
+  Contraseña: `admin123`
+
+  Para conectar a la base de datos desde pgAdmin:
+  - Host: `db`
+  - Puerto: `5432`
+  - Base de datos: `tienda_alquemia`
+  - Usuario: `postgres`
+  - Contraseña: `ZBcDttpuipJCZHFb`
 

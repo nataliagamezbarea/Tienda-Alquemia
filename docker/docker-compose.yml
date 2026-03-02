@@ -92,6 +92,21 @@ services:
     networks:
       - tienda_network
 
+  # pgAdmin - Interfaz web para PostgreSQL
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: tienda_alquemia_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@tienda.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks:
+      - tienda_network
+
 volumes:
   postgres_data:
 
