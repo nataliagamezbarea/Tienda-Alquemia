@@ -1,6 +1,6 @@
 # Tienda de Ropa - Alquemia
 
-![Mockup Tienda Alquemia](https://x02.me/i/4JTR.png)
+![Mockup Tienda Alquemia](https://x02.me/i/KEQATC.png)
 
 Bienvenido al repositorio de **Alquemia**, una aplicación web para la gestión de una tienda de ropa. Aquí puedes ver productos, gestionarlos y realizar compras desde una interfaz amigable y moderna.
 
